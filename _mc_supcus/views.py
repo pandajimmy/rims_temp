@@ -21,10 +21,10 @@ class SupcusViewSet(viewsets.ModelViewSet):
     # filterset_fields = ['value','label']
 
     filter_fields = {
-        'code': ["in", "exact"], # note the 'in' field
+        #'code': ["in", "exact"], # note the 'in' field
         'name': ["exact"]
     }
-    search_fields = ['code','name']
+    search_fields = ['name']
     paginator = None
     
     # def list(self, request, *args, **kwargs):

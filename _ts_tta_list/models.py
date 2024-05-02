@@ -74,14 +74,11 @@ class TtaList_ts(models.Model):
         # cursor.execute("SET sort_buffer_size = 262144256000000")
         return f'/{self.refno}/'  
 
-    def save():
-        if self.list_link_guid == '':
-	        self.list_link_guid = self.list_guid
-
-        if self.list_link_guid == None:
+    def save(self, *args, **kwargs):
+        if not self.list_link_guid:
             self.list_link_guid = self.list_guid
-        
-        if self.revision == '':
+    
+        if not self.revision:
             self.revision = '0'
 
         super(TtaList_ts,self).save(*args, **kwargs)

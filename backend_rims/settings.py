@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_swagger',
     'corsheaders',
+    'drf_yasg',
+    'dark',
+    'nav_list',
     'django_filters',
     '_mc_design_template.apps.McDesignTemplateConfig',
     '_mc_design_tab.apps.McDesignTabConfig',
@@ -140,11 +144,10 @@ DATABASES = {
         'NAME': 'backend_rims_test',                          #<= database name
         'USER': 'panda_dev',
         'PASSWORD': 'Dev@3323966',
-        'HOST': 'localhost',                             #<=Based on your own setting
+        'HOST': '192.168.9.246',                             #<=Based on your own setting
         'PORT': 3306,
     }
 }
-
 
 
 # Password validation
@@ -185,6 +188,11 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
+import os
+ROOT_PATH = os.path.dirname(__file__)
+
+STATICFILES_DIRS = [os.path.join(ROOT_PATH, 'static')]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -199,6 +207,7 @@ REST_FRAMEWORK = {
    'DEFAULT_FILTER_BACKENDS': 'django_filters.rest_framework',
    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication',],
    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+   'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' 
    #'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
    #'DEFAULT_PERMISSION_CLASSES': [ 'rest_framework.permissions.AllowAny'],
 }
@@ -207,7 +216,3 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 ALLOWED_HOSTS=['*']
-
-
-
-

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.pagination import PageNumberPagination
 
 from .models import TtaList
 
@@ -10,7 +11,10 @@ import django_filters.rest_framework
 import json
 from django.db import connection
 
- 
+class SingleRecordPagination(PageNumberPagination):
+    page_size = 1  # Set page size to 1, i.e., one record per page
+    page_size_query_param = 'page_size'
+    max_page_size = 1  # Optionally enforce a maximum page size
 
 class TtaListViewSet(viewsets.ModelViewSet):
     
@@ -26,6 +30,7 @@ class TtaListViewSet(viewsets.ModelViewSet):
 
     queryset = TtaList.objects.all().order_by('refno')
     serializer_class = TtaListSerializer
+    pagination_class = SingleRecordPagination  # Use custom pagination class
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filter_fields = {

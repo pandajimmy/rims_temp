@@ -20,7 +20,7 @@ class DesignDynamic(models.Model):
         ordering = ('dynamic_seq',)
     
     def __str__(self):
-        return self.dynamic_seq
+        return str(self.dynamic_seq)
 
     def get_absolute_url(self):
         return f'/{self.dynamic_seq}/'  

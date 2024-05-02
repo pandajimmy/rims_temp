@@ -3,7 +3,7 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'mc_GetTtaDetails', views.TtaListViewSet)
+router.register(r'mc_GetTtaDetails', views.TtaListDetailsViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

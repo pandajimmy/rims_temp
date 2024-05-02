@@ -1,4 +1,4 @@
 from django.contrib import admin
 
-from .models import TtaList
-admin.site.register(TtaList)
+from .models import TtaListDetails
+admin.site.register(TtaListDetails)

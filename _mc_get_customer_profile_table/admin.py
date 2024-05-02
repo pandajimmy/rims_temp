@@ -1,4 +1,4 @@
 from django.contrib import admin
 
-from .models import CustomerProfile
-admin.site.register(CustomerProfile)
+from .models import CustomerProfileTable
+admin.site.register(CustomerProfileTable)

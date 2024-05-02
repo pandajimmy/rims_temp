@@ -51,6 +51,6 @@ class RimsSupcusSerializer(serializers.ModelSerializer):
         check_customer_guid = super(RimsSupcusSerializer, self).to_representation(instance)
         if len(self.customer_guid) <= 0:
             raise ValidationError(
-                _('Customer ID is empty')
+                ('Customer ID is empty')
             )
         return check_customer_guid

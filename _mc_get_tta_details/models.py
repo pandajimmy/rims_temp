@@ -1,6 +1,6 @@
 from django.db import models
 
-class TtaList(models.Model):
+class TtaListDetails(models.Model):
     list_guid = models.CharField(primary_key=True, max_length=32)
     customer_guid = models.CharField(max_length=32)
     refno = models.CharField(max_length=20)
@@ -9,7 +9,7 @@ class TtaList(models.Model):
     bill_supp_guid = models.CharField(max_length=32)
     bill_supp_name = models.CharField(max_length=60, blank=True, null=True)
     negotiation_year = models.TextField(blank=True, null=True)  # This field type is a guess.
-    co_reg_no = models.IntegerField(blank=True, null=True)
+    co_reg_no = models.CharField(max_length=32,blank=True, null=True)
     tta_period_from = models.CharField(max_length=200, blank=True, null=True)
     tta_period_to = models.CharField(max_length=200, blank=True, null=True)
     internal_pic = models.CharField(max_length=200, blank=True, null=True)
@@ -24,6 +24,7 @@ class TtaList(models.Model):
     supplier_pic_email = models.CharField(max_length=200, blank=True, null=True)
     banner = models.CharField(max_length=200, blank=True, null=True)
     outlet = models.CharField(max_length=200, blank=True, null=True)
+    '''
     target_purchase_per_year_left_option = models.CharField(max_length=200, blank=True, null=True)
     target_purchase_per_year = models.IntegerField(blank=True, null=True)
     target_purchase_per_year_option = models.CharField(max_length=200, blank=True, null=True)
@@ -170,6 +171,8 @@ class TtaList(models.Model):
     general_complicance = models.CharField(max_length=200, blank=True, null=True)
     return_condition = models.CharField(max_length=200, blank=True, null=True)
     price_n_billing = models.CharField(max_length=200, blank=True, null=True)
+    '''
+
     effective_date = models.CharField(max_length=200, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     created_by = models.CharField(max_length=20, blank=True, null=True)
@@ -182,6 +185,10 @@ class TtaList(models.Model):
     reject_at = models.DateTimeField(blank=True, null=True)
     reject_by = models.CharField(max_length=20, blank=True, null=True)
     list_status = models.CharField(max_length=20, blank=True, null=True)
+    '''
+    ecommerce_support = models.JSONField(blank=True, null=True)
+    purchase_rebate_tier = models.JSONField(blank=True, null=True)
+    '''
 
     class Meta:
         managed = False

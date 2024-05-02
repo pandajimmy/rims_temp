@@ -1,9 +1,9 @@
 from django.db import models
-from _mc_get_tta_details.models import TtaList
+from _mc_get_tta_details.models import TtaListDetails
 
 class TtaListForm(models.Model):
     list_guid_c = models.CharField(primary_key=True, max_length=32)
-    list_guid = models.ForeignKey(TtaList, models.DO_NOTHING, db_column='list_guid',related_name='dynamic_field')
+    list_guid = models.ForeignKey(TtaListDetails, models.DO_NOTHING, db_column='list_guid',related_name='dynamic_field')
     tab_guid = models.CharField(max_length=32, blank=True, null=True)
     group = models.CharField(max_length=200, blank=True, null=True)
     seq = models.IntegerField(blank=True, null=True)

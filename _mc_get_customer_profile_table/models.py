@@ -1,6 +1,6 @@
 from django.db import models
 
-class CustomerProfile(models.Model):
+class CustomerProfileTable(models.Model):
     customer_guid = models.CharField(primary_key=True, max_length=32)
     customer_name = models.CharField(max_length=100, blank=True, null=True)
     customer_regno = models.CharField(max_length=30, blank=True, null=True)

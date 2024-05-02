@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
+from rest_framework.response import Response
+from rest_framework import status
 import requests
 import json
 import uuid
@@ -17,7 +19,7 @@ def generate_uuid():
     return uuid.uuid4().hex.upper()
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello, what are you trying to do?")
+    return HttpResponse("This is the index page.")
 
 
 def try_query(request, datefrom, dateto):

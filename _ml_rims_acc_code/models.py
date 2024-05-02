@@ -1,7 +1,6 @@
 from django.db import models
 from _lib import panda
 
-# Create your models here.
 class RimsAccCode(models.Model):
     acc_guid = models.CharField(primary_key=True, max_length=32)
     customer_guid = models.CharField(max_length=32)
@@ -16,10 +15,10 @@ class RimsAccCode(models.Model):
         managed = False
         db_table = 'rims_acc_code'
     
-    def save(self, *args, **kwargs):        
-        if self.acc_guid =='':
-	        self.acc_guid = panda.panda_uuid() 
-
-        self.updated_at=panda.panda_today()
-        self.updated_by=self.updated_by
-        super(RimsAccCode,self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.acc_guid == '':
+            self.acc_guid = panda.panda_uuid()
+        
+        self.updated_at = panda.panda_today()
+        self.updated_by = self.updated_by
+        super(RimsAccCode, self).save(*args, **kwargs)

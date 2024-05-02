@@ -16,5 +16,5 @@ class DesignMenuChildViewSet(viewsets.ModelViewSet):
     queryset = DesignMenuChild.objects.all().order_by('description')
     serializer_class = DesignMenuChildSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
-    filterset_fields = ['code','description'] 
+    filterset_fields = ['description'] 
     search_fields = ['description']	

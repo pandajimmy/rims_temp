@@ -23,7 +23,7 @@ class DesignColumn(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = '!_design_column'
 
 
@@ -60,7 +60,7 @@ class DesignComponent(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = '!_design_component'
 
 
@@ -97,7 +97,7 @@ class DesignComponent20211112(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = '!_design_component_20211112'
 
 
@@ -112,7 +112,7 @@ class DesignRow(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = '!_design_row'
 
 
@@ -124,7 +124,7 @@ class AccInternal(models.Model):
     created_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'acc_internal'
 
 
@@ -147,7 +147,7 @@ class AccUser(models.Model):
     acc_user_location = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'acc_user'
 
 
@@ -155,7 +155,7 @@ class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'auth_group'
 
 
@@ -165,7 +165,7 @@ class AuthGroupPermissions(models.Model):
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'auth_group_permissions'
         unique_together = (('group', 'permission'),)
 
@@ -176,7 +176,7 @@ class AuthPermission(models.Model):
     codename = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'auth_permission'
         unique_together = (('content_type', 'codename'),)
 
@@ -194,7 +194,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'auth_user'
 
 
@@ -204,7 +204,7 @@ class AuthUserGroups(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'auth_user_groups'
         unique_together = (('user', 'group'),)
 
@@ -215,7 +215,7 @@ class AuthUserUserPermissions(models.Model):
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
@@ -226,7 +226,7 @@ class AuthtokenToken(models.Model):
     user = models.OneToOneField(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'authtoken_token'
 
 
@@ -250,8 +250,32 @@ class CustomerProfile(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
+        managed =True
+        db_table = 'customer_profile'
+
+class CustomerProfileTable(models.Model):
+    customer_guid = models.CharField(primary_key=True, max_length=32)
+    customer_name = models.CharField(max_length=100, blank=True, null=True)
+    customer_regno = models.CharField(max_length=30, blank=True, null=True)
+    customer_gstno = models.CharField(max_length=30, blank=True, null=True)
+    customer_taxcode = models.CharField(max_length=30, blank=True, null=True)
+    customer_add1 = models.CharField(max_length=60, blank=True, null=True)
+    customer_add2 = models.CharField(max_length=60, blank=True, null=True)
+    customer_add3 = models.CharField(max_length=60, blank=True, null=True)
+    customer_add4 = models.CharField(max_length=60, blank=True, null=True)
+    customer_postcode = models.CharField(max_length=6, blank=True, null=True)
+    customer_state = models.CharField(max_length=20, blank=True, null=True)
+    customer_country = models.CharField(max_length=25, blank=True, null=True)
+    customer_tel = models.CharField(max_length=50, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=100, blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    updated_by = models.CharField(max_length=100, blank=True, null=True)
+
+class Meta:
         managed = False
         db_table = 'customer_profile'
+        ordering = ('customer_name',)
 
 
 class CustomerUrl(models.Model):
@@ -266,7 +290,7 @@ class CustomerUrl(models.Model):
     created_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'customer_url'
 
 
@@ -285,7 +309,7 @@ class DesignColumn(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_column'
 
 
@@ -322,7 +346,7 @@ class DesignComponent(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_component'
 
 
@@ -359,7 +383,7 @@ class DesignComponent20211112(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_component_20211112'
 
 
@@ -379,7 +403,7 @@ class DesignCot(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_cot'
         unique_together = (('cot_guid', 'customer_guid', 'tab_guid'),)
 
@@ -397,7 +421,7 @@ class DesignDynamic(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_dynamic'
 
 
@@ -414,7 +438,7 @@ class DesignDynamic20220221(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_dynamic_20220221'
 
 
@@ -431,7 +455,7 @@ class DesignDynamicEverrise(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_dynamic_everrise'
 
 
@@ -448,7 +472,7 @@ class DesignDynamicEverrisecanuse20220223(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_dynamic_everriseCanUse_20220223'
 
 
@@ -465,7 +489,7 @@ class DesignMainTemplate(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_main_template'
 
 
@@ -481,7 +505,7 @@ class DesignMenu(models.Model):
     updated_by = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_menu'
 
 
@@ -498,7 +522,7 @@ class DesignMenuChild(models.Model):
     updated_by = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_menu_child'
 
 
@@ -513,7 +537,7 @@ class DesignRow(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_row'
 
 
@@ -529,7 +553,7 @@ class DesignTab(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_tab'
 
 
@@ -541,7 +565,7 @@ class DesignTemplate(models.Model):
     line = models.CharField(max_length=6)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'design_template'
         unique_together = (('template_guid', 'line'),)
 
@@ -556,7 +580,7 @@ class DjangoAdminLog(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'django_admin_log'
 
 
@@ -565,7 +589,7 @@ class DjangoContentType(models.Model):
     model = models.CharField(max_length=100)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'django_content_type'
         unique_together = (('app_label', 'model'),)
 
@@ -577,7 +601,7 @@ class DjangoMigrations(models.Model):
     applied = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'django_migrations'
 
 
@@ -587,7 +611,7 @@ class DjangoSession(models.Model):
     expire_date = models.DateTimeField()
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'django_session'
 
 
@@ -601,7 +625,7 @@ class FormGroup(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'form_group'
 
 
@@ -622,7 +646,7 @@ class FormGroupC(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'form_group_c'
 
 
@@ -633,7 +657,7 @@ class FormGroupStatus(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'form_group_status'
 
 
@@ -647,7 +671,7 @@ class FormOption(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'form_option'
 
 
@@ -665,7 +689,7 @@ class FormOptionValue(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'form_option_value'
 
 
@@ -679,7 +703,7 @@ class MainFilter(models.Model):
     updated_by = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'main_filter'
 
 
@@ -704,7 +728,7 @@ class MainFilterChild(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'main_filter_child'
 
 
@@ -719,7 +743,7 @@ class RimsAccCode(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_acc_code'
 
 
@@ -736,7 +760,7 @@ class RimsAccGlmaster(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_acc_glmaster'
         unique_together = (('customer_guid', 'acc_code'),)
 
@@ -748,7 +772,7 @@ class RimsAccType(models.Model):
     isactive = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_acc_type'
 
 
@@ -763,7 +787,7 @@ class RimsBanner(models.Model):
     branch_inactive = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_banner'
         unique_together = (('banner_guid', 'customer_guid'),)
 
@@ -776,7 +800,7 @@ class RimsBrand(models.Model):
     description = models.CharField(db_column='Description', max_length=40, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_brand'
 
 
@@ -820,7 +844,7 @@ class RimsCpSetBranch(models.Model):
     fifo_calc = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_cp_set_branch'
         unique_together = (('customer_guid', 'branch_guid'),)
 
@@ -839,7 +863,7 @@ class RimsCustomerData(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_customer_data'
 
 
@@ -856,7 +880,7 @@ class RimsDivDeptSdC(models.Model):
     category_desc = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_div_dept_sd_c'
         unique_together = (('customer_guid', 'trans_guid'),)
 
@@ -870,7 +894,7 @@ class RimsPayTerm(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_pay_term'
         unique_together = (('customer_guid', 'code'),)
 
@@ -890,7 +914,7 @@ class RimsPayTermChild(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_pay_term_child'
         unique_together = (('customer_guid', 'code', 'line'),)
 
@@ -1018,7 +1042,7 @@ class RimsSupcus(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_supcus'
 
 
@@ -1035,7 +1059,7 @@ class RimsSupcusLink(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'rims_supcus_link'
         unique_together = (('customer_guid', 'link_guid'),)
 
@@ -1061,7 +1085,7 @@ class SetUser(models.Model):
     mobile_status = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'set_user'
         unique_together = (('user_guid', 'customer_guid'),)
 
@@ -1184,7 +1208,7 @@ class Supcus(models.Model):
     pos_sales = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'supcus'
 
 
@@ -1200,7 +1224,7 @@ class Sysrun(models.Model):
     remarks = models.CharField(db_column='Remarks', max_length=100, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'sysrun'
 
 
@@ -1210,7 +1234,7 @@ class TemplateCopy(models.Model):
     json = models.JSONField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'template_copy'
 
 
@@ -1269,9 +1293,196 @@ class TtaList(models.Model):
     purchase_rebate_tier = models.JSONField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_list'
 
+class TtaListDetails(models.Model):
+    list_guid = models.CharField(primary_key=True, max_length=32)
+    customer_guid = models.CharField(max_length=32)
+    refno = models.CharField(max_length=20)
+    supplier_guid = models.CharField(max_length=32)
+    supplier_name = models.CharField(max_length=60, blank=True, null=True)
+    bill_supp_guid = models.CharField(max_length=32)
+    bill_supp_name = models.CharField(max_length=60, blank=True, null=True)
+    negotiation_year = models.TextField(blank=True, null=True)  # This field type is a guess.
+    co_reg_no = models.IntegerField(blank=True, null=True)
+    tta_period_from = models.CharField(max_length=200, blank=True, null=True)
+    tta_period_to = models.CharField(max_length=200, blank=True, null=True)
+    internal_pic = models.CharField(max_length=200, blank=True, null=True)
+    trading_group = models.CharField(max_length=200, blank=True, null=True)
+    trading_type = models.CharField(max_length=200, blank=True, null=True)
+    delivery_mode = models.CharField(max_length=200, blank=True, null=True)
+    returnable = models.CharField(max_length=200, blank=True, null=True)
+    supplier_pic = models.CharField(max_length=200, blank=True, null=True)
+    supplier_pic_name = models.CharField(max_length=200, blank=True, null=True)
+    supplier_pic_position = models.CharField(max_length=200, blank=True, null=True)
+    supplier_pic_contact = models.CharField(max_length=200, blank=True, null=True)
+    supplier_pic_email = models.CharField(max_length=200, blank=True, null=True)
+    banner = models.CharField(max_length=200, blank=True, null=True)
+    outlet = models.CharField(max_length=200, blank=True, null=True)
+    target_purchase_per_year_left_option = models.CharField(max_length=200, blank=True, null=True)
+    target_purchase_per_year = models.IntegerField(blank=True, null=True)
+    target_purchase_per_year_option = models.CharField(max_length=200, blank=True, null=True)
+    flat_rebate_left_option = models.CharField(max_length=200, blank=True, null=True)
+    flat_rebate = models.IntegerField(blank=True, null=True)
+    flat_rebate_option = models.CharField(max_length=200, blank=True, null=True)
+    business_development_fund_left_option = models.CharField(max_length=200, blank=True, null=True)
+    business_development_fund = models.IntegerField(blank=True, null=True)
+    business_development_fund_option = models.CharField(max_length=200, blank=True, null=True)
+    payment_terms_left_option = models.CharField(max_length=200, blank=True, null=True)
+    payment_terms = models.CharField(max_length=200, blank=True, null=True)
+    early_payment_terms_left_option = models.CharField(max_length=200, blank=True, null=True)
+    early_payment_terms = models.CharField(max_length=200, blank=True, null=True)
+    early_payment_discount_left_option = models.CharField(max_length=200, blank=True, null=True)
+    early_payment_discount = models.IntegerField(blank=True, null=True)
+    early_payment_discount_option = models.CharField(max_length=200, blank=True, null=True)
+    cross_docking_allowance_left_option = models.CharField(max_length=200, blank=True, null=True)
+    cross_docking_allowance = models.IntegerField(blank=True, null=True)
+    cross_docking_allowance_option = models.CharField(max_length=200, blank=True, null=True)
+    east_malaysia_orders_allowance_left_option = models.CharField(max_length=200, blank=True, null=True)
+    east_malaysia_orders_allowance = models.IntegerField(blank=True, null=True)
+    east_malaysia_orders_allowance_option = models.CharField(max_length=200, blank=True, null=True)
+    damage_good_allowance_left_option = models.CharField(max_length=200, blank=True, null=True)
+    damage_good_allowance = models.IntegerField(blank=True, null=True)
+    damage_good_allowance_option = models.CharField(max_length=200, blank=True, null=True)
+    non_compliance_packaging_allowance_left_option = models.CharField(max_length=200, blank=True, null=True)
+    non_compliance_packaging_allowance = models.IntegerField(blank=True, null=True)
+    non_compliance_packaging_allowance_option = models.CharField(max_length=200, blank=True, null=True)
+    purchase_order_fulfillment_left_option = models.CharField(max_length=200, blank=True, null=True)
+    purchase_order_fulfillment = models.IntegerField(blank=True, null=True)
+    purchase_order_fulfillment_option = models.CharField(max_length=200, blank=True, null=True)
+    unfulfilled_penalty_left_option = models.CharField(max_length=200, blank=True, null=True)
+    unfulfilled_penalty = models.IntegerField(blank=True, null=True)
+    unfulfilled_penalty_option = models.CharField(max_length=200, blank=True, null=True)
+    lost_of_profit_penalty_left_option = models.CharField(max_length=200, blank=True, null=True)
+    lost_of_profit_penalty = models.IntegerField(blank=True, null=True)
+    lost_of_profit_penalty_option = models.CharField(max_length=200, blank=True, null=True)
+    purchase_order_lead_time_left_option = models.CharField(max_length=200, blank=True, null=True)
+    purchase_order_lead_time = models.CharField(max_length=200, blank=True, null=True)
+    purchase_order_lead_time_option = models.CharField(max_length=200, blank=True, null=True)
+    lead_time_penalty_left_option = models.CharField(max_length=200, blank=True, null=True)
+    lead_time_penalty = models.IntegerField(blank=True, null=True)
+    lead_time_penalty_option = models.CharField(max_length=200, blank=True, null=True)
+    account_administration_fee_left_option = models.CharField(max_length=200, blank=True, null=True)
+    account_administration_fee = models.IntegerField(blank=True, null=True)
+    account_administration_fee_option = models.CharField(max_length=200, blank=True, null=True)
+    product_registration_fee_left_option = models.CharField(max_length=200, blank=True, null=True)
+    product_registration_fee = models.IntegerField(blank=True, null=True)
+    product_registration_fee_option = models.CharField(max_length=200, blank=True, null=True)
+    sku_replacement_left_option = models.CharField(max_length=200, blank=True, null=True)
+    sku_replacement = models.IntegerField(blank=True, null=True)
+    sku_replacement_option = models.CharField(max_length=200, blank=True, null=True)
+    new_item_listing_left_option = models.CharField(max_length=200, blank=True, null=True)
+    new_item_listing = models.CharField(max_length=200, blank=True, null=True)
+    new_item_listing_option = models.CharField(max_length=200, blank=True, null=True)
+    new_item_first_order_discount_left_option = models.CharField(max_length=200, blank=True, null=True)
+    new_item_first_order_discount = models.CharField(max_length=200, blank=True, null=True)
+    new_item_first_order_discount_2_left_option = models.CharField(max_length=200, blank=True, null=True)
+    new_item_first_order_discount_2 = models.IntegerField(blank=True, null=True)
+    new_item_first_order_discount_option = models.CharField(max_length=200, blank=True, null=True)
+    new_store_opening_left_option = models.CharField(max_length=200, blank=True, null=True)
+    new_store_opening = models.IntegerField(blank=True, null=True)
+    new_store_opening_option = models.CharField(max_length=200, blank=True, null=True)
+    refurbish_store_left_option = models.CharField(max_length=200, blank=True, null=True)
+    refurbish_store = models.IntegerField(blank=True, null=True)
+    refurbish_store_option = models.CharField(max_length=200, blank=True, null=True)
+    anniversary_sales_allowance_left_option = models.CharField(max_length=200, blank=True, null=True)
+    anniversary_sales_allowance = models.IntegerField(blank=True, null=True)
+    anniversary_sales_allowance_option = models.CharField(max_length=200, blank=True, null=True)
+    anniversary_orders_rebate_left_option = models.CharField(max_length=200, blank=True, null=True)
+    anniversary_orders_rebate = models.IntegerField(blank=True, null=True)
+    anniversary_orders_rebate_option = models.CharField(max_length=200, blank=True, null=True)
+    new_store_first_order_discount_left_option = models.CharField(max_length=200, blank=True, null=True)
+    new_store_first_order_discount = models.CharField(max_length=200, blank=True, null=True)
+    new_store_first_order_discount_2_left_option = models.CharField(max_length=200, blank=True, null=True)
+    new_store_first_order_discount_2 = models.IntegerField(blank=True, null=True)
+    new_store_first_order_discount_option = models.CharField(max_length=200, blank=True, null=True)
+    anniversary_sales_left_option = models.CharField(max_length=200, blank=True, null=True)
+    anniversary_sales = models.IntegerField(blank=True, null=True)
+    anniversary_sales_option = models.CharField(max_length=200, blank=True, null=True)
+    chinese_new_year_sales_left_option = models.CharField(max_length=200, blank=True, null=True)
+    chinese_new_year_sales = models.IntegerField(blank=True, null=True)
+    chinese_new_year_sales_option = models.CharField(max_length=200, blank=True, null=True)
+    hari_raya_sales_left_option = models.CharField(max_length=200, blank=True, null=True)
+    hari_raya_sales = models.IntegerField(blank=True, null=True)
+    hari_raya_sales_option = models.CharField(max_length=200, blank=True, null=True)
+    christmas_sales_left_option = models.CharField(max_length=200, blank=True, null=True)
+    christmas_sales = models.IntegerField(blank=True, null=True)
+    christmas_sales_option = models.CharField(max_length=200, blank=True, null=True)
+    in_store_display_left_option = models.CharField(max_length=200, blank=True, null=True)
+    in_store_display = models.IntegerField(blank=True, null=True)
+    in_store_display_option = models.CharField(max_length=200, blank=True, null=True)
+    press_advertisement_n_mailer_left_option = models.CharField(max_length=200, blank=True, null=True)
+    press_advertisement_n_mailer = models.IntegerField(blank=True, null=True)
+    press_advertisement_n_mailer_option = models.CharField(max_length=200, blank=True, null=True)
+    adhoc_support_left_option = models.CharField(max_length=200, blank=True, null=True)
+    adhoc_support = models.IntegerField(blank=True, null=True)
+    adhoc_support_option = models.CharField(max_length=200, blank=True, null=True)
+    crm_event_left_option = models.CharField(max_length=200, blank=True, null=True)
+    crm_event = models.IntegerField(blank=True, null=True)
+    crm_event_option = models.CharField(max_length=200, blank=True, null=True)
+    marketing_event_left_option = models.CharField(max_length=200, blank=True, null=True)
+    marketing_event = models.IntegerField(blank=True, null=True)
+    marketing_event_option = models.CharField(max_length=200, blank=True, null=True)
+    concourse_event_left_option = models.CharField(max_length=200, blank=True, null=True)
+    concourse_event = models.IntegerField(blank=True, null=True)
+    concourse_event_option = models.CharField(max_length=200, blank=True, null=True)
+    system_setup_n_maintenance_left_option = models.CharField(max_length=200, blank=True, null=True)
+    system_setup_n_maintenance = models.IntegerField(blank=True, null=True)
+    system_setup_n_maintenance_option = models.CharField(max_length=200, blank=True, null=True)
+    digital_communication_left_option = models.CharField(max_length=200, blank=True, null=True)
+    digital_communication = models.IntegerField(blank=True, null=True)
+    digital_communication_option = models.CharField(max_length=200, blank=True, null=True)
+    social_media_post_left_option = models.CharField(max_length=200, blank=True, null=True)
+    social_media_post = models.IntegerField(blank=True, null=True)
+    social_media_post_option = models.CharField(max_length=200, blank=True, null=True)
+    market_place_event_left_option = models.CharField(max_length=200, blank=True, null=True)
+    market_place_event = models.IntegerField(blank=True, null=True)
+    market_place_event_option = models.CharField(max_length=200, blank=True, null=True)
+    normal_items_left_option = models.CharField(max_length=200, blank=True, null=True)
+    normal_items = models.IntegerField(blank=True, null=True)
+    normal_items_option = models.CharField(max_length=200, blank=True, null=True)
+    best_buy_items_left_option = models.CharField(max_length=200, blank=True, null=True)
+    best_buy_items = models.IntegerField(blank=True, null=True)
+    best_buy_items_option = models.CharField(max_length=200, blank=True, null=True)
+    super_best_buy_items_left_option = models.CharField(max_length=200, blank=True, null=True)
+    super_best_buy_items = models.IntegerField(blank=True, null=True)
+    super_best_buy_items_option = models.CharField(max_length=200, blank=True, null=True)
+    mark_down_items_left_option = models.CharField(max_length=200, blank=True, null=True)
+    mark_down_items = models.IntegerField(blank=True, null=True)
+    mark_down_items_option = models.CharField(max_length=200, blank=True, null=True)
+    number_50_percent_discount_left_option = models.CharField(db_column='50_percent_discount_left_option', max_length=200, blank=True, null=True)  # Field renamed because it wasn't a valid Python identifier.
+    number_50_percent_discount = models.IntegerField(db_column='50_percent_discount', blank=True, null=True)  # Field renamed because it wasn't a valid Python identifier.
+    number_50_percent_discount_option = models.CharField(db_column='50_percent_discount_option', max_length=200, blank=True, null=True)  # Field renamed because it wasn't a valid Python identifier.
+    data_sharing_subscription_left_option = models.CharField(max_length=200, blank=True, null=True)
+    data_sharing_subscription = models.IntegerField(blank=True, null=True)
+    data_sharing_subscription_option = models.CharField(max_length=200, blank=True, null=True)
+    weekly_sales_n_qty_perf_by_store_vs_lst_year_perf = models.CharField(max_length=200, blank=True, null=True)
+    weekly_sales_n_qty_perf_by_store_vs_lst_year_perf_option = models.CharField(max_length=200, blank=True, null=True)
+    monthly_sales_n_qty_perf_by_store_vs_lst_year_perf = models.CharField(max_length=200, blank=True, null=True)
+    monthly_sales_n_qty_perf_by_store_vs_lst_year_perf_option = models.CharField(max_length=200, blank=True, null=True)
+    weekly_stock_listing_by_sku = models.CharField(max_length=200, blank=True, null=True)
+    weekly_stock_listing_by_sku_option = models.CharField(max_length=200, blank=True, null=True)
+    general_complicance = models.CharField(max_length=200, blank=True, null=True)
+    return_condition = models.CharField(max_length=200, blank=True, null=True)
+    price_n_billing = models.CharField(max_length=200, blank=True, null=True)
+    effective_date = models.CharField(max_length=200, blank=True, null=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+    created_by = models.CharField(max_length=20, blank=True, null=True)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    updated_by = models.CharField(max_length=20, blank=True, null=True)
+    submit_date = models.DateTimeField(blank=True, null=True)
+    submit_by = models.CharField(max_length=20, blank=True, null=True)
+    approve_date = models.DateTimeField(blank=True, null=True)
+    approve_by = models.CharField(max_length=20, blank=True, null=True)
+    reject_at = models.DateTimeField(blank=True, null=True)
+    reject_by = models.CharField(max_length=20, blank=True, null=True)
+    list_status = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tta_list'
+        ordering = ('refno',)
 
 class TtaListCal(models.Model):
     cal_guid = models.CharField(max_length=32, blank=True, null=True)
@@ -1292,7 +1503,7 @@ class TtaListCal(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_list_cal'
 
 
@@ -1315,7 +1526,7 @@ class TtaListCalMain(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_list_cal_main'
 
 
@@ -1341,7 +1552,7 @@ class TtaListForm(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_list_form'
 
 
@@ -1352,7 +1563,7 @@ class TtaListStatus(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_list_status'
 
 
@@ -1370,7 +1581,7 @@ class TtaListStatusTrans(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_list_status_trans'
 
 
@@ -1385,5 +1596,5 @@ class TtaLogs(models.Model):
     remark = models.JSONField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed =True
         db_table = 'tta_logs'

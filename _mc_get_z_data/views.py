@@ -50,7 +50,7 @@ def home(request, customer_guid):
     # key = content['Global']['NewDeaths']  
     # return HttpResponse(key)
 
-def pnl(request, customer_guid,list_guid, date_from, date):
+def pnl(request, customer_guid,list_guid, date_to, date_from, date):
     for key in jsonObject:
         value = jsonObject[key]
         HttpResponse("The key and value are ({}) = ({})".format(key, value))
@@ -78,7 +78,7 @@ def pnl(request, customer_guid,list_guid, date_from, date):
             return HttpResponse('List ID does not exist')
 
         #get pnl data from source 
-        #custoemr_guid 8D5B38E931FA11E79E7E33210BD612D3
+        #customer_guid 8D5B38E931FA11E79E7E33210BD612D3
         #list_guid  9C0025574BFE48A68946CD7A4BDF1E97
         response = requests.post(get_URL.customer_url+'pnlcategory/', json={'date_from':'%s' %date_from, 'date_to':'%s' %date_to})
         #fail 

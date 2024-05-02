@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RIMS API Error List</title>
+    {% load static %}
+    <link rel="icon" href="{% static 'images/django.png' %}" type="image/png">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+        background-color: #517bc0;
+      }
+
+      .container {
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .title-text {
+        color: beige;
+        font-weight: 700;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+      }
+
+      .last-updated-text {
+        color: beige;
+        font-weight: 700;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+      }
+
+      .error-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .error-card {
+        background: beige;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        width: 100%; /* Adjust the width as needed */
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+        text-align: justify;
+      }
+
+      .error-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .error-card h3 {
+        font-size: 18px;
+        color: #203454;
+        margin-bottom: 10px;
+      }
+
+      .error-card p {
+        font-size: 16px;
+        color: #444;
+      }
+
+      .error-card ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .error-card li {
+        margin-bottom: 5px;
+      }
+
+      .error-card a {
+        color: #203454;
+        text-decoration: none;
+      }
+
+      .error-card a:hover {
+        text-decoration: underline;
+      }
+
+      .solved {
+        color: #00cc00;
+      }
+
+      .spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #203454;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite; /* This line is updated */
+        z-index: 9999;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg); /* Rotate from 0 degrees */
+        }
+        100% {
+          transform: rotate(360deg); /* Rotate to 360 degrees */
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.5
+        ); /* Semi-transparent black overlay */
+        z-index: 9998; /* Ensure the overlay appears below the spinner */
+      }
+
+      /* Style for scroll to top button */
+      #scrollToTopBtn {
+        display: none; /* Initially hide the button */
+        position: fixed; /* Fixed position */
+        bottom: 20px; /* Position from bottom */
+        right: 20px; /* Position from right */
+        z-index: 9999; /* Ensure the button stays on top of other elements */
+        background-color: #203454; /* Green background */
+        color: white; /* White text */
+        border: none; /* No border */
+        border-radius: 10px; /* Circular shape */
+        width: 35px;
+        height: 35px;
+        font-size: 20px; /* Font size */
+        cursor: pointer; /* Cursor on hover */
+        outline: none; /* Remove default focus outline */
+      }
+
+      /* Style for arrow icon */
+      #scrollToTopBtn::before {
+        content: "\2B06"; /* Unicode for upward arrow */
+      }
+
+      img {
+        border: 2px solid #203454;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="spinner" id="spinner"></div>
+    <div class="overlay hidden" id="overlay"></div>
+
+    <div class="container">
+      <span class="title-text">RIMS API Endpoint Error List</span>
+      <span class="last-updated-text" id="last-updated"
+        >Last Updated Time: 3:14 PM 24/4/2024</span
+      >
+    </div>
+
+    <!-- Error containers as 3D cards with clickable links -->
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(1) SAME SERIALIZERS/MODELS/VIEWS ERROR</h3>
+        <p><strong>Error:</strong> Schema conflict in serializers/models.</p>
+        <p style="color: #203454">
+          <strong
+            >File
+            "D:\rims_temp-main\env\Lib\site-packages\drf_yasg\inspectors\field.py",
+            line 137, in field_to_swagger_object raise SwaggerGenerationError(
+            drf_yasg.errors.SwaggerGenerationError: Schema for <class
+            '_mc_get_tta_details.serializers.TtaListSerializer'> would override
+            distinct serializer <class
+            '_mc_tta_list.serializers.TtaListSerializer'> because they
+            implicitly share the same ref_name; explicitly set the ref_name
+            attribute on both serializers' Meta classes</strong
+          >
+        </p>
+        <p><strong>Endpoints:</strong></p>
+        <ul>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_get_customer_profile/mc_CustomerProfile/"
+              target="_blank"
+              >mc_get_customer_profile</a
+            >
+            &
+            <a
+              href="http://127.0.0.1:8000/mc_get_customer_profile_table/mc_CustomerProfileTable/"
+              target="_blank"
+              >mc_get_customer_profile_table</a
+            >
+          </li>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_get_tta_details/mc_GetTtaDetails/"
+              target="_blank"
+              >mc_get_tta_details</a
+            >
+            &
+            <a
+              href="http://127.0.0.1:8000/mc_tta_list/mc_TtaList/"
+              target="_blank"
+              >mc_tta_list</a
+            >
+          </li>
+        </ul>
+        <p class="solved">
+          ➔ <strong>Temporary resolution</strong>: give them different names for
+          models, views, serializers, etc...
+        </p>
+      </div>
+    </div>
+
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(2) SWAGGER UI NOT ACCESSIBLE DUE TO DJANGO-FILTER ERROR</h3>
+        <p>
+          <strong>Error:</strong> Unable to access Swagger UI due to an
+          undefined Django filter.
+        </p>
+        <p style="color: #203454">
+          <strong
+            >If I didnt comment the line of filterset.py, I am not able to
+            access Swagger <br />
+            if undefined: raise TypeError( "'Meta.fields' must not contain
+            non-model field names: %s" % ", ".join(undefined) ) <br />
+            File
+            "D:\rims_temp-main\env\Lib\site-packages\django_filters\filterset.py",
+            line 350, in get_filters raise TypeError( TypeError: 'Meta.fields'
+            must not contain non-model field names: code <br />
+            [25/Apr/2024 14:09:39] "GET /swagger/?format=openapi HTTP/1.1" 500
+            176980
+          </strong>
+        </p>
+        <p>
+          <strong>Endpoint:</strong>
+          <a href="http://127.0.0.1:8000/swagger/" target="_blank"
+            >http://127.0.0.1:8000/swagger/</a
+          >
+        </p>
+        <p class="solved">
+          ➔ <strong>Temporary resolution</strong>: solved by referring to (6)
+        </p>
+      </div>
+    </div>
+
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(3) DATABASE TABLE IS USED BY MULTIPLE MODELS</h3>
+        <p>
+          <strong>Error:</strong> Database table conflicts with multiple models.
+        </p>
+        <p style="color: #203454">
+          <strong
+            >customer_profile: (models.E028) db_table 'customer_profile' is used
+            by multiple models: <br />
+            _mc_get_customer_profile.CustomerProfile,
+            _mc_get_customer_profile_table.CustomerProfile.
+            <br /><br />design_dynamic: (models.E028) db_table 'design_dynamic'
+            is used by multiple models: _mc_design_dynamic.DesignDynamic,
+            _mc_design_dynamic_single.DesignDynamic_S.
+            <br /><br />design_main_template: (models.E028) db_table
+            'design_main_template' is used by multiple models:
+            _mc_design_main_template.DesignMainTemplate,
+            _mc_get_design_main_template_table.DesignMainTemplate,
+            _mc_get_design_main_template_option.DesignMainTemplate.
+            <br /><br />tta_list: (models.E028) db_table 'tta_list' is used by
+            multiple models: _mc_tta_list.TtaList, _mc_get_tta_details.TtaList,
+            _mc_get_tta_status_history.TtaList. <br /><br />tta_list_form:
+            (models.E028) db_table 'tta_list_form' is used by multiple models:
+            _mc_tta_list_form.TtaListForm,
+            _mc_get_tta_details_child.TtaListForm.
+          </strong>
+        </p>
+        <ol>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_get_customer_profile/mc_CustomerProfile/"
+              target="_blank"
+              >customer_profile</a
+            >
+          </li>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_design_dynamic/mc_DesignDynamic/"
+              target="_blank"
+              >design_dynamic</a
+            >
+          </li>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_design_main_template/mc_DesignMainTemplate/"
+              target="_blank"
+              >design_main_template</a
+            >
+          </li>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_tta_list/mc_TtaList/"
+              target="_blank"
+              >tta_list</a
+            >
+          </li>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/ts_tta_list/ts_TtaList_ts/"
+              target="_blank"
+              >tta_list_form</a
+            >
+          </li>
+        </ol>
+
+        <hr />
+
+        <p>
+
+          <ol> 
+            <li>**customer_profile**:
+           <br>- Models:
+           <br>- `_mc_get_customer_profile.CustomerProfile`
+             <br>- `_mc_get_customer_profile_table.CustomerProfile`
+             <br>- Table: `customer_profile`
+          </li>
+          <br>
+           <li> **design_dynamic**:
+            <br>- Models:
+            <br>- `_mc_design_dynamic.DesignDynamic`
+             <br>- `_mc_design_dynamic_single.DesignDynamic_S`
+             <br>- Table: `design_dynamic`
+          </li>
+          <br>
+           <li> **design_main_template**:
+            <br>- Models:
+            <br>- `_mc_design_main_template.DesignMainTemplate`
+            <br>- `_mc_get_design_main_template_table.DesignMainTemplate`
+            <br>- `_mc_get_design_main_template_option.DesignMainTemplate`
+            <br>- Table: `design_main_template`
+          </li>
+          <br>
+        <li> **tta_list**:
+          <br>- Models:
+          <br> - `_mc_tta_list.TtaList`
+          <br> - `_mc_get_tta_details.TtaList`
+          <br> - `_mc_get_tta_status_history.TtaList`
+          <br>- Table: `tta_list`
+          </li>
+          <br>
+           <li> **tta_list_form**:
+            <br>- Models:
+           <br>- `_mc_tta_list_form.TtaListForm`
+           <br> - `_mc_get_tta_details_child.TtaListForm`
+           <br>- Table: `tta_list_form`
+          </li>
+      </p>
+      </div>
+    </div>
+
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(4) OUT OF SORT MEMORY</h3>
+        <p><strong>Error:</strong> Server sort memory issue.</p>
+        <p style="color: #203454">
+          <strong
+            >OUT OF SORT MEMORY, CONSIDER INCREASING SERVER SORT BUFFER SIZE
+            (Suspect list data is too long, because Swagger also crash, can
+            consider to add pagination in the api)
+
+            <br />
+            ← "page": 1, "results": [ "total_pages": 1000, "total_results":
+            20000]
+          </strong>
+        </p>
+        <p style="color: black;"><strong>Image References: </strong></p>
+        {% load static %}
+        <img src="{% static 'images/pagination_ttalist.jpg' %}" alt="Error Code" width="100%">
+        <p>
+          <strong>Endpoint:</strong>
+          <a
+            href="http://127.0.0.1:8000/mc_tta_list/mc_TtaList/?limit=15&offset=0&ordering=-updated_at&search=&list_status__in=&customer_guid=D361F8521E1211EAAD7CC8CBB8CC0C93"
+            target="_blank"
+            >mc_tta_list/mc_TtaList/</a
+          >
+        </p>
+        <p class="solved">
+          ➔</strong><strong>Temporary resolution</strong>: applied pagination to show one record per page to avoid internal server error (loading very slow and may crash)
+        </p>
+      </div>
+    </div>
+
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(5) OPERATIONAL ERROR AND VALUE ERROR</h3>
+        <p><strong>Error:</strong> Unknown column in database field. IntegerField consists of non-integer values</p>
+        <p style="color: #203454">
+          <strong
+            >OperationalError at
+            http://127.0.0.1:8000/mc_get_tta_details/mc_GetTtaDetails/ (1054,
+            "Unknown column 'tta_list.target_purchase_per_year_left_option' in
+            'field list'")
+          </strong>
+        </p>
+        <p style="color: #203454">
+          <strong>
+          <br>co_reg_no = models.IntegerField(blank=True, null=True) has the ValueError at /mc_get_tta_details/mc_GetTtaDetails/ invalid literal for int() with base 10: '.'
+          <br>from target_purchase_per_year_left_option until price_n_billing are unknown column 
+          </strong>
+        </p>
+        <p style="color: black;"><strong>Image References: </strong></p>
+        {% load static %}
+        <img src="{% static 'images/get_tta_details_valueerror.jpg' %}" alt="Error Code" width="100%">
+        <img src="{% static 'images/co_reg_no.jpg' %}" alt="Error Code" width="100%">
+        <img src="{% static 'images/baseintdot.jpg' %}" alt="Error Code" width="100%">
+        <img src="{% static 'images/baseintbutstring.jpg' %}" alt="Error Code" width="100%">
+        <p><strong>Affected URLs:</strong></p>
+        <ul>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_get_tta_details/mc_GetTtaDetails/"
+              target="_blank"
+              >http://127.0.0.1:8000/mc_get_tta_details/mc_GetTtaDetails/</a
+            >
+          </li>
+          <li>
+            <a
+              href="http://127.0.0.1:8000/mc_get_tta_details_child/mc_GetTtaDetailsChild/"
+              target="_blank"
+              >http://127.0.0.1:8000/mc_get_tta_details_child/mc_GetTtaDetailsChild/</a
+            >
+          </li>
+        </ul>
+        <p class="solved">
+          ➔</strong><strong>Temporary resolution</strong>: changed for co_reg_no to textfield temporarily, commented the affected models
+        </p>
+      </div>
+    </div>
+
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(6) TYPE ERROR</h3>
+        <p><strong>Error:</strong> Type mismatch in model fields.</p>
+        <p style="color: #203454">
+          <strong
+            >TypeError at /mc_design_dynamic/mc_DesignDynamic/ __str__ returned
+            non-string (type int)
+
+            <p>
+            <p style="color: black;"><strong>Image References: </strong></p>
+            {% load static %}
+            <img src="{% static 'images/selfdynamic.jpg' %}" alt="Error Code" width="100%">
+            <img src="{% static 'images/selfdynamicsolve.jpg' %}" alt="Error Code" width="100%">
+            <p>
+              <strong>Endpoint:</strong><br>
+              <a
+                href="http://127.0.0.1:8000/mc_design_dynamic/mc_DesignDynamic/"
+                target="_blank"
+                >http://127.0.0.1:8000/mc_design_dynamic/mc_DesignDynamic/</a
+              > 
+
+            <p class="solved">
+              ➔</strong><strong>Temporary resolution</strong>: str cannot resolve integer value, need to change to string format, it has foreign key of Design Tab, so in Design Tab there also need to change too in order for it to work
+            </p>
+
+          <strong>
+            <br />TypeError at /mc_design_menu_child/mc_DesignMenuChild/
+            'Meta.fields' must not contain non-model field names: code
+
+            <br />TypeError at /swagger/ 'Meta.fields' must not contain
+            non-model field names: code
+        </p>
+        <p style="color: black;"><strong>Image References: </strong></p>
+        {% load static %}
+        <img src="{% static 'images/design_menu_child_codetypeerror.jpg' %}" alt="Error Code" width="100%">
+        <p>
+          <strong>Endpoint:</strong><br>
+          <a
+            href="http://127.0.0.1:8000/mc_design_menu_child/mc_DesignMenuChild/"
+            target="_blank"
+            >http://127.0.0.1:8000/mc_design_menu_child/mc_DesignMenuChild/</a
+          > <br>
+          <a
+            href="http://127.0.0.1:8000/swagger/"
+            target="_blank"
+            >http://127.0.0.1:8000/swagger/</a
+          > <br>
+          <a
+          href="http://127.0.0.1:8000/redoc/"
+          target="_blank"
+          >http://127.0.0.1:8000/redoc/</a
+        >
+        </p>
+        <p class="solved">
+          ➔ </strong><strong>Temporary resolution</strong>: I removed this code in the filterset_fields first, if any changes can let me know kindly :D
+        </p>
+      </div>
+    </div>
+
+    <div class="error-container">
+      <div class="error-card">
+        <h3>(7) OUT OF MEMORY</h3>
+        <p>
+          <strong>Error:</strong> Server out of memory issue, suspect because
+          the listed data is too long.
+        </p>
+        <p style="color: #203454">
+          <strong
+            >Aw snap! <br />
+            something went wrong while displaying this webpage <br />
+            error code: out of memory
+          </strong>
+        </p>
+        <p style="color: black;"><strong>Image References: </strong></p>
+        {% load static %}
+        <img src="{% static 'images/pagination_ttalist.jpg' %}" alt="Error Code" width="100%">
+         <p>
+          <strong>Endpoint:</strong>
+          <a
+            href="http://127.0.0.1:8000/ts_tta_list/ts_TtaList_ts/"
+            target="_blank"
+            >ts_tta_list/ts_TtaList_ts/</a
+          >
+        </p>
+        <p class="solved">
+          ➔</strong><strong>Temporary resolution</strong>: applied pagination to show one record per page to avoid internal server error (loading very slow and may crash)
+        </p>
+      </div>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button
+      onclick="scrollToTop()"
+      class="scrolltoTopBtn"
+      id="scrollToTopBtn"
+      title="Go to top"
+    ></button>
+
+    <script>
+      // Function to scroll to the top of the page smoothly
+      function scrollToTop() {
+        // Scroll to the top of the page with smooth behavior
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+
+      // Show or hide the scroll to top button based on scroll position
+      window.onscroll = function () {
+        scrollFunction();
+      };
+
+      function scrollFunction() {
+        // Get the scroll position
+        if (
+          document.body.scrollTop > 20 ||
+          document.documentElement.scrollTop > 20
+        ) {
+          // If the scroll position is greater than 20 pixels, show the button
+          document.getElementById("scrollToTopBtn").style.display = "block";
+        } else {
+          // Otherwise, hide the button
+          document.getElementById("scrollToTopBtn").style.display = "none";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const spinner = document.getElementById("spinner");
+        spinner.classList.remove("hidden"); // Show the spinner
+
+        // Function to hide the spinner after a delay (e.g., 1 second)
+        setTimeout(function () {
+          spinner.classList.add("hidden");
+        }, 1000); // 1000 milliseconds = 1 second
+
+        // Your existing code goes here...
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const spinner = document.getElementById("spinner");
+        const overlay = document.getElementById("overlay");
+
+        // Show the spinner and overlay
+        spinner.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+
+        // Function to hide the spinner and overlay after a delay (e.g., 1 second)
+        setTimeout(function () {
+          spinner.classList.add("hidden");
+          overlay.classList.add("hidden");
+        }, 1000); // 1000 milliseconds = 1 second
+
+        // Your existing code goes here...
+      });
+
+      // Function to update the last updated time
+      function updateLastUpdatedTime() {
+        var currentDate = new Date();
+        var hours = currentDate.getHours();
+        var minutes = currentDate.getMinutes();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1; // Adding 1 because January is 0
+        var year = currentDate.getFullYear();
+
+        // Formatting the time and date
+        var formattedTime = formatTime(hours, minutes);
+        var formattedDate = day + "/" + month + "/" + year;
+
+        // Updating the text content of the element
+        document.getElementById("last-updated").textContent =
+          "Last Updated Time: " + formattedTime + " " + formattedDate;
+      }
+
+      // Function to format time to 12-hour format with AM/PM
+      function formatTime(hours, minutes) {
+        var amPm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Handle midnight (0 hours)
+        minutes = minutes < 10 ? "0" + minutes : minutes; // Add leading zero for single digit minutes
+        return hours + ":" + minutes + " " + amPm;
+      }
+
+      // Call the function initially to set the last updated time
+      updateLastUpdatedTime();
+
+      // Update the last updated time every minute
+      setInterval(updateLastUpdatedTime, 60000); // 60000 milliseconds = 1 minute
+    </script>
+  </body>
+</html>

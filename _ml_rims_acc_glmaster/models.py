@@ -1,7 +1,6 @@
 from django.db import models
 from _lib import panda
 
-# Create your models here.
 class RimsAccGlmaster(models.Model):
     glmaster_guid = models.CharField(primary_key=True, max_length=32)
     customer_guid = models.CharField(max_length=32, blank=True, null=True)
@@ -19,10 +18,10 @@ class RimsAccGlmaster(models.Model):
         db_table = 'rims_acc_glmaster'
         unique_together = (('customer_guid', 'acc_code'),)
     
-    def save(self, *args, **kwargs):        
-        if self.glmaster_guid =='':
-	        self.glmaster_guid = panda.panda_uuid() 
-
-        self.updated_at=panda.panda_today()
-        self.updated_by=self.updated_by
-        super(RimsAccGlmaster,self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.glmaster_guid == '':
+            self.glmaster_guid = panda.panda_uuid()
+        
+        self.updated_at = panda.panda_today()
+        self.updated_by = self.updated_by
+        super(RimsAccGlmaster, self).save(*args, **kwargs)

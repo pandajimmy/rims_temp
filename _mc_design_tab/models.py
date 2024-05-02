@@ -18,7 +18,7 @@ class DesignTab(models.Model):
         ordering = ('sequence',)
 
     def __str__(self):
-        return self.sequence
+        return str(self.sequence)
 
     def get_absolute_url(self):
         return f'/{self.sequence}/'  

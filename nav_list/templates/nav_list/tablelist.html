@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RIMS API Endpoint Access Table</title>
+    {% load static %}
+    <link rel="icon" href="{% static 'images/django.png' %}" type="image/png">
+    <style>
+      body {
+        background-color: #517bc0;
+      }
+
+      table.comicGreen {
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        border: 2px solid #4f7849;
+        background-color: beige;
+        width: 100%;
+        text-align: center;
+        border-collapse: separate; /* Separate border model */
+        border-spacing: 0; /* No spacing between cells */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Add shadow for 3D effect */
+      }
+
+      table.comicGreen thead th {
+        background-color: #203454;
+        color: white;
+        border-bottom: 2px solid #4f7849; /* Add bottom border */
+      }
+
+      table.comicGreen td,
+      table.comicGreen th {
+        border: 1px solid #4f7849;
+        padding: 8px; /* Increase padding for better spacing */
+      }
+
+      table.comicGreen tbody td {
+        font-size: 19px;
+        font-weight: bold;
+        color: #4f7849;
+      }
+
+      table.comicGreen tr:nth-child(even) {
+        background: #cee0cc;
+      }
+
+      table.comicGreen tfoot {
+        font-size: 21px;
+        font-weight: bold;
+        color: #ffffff;
+        background: #203454;
+        background: -moz-linear-gradient(
+          top,
+          #203454 0%,
+          #4f7849 66%,
+          #203454 100%
+        );
+        background: -webkit-linear-gradient(
+          top,
+          #203454 0%,
+          #4f7849 66%,
+          #203454 100%
+        );
+        background: linear-gradient(
+          to bottom,
+          #203454 0%,
+          #4f7849 66%,
+          #203454 100%
+        );
+        border-top: 1px solid #444444;
+      }
+
+      table.comicGreen tfoot td {
+        font-size: 21px;
+      }
+
+      .no {
+        width: 30px;
+      }
+
+      .no {
+        width: 30px;
+      }
+
+      /* Your CSS styles */
+      .clickable {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .container {
+        overflow: hidden;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .title-text {
+        float: left;
+        color: #fff;
+        font-weight: 700;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+      }
+
+      .last-updated-text {
+        color: #fff;
+        font-weight: 700;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+      }
+
+      .spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #203454;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite; /* This line is updated */
+        z-index: 9999;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg); /* Rotate from 0 degrees */
+        }
+        100% {
+          transform: rotate(360deg); /* Rotate to 360 degrees */
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(
+          0,
+          0,
+          0,
+          0.5
+        ); /* Semi-transparent black overlay */
+        z-index: 9998; /* Ensure the overlay appears below the spinner */
+      }
+
+      /* Style for scroll to top button */
+      #scrollToTopBtn {
+        display: none; /* Initially hide the button */
+        position: fixed; /* Fixed position */
+        bottom: 20px; /* Position from bottom */
+        right: 20px; /* Position from right */
+        z-index: 9999; /* Ensure the button stays on top of other elements */
+        background-color: #203454; /* Green background */
+        color: white; /* White text */
+        border: none; /* No border */
+        border-radius: 10px; /* Circular shape */
+        width: 35px;
+        height: 35px;
+        font-size: 20px; /* Font size */
+        cursor: pointer; /* Cursor on hover */
+        outline: none; /* Remove default focus outline */
+      }
+
+      /* Style for arrow icon */
+      #scrollToTopBtn::before {
+        content: "\2B06"; /* Unicode for upward arrow */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="spinner" id="spinner"></div>
+    <div class="overlay hidden" id="overlay"></div>
+
+    <div class="container">
+      <span class="title-text"> RIMS API Endpoint Access Table </span>
+
+      <span class="last-updated-text" id="last-updated">
+        Last Updated Time: 3:14 PM 24/4/2024
+      </span>
+    </div>
+
+    <table class="comicGreen" id="apiTable">
+      <thead>
+        <tr>
+          <th class="no">No.</th>
+          <th>API Endpoint</th>
+          <th>Checked</th>
+          <th>Status</th>
+          <th>Current Availabilities</th>
+          <!-- New column for Error -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table body will be populated dynamically -->
+      </tbody>
+    </table>
+
+    <!-- Scroll to top button -->
+    <button
+      onclick="scrollToTop()"
+      class="scrolltoTopBtn"
+      id="scrollToTopBtn"
+      title="Go to top"
+    ></button>
+
+    <script type="application/json" id="checkApiData">
+      [
+        {
+          "api_name": "swagger/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "redoc/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "tablelist/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "errorlist/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "api/token/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error, POST only"
+        },
+        {
+          "api_name": "api/token/refresh/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error, POST only"
+        },
+        {
+          "api_name": "admin/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_design_template/mc_DesignTemplate/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_design_tab/mc_DesignTab/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_design_component/mc_DesignComponent/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_main_filter/mc_MainFilter/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_main_filter_child/mc_MainFilterChild/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_tta_list/mc_TtaList/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "mc_sysrun/mc_Sysrun/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_design_menu/mc_DesignMenu/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_design_menu_child/mc_DesignMenuChild/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "mc_get_tta_details/mc_GetTtaDetails/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "mc_get_tta_details_child/mc_GetTtaDetailsChild/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "mc_tta_list_status/mc_TtaListStatus/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_acc_user/mc_AccUser/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_set_user/mc_SetUser/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_customer_profile/mc_CustomerProfile/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_customer_profile_table/mc_CustomerProfileTable/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        
+        {
+          "api_name": "mc_design_main_template/mc_DesignMainTemplate/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_tta_logs/mc_TtaLogs/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_cp_set_branch/ml_RimsCpSetBranch/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_pay_term/ml_RimsPayTerm/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_supcus/ml_RimsSupcus/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_design_dynamic/mc_DesignDynamic/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "mc_design_dynamic_single/mc_DesignDynamic_S/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_design_cot/ml_DesignCot/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_banner/ml_RimsBanner/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_brand/ml_RimsBrand/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_div_dept_sd_c/ml_RimsDivDeptSdC/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ts_tta_list/ts_TtaList_ts/",
+          "checked": false,
+          "status": "temporary solution",
+          "error": "pending confirmation"
+        },
+        {
+          "api_name": "mc_get_z_data/",
+          "checked": true,
+          "status": "completed",
+          "error": "direct to index, no error"
+        },
+        {
+          "api_name": "mc_get_z_data/8D5B38E931FA11E79E7E33210BD612D3/",
+          "checked": true,
+          "status": "valid guid",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_z_data/vote/8D5B38E931FA11E79E7E33210BD612D3/",
+          "checked": true,
+          "status": "voting test",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_customer_url/mc_CustomerUrl/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_get_acc_internal/mc_AccInternal/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_customer_data/ml_RimsCustomerData/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_acc_code/ml_RimsAccCode/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ml_rims_acc_glmaster/ml_RimsAccGlmaster/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_tta_list_cal_main/mc_TtaListCalMain/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "mc_sysrun_logic/",
+          "checked": true,
+          "status": "completed",
+          "error": "direct to index, no error"
+        },
+        {
+          "api_name": "ts_tta_cal/check_tta/",
+          "checked": true,
+          "status": "completed",
+          "error": "POST only"
+        },
+        {
+          "api_name": "ts_tta_cal/tta_vendor/",
+          "checked": true,
+          "status": "completed",
+          "error": "POST only"
+        },
+        {
+          "api_name": "ts_cal_api/calculation/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ts_cal_api/check_cal/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ts_tta_cal_log/ts_TtaListCalLogs/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ts_tta_cndnamt/ts_TtaCndnAmt/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        },
+        {
+          "api_name": "ts_tta_invmain/ts_TtaInvmain/",
+          "checked": true,
+          "status": "completed",
+          "error": "no error"
+        }
+      ]
+    </script>
+
+    <script>
+      const jsonDataString =
+        document.getElementById("checkApiData").textContent;
+      let jsonData = JSON.parse(jsonDataString);
+
+      const tableBody = document.querySelector("#apiTable tbody");
+
+      function updateTable() {
+        tableBody.innerHTML = ""; // Clear the table body
+        jsonData.forEach((item, index) => {
+          const row = `
+      <tr id="api_${index + 1}">
+          <td>${index + 1}</td>
+          <td><a href="
+            http://127.0.0.1:8000/${
+            item.api_name
+          }" target="_blank" style="color: #4f7849; text-decoration: none;">${
+            item.api_name
+          }</a></td>
+          <td><input type="checkbox" ${
+            item.checked ? "checked" : ""
+          } onchange="updateChecked(${index}, this.checked)"></td>
+          <td>${item.status}</td>
+          <td>${item.error}</td> <!-- Error column -->
+      </tr>
+  `;
+          tableBody.innerHTML += row;
+        });
+      }
+
+      // Function to update the 'checked' property in JSON data
+      function updateChecked(index, checked) {
+        jsonData[index].checked = checked;
+        // Here you can perform any other actions you need, such as updating the server or other UI elements
+      }
+
+      // Function to toggle the 'status' property in JSON data
+      function toggleStatus(index) {
+        switch (jsonData[index].status) {
+          case "pending":
+            jsonData[index].status = "completed";
+            break;
+          case "completed":
+            jsonData[index].status = "error";
+            break;
+          case "error":
+            jsonData[index].status = "?";
+            break;
+          case "?":
+            jsonData[index].status = "pending";
+            break;
+        }
+        updateTable(); // Update the table after toggling the status
+        // Here you can perform any other actions you need, such as updating the server or other UI elements
+      }
+
+      // Function to toggle the 'error' property in JSON data
+      function toggleError(index) {
+        switch (jsonData[index].error) {
+          case "no error":
+            jsonData[index].error = "operational error";
+            break;
+          case "operational error":
+            jsonData[index].error = "type error";
+            break;
+          case "type error":
+            jsonData[index].error = "value error";
+            break;
+          case "value error":
+            jsonData[index].error = "no models";
+            break;
+
+          case "no models":
+            jsonData[index].error = "no error";
+            break;
+        }
+
+        updateTable(); // Update the table after toggling the error status
+        //Here you can perform any other actions you need, such as updating the server or other UI elements
+      }
+
+      // Initial table population
+      updateTable();
+
+      // Function to scroll to the top of the page smoothly
+      function scrollToTop() {
+        // Scroll to the top of the page with smooth behavior
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+
+      // Show or hide the scroll to top button based on scroll position
+      window.onscroll = function () {
+        scrollFunction();
+      };
+
+      function scrollFunction() {
+        // Get the scroll position
+        if (
+          document.body.scrollTop > 20 ||
+          document.documentElement.scrollTop > 20
+        ) {
+          // If the scroll position is greater than 20 pixels, show the button
+          document.getElementById("scrollToTopBtn").style.display = "block";
+        } else {
+          // Otherwise, hide the button
+          document.getElementById("scrollToTopBtn").style.display = "none";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const spinner = document.getElementById("spinner");
+        spinner.classList.remove("hidden"); // Show the spinner
+
+        // Function to hide the spinner after a delay (e.g., 1 second)
+        setTimeout(function () {
+          spinner.classList.add("hidden");
+        }, 1000); // 1000 milliseconds = 1 second
+
+        // Your existing code goes here...
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const spinner = document.getElementById("spinner");
+        const overlay = document.getElementById("overlay");
+
+        // Show the spinner and overlay
+        spinner.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+
+        // Function to hide the spinner and overlay after a delay (e.g., 1 second)
+        setTimeout(function () {
+          spinner.classList.add("hidden");
+          overlay.classList.add("hidden");
+        }, 1000); // 1000 milliseconds = 1 second
+
+        // Your existing code goes here...
+      });
+
+      // Function to update the last updated time
+      function updateLastUpdatedTime() {
+        var currentDate = new Date();
+        var hours = currentDate.getHours();
+        var minutes = currentDate.getMinutes();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1; // Adding 1 because January is 0
+        var year = currentDate.getFullYear();
+
+        // Formatting the time and date
+        var formattedTime = formatTime(hours, minutes);
+        var formattedDate = day + "/" + month + "/" + year;
+
+        // Updating the text content of the element
+        document.getElementById("last-updated").textContent =
+          "Last Updated Time: " + formattedTime + " " + formattedDate;
+      }
+
+      // Function to format time to 12-hour format with AM/PM
+      function formatTime(hours, minutes) {
+        var amPm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Handle midnight (0 hours)
+        minutes = minutes < 10 ? "0" + minutes : minutes; // Add leading zero for single digit minutes
+        return hours + ":" + minutes + " " + amPm;
+      }
+
+      // Call the function initially to set the last updated time
+      updateLastUpdatedTime();
+
+      // Update the last updated time every minute
+      setInterval(updateLastUpdatedTime, 60000); // 60000 milliseconds = 1 minute
+    </script>
+  </body>
+</html>
