@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
@@ -141,10 +142,10 @@ WSGI_APPLICATION = 'backend_rims.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend_rims_test',                          #<= database name
-        'USER': 'panda_dev',
-        'PASSWORD': 'Dev@3323966',
-        'HOST': '192.168.9.246',                             #<=Based on your own setting
+        'NAME': 'backend_rims',                          #<= database name
+        'USER': 'root',
+        'PASSWORD': 'panda_web',
+        'HOST': 'localhost',                             #<=Based on your own setting
         'PORT': 3306,
     }
 }
@@ -203,7 +204,7 @@ REST_FRAMEWORK = {
     
     
    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-   'PAGE_SIZE': 1000,
+   'PAGE_SIZE': 20,
    'DEFAULT_FILTER_BACKENDS': 'django_filters.rest_framework',
    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_simplejwt.authentication.JWTAuthentication',],
    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",

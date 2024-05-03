@@ -45,7 +45,7 @@ class TtaInvmain(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'tta_invmain'
         ordering = ('refno',)
 

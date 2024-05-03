@@ -185,10 +185,6 @@ class TtaListDetails(models.Model):
     reject_at = models.DateTimeField(blank=True, null=True)
     reject_by = models.CharField(max_length=20, blank=True, null=True)
     list_status = models.CharField(max_length=20, blank=True, null=True)
-    '''
-    ecommerce_support = models.JSONField(blank=True, null=True)
-    purchase_rebate_tier = models.JSONField(blank=True, null=True)
-    '''
 
     class Meta:
         managed = False

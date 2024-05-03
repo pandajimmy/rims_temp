@@ -23,7 +23,7 @@ class DesignColumn(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = '!_design_column'
 
 
@@ -60,7 +60,7 @@ class DesignComponent(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = '!_design_component'
 
 
@@ -97,7 +97,7 @@ class DesignComponent20211112(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = '!_design_component_20211112'
 
 
@@ -112,7 +112,7 @@ class DesignRow(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = '!_design_row'
 
 
@@ -124,7 +124,7 @@ class AccInternal(models.Model):
     created_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'acc_internal'
 
 
@@ -147,7 +147,7 @@ class AccUser(models.Model):
     acc_user_location = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'acc_user'
 
 
@@ -155,7 +155,7 @@ class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'auth_group'
 
 
@@ -165,7 +165,7 @@ class AuthGroupPermissions(models.Model):
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'auth_group_permissions'
         unique_together = (('group', 'permission'),)
 
@@ -176,7 +176,7 @@ class AuthPermission(models.Model):
     codename = models.CharField(max_length=100)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'auth_permission'
         unique_together = (('content_type', 'codename'),)
 
@@ -194,7 +194,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField()
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'auth_user'
 
 
@@ -204,7 +204,7 @@ class AuthUserGroups(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'auth_user_groups'
         unique_together = (('user', 'group'),)
 
@@ -215,7 +215,7 @@ class AuthUserUserPermissions(models.Model):
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
@@ -226,7 +226,7 @@ class AuthtokenToken(models.Model):
     user = models.OneToOneField(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'authtoken_token'
 
 
@@ -250,7 +250,7 @@ class CustomerProfile(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'customer_profile'
 
 class CustomerProfileTable(models.Model):
@@ -290,7 +290,7 @@ class CustomerUrl(models.Model):
     created_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'customer_url'
 
 
@@ -309,7 +309,7 @@ class DesignColumn(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_column'
 
 
@@ -346,7 +346,7 @@ class DesignComponent(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_component'
 
 
@@ -383,7 +383,7 @@ class DesignComponent20211112(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_component_20211112'
 
 
@@ -403,7 +403,7 @@ class DesignCot(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_cot'
         unique_together = (('cot_guid', 'customer_guid', 'tab_guid'),)
 
@@ -421,7 +421,7 @@ class DesignDynamic(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_dynamic'
 
 
@@ -438,7 +438,7 @@ class DesignDynamic20220221(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_dynamic_20220221'
 
 
@@ -455,7 +455,7 @@ class DesignDynamicEverrise(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_dynamic_everrise'
 
 
@@ -472,7 +472,7 @@ class DesignDynamicEverrisecanuse20220223(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_dynamic_everriseCanUse_20220223'
 
 
@@ -489,7 +489,7 @@ class DesignMainTemplate(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_main_template'
 
 
@@ -505,7 +505,7 @@ class DesignMenu(models.Model):
     updated_by = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_menu'
 
 
@@ -522,7 +522,7 @@ class DesignMenuChild(models.Model):
     updated_by = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_menu_child'
 
 
@@ -537,7 +537,7 @@ class DesignRow(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_row'
 
 
@@ -553,7 +553,7 @@ class DesignTab(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_tab'
 
 
@@ -565,7 +565,7 @@ class DesignTemplate(models.Model):
     line = models.CharField(max_length=6)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'design_template'
         unique_together = (('template_guid', 'line'),)
 
@@ -580,7 +580,7 @@ class DjangoAdminLog(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'django_admin_log'
 
 
@@ -589,7 +589,7 @@ class DjangoContentType(models.Model):
     model = models.CharField(max_length=100)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'django_content_type'
         unique_together = (('app_label', 'model'),)
 
@@ -601,7 +601,7 @@ class DjangoMigrations(models.Model):
     applied = models.DateTimeField()
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'django_migrations'
 
 
@@ -611,7 +611,7 @@ class DjangoSession(models.Model):
     expire_date = models.DateTimeField()
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'django_session'
 
 
@@ -625,7 +625,7 @@ class FormGroup(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'form_group'
 
 
@@ -646,7 +646,7 @@ class FormGroupC(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'form_group_c'
 
 
@@ -657,7 +657,7 @@ class FormGroupStatus(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'form_group_status'
 
 
@@ -671,7 +671,7 @@ class FormOption(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'form_option'
 
 
@@ -689,7 +689,7 @@ class FormOptionValue(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'form_option_value'
 
 
@@ -703,7 +703,7 @@ class MainFilter(models.Model):
     updated_by = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'main_filter'
 
 
@@ -728,7 +728,7 @@ class MainFilterChild(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'main_filter_child'
 
 
@@ -743,7 +743,7 @@ class RimsAccCode(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_acc_code'
 
 
@@ -760,7 +760,7 @@ class RimsAccGlmaster(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_acc_glmaster'
         unique_together = (('customer_guid', 'acc_code'),)
 
@@ -772,7 +772,7 @@ class RimsAccType(models.Model):
     isactive = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_acc_type'
 
 
@@ -787,7 +787,7 @@ class RimsBanner(models.Model):
     branch_inactive = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_banner'
         unique_together = (('banner_guid', 'customer_guid'),)
 
@@ -800,7 +800,7 @@ class RimsBrand(models.Model):
     description = models.CharField(db_column='Description', max_length=40, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_brand'
 
 
@@ -844,7 +844,7 @@ class RimsCpSetBranch(models.Model):
     fifo_calc = models.SmallIntegerField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_cp_set_branch'
         unique_together = (('customer_guid', 'branch_guid'),)
 
@@ -863,7 +863,7 @@ class RimsCustomerData(models.Model):
     updated_by = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_customer_data'
 
 
@@ -880,7 +880,7 @@ class RimsDivDeptSdC(models.Model):
     category_desc = models.CharField(max_length=120, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_div_dept_sd_c'
         unique_together = (('customer_guid', 'trans_guid'),)
 
@@ -894,7 +894,7 @@ class RimsPayTerm(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_pay_term'
         unique_together = (('customer_guid', 'code'),)
 
@@ -914,7 +914,7 @@ class RimsPayTermChild(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_pay_term_child'
         unique_together = (('customer_guid', 'code', 'line'),)
 
@@ -1042,7 +1042,7 @@ class RimsSupcus(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_supcus'
 
 
@@ -1059,7 +1059,7 @@ class RimsSupcusLink(models.Model):
     sync_guid = models.CharField(max_length=32, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'rims_supcus_link'
         unique_together = (('customer_guid', 'link_guid'),)
 
@@ -1085,7 +1085,7 @@ class SetUser(models.Model):
     mobile_status = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'set_user'
         unique_together = (('user_guid', 'customer_guid'),)
 
@@ -1208,7 +1208,7 @@ class Supcus(models.Model):
     pos_sales = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'supcus'
 
 
@@ -1224,7 +1224,7 @@ class Sysrun(models.Model):
     remarks = models.CharField(db_column='Remarks', max_length=100, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'sysrun'
 
 
@@ -1234,7 +1234,7 @@ class TemplateCopy(models.Model):
     json = models.JSONField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'template_copy'
 
 
@@ -1293,7 +1293,7 @@ class TtaList(models.Model):
     purchase_rebate_tier = models.JSONField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_list'
 
 class TtaListDetails(models.Model):
@@ -1503,7 +1503,7 @@ class TtaListCal(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_list_cal'
 
 
@@ -1526,7 +1526,7 @@ class TtaListCalMain(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_list_cal_main'
 
 
@@ -1552,7 +1552,7 @@ class TtaListForm(models.Model):
     updated_by = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_list_form'
 
 
@@ -1563,7 +1563,7 @@ class TtaListStatus(models.Model):
     created_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_list_status'
 
 
@@ -1581,7 +1581,7 @@ class TtaListStatusTrans(models.Model):
     updated_by = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_list_status_trans'
 
 
@@ -1596,5 +1596,5 @@ class TtaLogs(models.Model):
     remark = models.JSONField(blank=True, null=True)
 
     class Meta:
-        managed =True
+        managed = False
         db_table = 'tta_logs'

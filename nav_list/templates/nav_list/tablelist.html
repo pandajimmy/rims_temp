@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RIMS API Endpoint Access Table</title>
     {% load static %}
-    <link rel="icon" href="{% static 'images/django.png' %}" type="image/png">
+    <link rel="icon" href="{% static 'images/django.png' %}" type="image/png" />
     <style>
       body {
         background-color: #517bc0;
@@ -191,10 +191,7 @@
         <tr>
           <th class="no">No.</th>
           <th>API Endpoint</th>
-          <th>Checked</th>
           <th>Status</th>
-          <th>Current Availabilities</th>
-          <!-- New column for Error -->
         </tr>
       </thead>
       <tbody>
@@ -213,317 +210,167 @@
     <script type="application/json" id="checkApiData">
       [
         {
-          "api_name": "swagger/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "swagger/"
         },
         {
-          "api_name": "redoc/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "swaggerMC/"
         },
         {
-          "api_name": "tablelist/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "swaggerML/"
         },
         {
-          "api_name": "errorlist/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "swaggerTS/"
         },
         {
-          "api_name": "api/token/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error, POST only"
+          "api_name": "redoc/"
         },
         {
-          "api_name": "api/token/refresh/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error, POST only"
+          "api_name": "tablelist/"
         },
         {
-          "api_name": "admin/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "api/token/"
         },
         {
-          "api_name": "mc_design_template/mc_DesignTemplate/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "api/token/refresh/"
         },
         {
-          "api_name": "mc_design_tab/mc_DesignTab/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "admin/"
         },
         {
-          "api_name": "mc_design_component/mc_DesignComponent/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_design_template/mc_DesignTemplate/"
         },
         {
-          "api_name": "mc_main_filter/mc_MainFilter/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_design_tab/mc_DesignTab/"
         },
         {
-          "api_name": "mc_main_filter_child/mc_MainFilterChild/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_design_component/mc_DesignComponent/"
         },
         {
-          "api_name": "mc_tta_list/mc_TtaList/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "mc_main_filter/mc_MainFilter/"
         },
         {
-          "api_name": "mc_sysrun/mc_Sysrun/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_main_filter_child/mc_MainFilterChild/"
         },
         {
-          "api_name": "mc_design_menu/mc_DesignMenu/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_tta_list/mc_TtaList/"
         },
         {
-          "api_name": "mc_design_menu_child/mc_DesignMenuChild/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "mc_sysrun/mc_Sysrun/"
         },
         {
-          "api_name": "mc_get_tta_details/mc_GetTtaDetails/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "mc_design_menu/mc_DesignMenu/"
         },
         {
-          "api_name": "mc_get_tta_details_child/mc_GetTtaDetailsChild/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "mc_design_menu_child/mc_DesignMenuChild/"
         },
         {
-          "api_name": "mc_tta_list_status/mc_TtaListStatus/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_tta_details/mc_GetTtaDetails/"
         },
         {
-          "api_name": "mc_get_acc_user/mc_AccUser/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_tta_details_child/mc_GetTtaDetailsChild/"
         },
         {
-          "api_name": "mc_get_set_user/mc_SetUser/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_tta_list_status/mc_TtaListStatus/"
         },
         {
-          "api_name": "mc_get_customer_profile/mc_CustomerProfile/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_acc_user/mc_AccUser/"
         },
         {
-          "api_name": "mc_get_customer_profile_table/mc_CustomerProfileTable/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
-        },
-        
-        {
-          "api_name": "mc_design_main_template/mc_DesignMainTemplate/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_set_user/mc_SetUser/"
         },
         {
-          "api_name": "mc_tta_logs/mc_TtaLogs/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_customer_profile/mc_CustomerProfile/"
         },
         {
-          "api_name": "ml_rims_cp_set_branch/ml_RimsCpSetBranch/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_customer_profile_table/mc_CustomerProfileTable/"
+        },
+
+        {
+          "api_name": "mc_design_main_template/mc_DesignMainTemplate/"
         },
         {
-          "api_name": "ml_rims_pay_term/ml_RimsPayTerm/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_tta_logs/mc_TtaLogs/"
         },
         {
-          "api_name": "ml_rims_supcus/ml_RimsSupcus/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ml_rims_cp_set_branch/ml_RimsCpSetBranch/"
         },
         {
-          "api_name": "mc_design_dynamic/mc_DesignDynamic/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "ml_rims_pay_term/ml_RimsPayTerm/"
         },
         {
-          "api_name": "mc_design_dynamic_single/mc_DesignDynamic_S/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ml_rims_supcus/ml_RimsSupcus/"
         },
         {
-          "api_name": "ml_design_cot/ml_DesignCot/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_design_dynamic/mc_DesignDynamic/"
         },
         {
-          "api_name": "ml_rims_banner/ml_RimsBanner/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_design_dynamic_single/mc_DesignDynamic_S/"
         },
         {
-          "api_name": "ml_rims_brand/ml_RimsBrand/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ml_design_cot/ml_DesignCot/"
         },
         {
-          "api_name": "ml_rims_div_dept_sd_c/ml_RimsDivDeptSdC/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ml_rims_banner/ml_RimsBanner/"
         },
         {
-          "api_name": "ts_tta_list/ts_TtaList_ts/",
-          "checked": false,
-          "status": "temporary solution",
-          "error": "pending confirmation"
+          "api_name": "ml_rims_brand/ml_RimsBrand/"
         },
         {
-          "api_name": "mc_get_z_data/",
-          "checked": true,
-          "status": "completed",
-          "error": "direct to index, no error"
+          "api_name": "ml_rims_div_dept_sd_c/ml_RimsDivDeptSdC/"
         },
         {
-          "api_name": "mc_get_z_data/8D5B38E931FA11E79E7E33210BD612D3/",
-          "checked": true,
-          "status": "valid guid",
-          "error": "no error"
+          "api_name": "ts_tta_list/ts_TtaList_ts/"
         },
         {
-          "api_name": "mc_get_z_data/vote/8D5B38E931FA11E79E7E33210BD612D3/",
-          "checked": true,
-          "status": "voting test",
-          "error": "no error"
+          "api_name": "mc_get_z_data/"
         },
         {
-          "api_name": "mc_get_customer_url/mc_CustomerUrl/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_z_data/8D5B38E931FA11E79E7E33210BD612D3/"
         },
         {
-          "api_name": "mc_get_acc_internal/mc_AccInternal/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_z_data/vote/8D5B38E931FA11E79E7E33210BD612D3/"
         },
         {
-          "api_name": "ml_rims_customer_data/ml_RimsCustomerData/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_customer_url/mc_CustomerUrl/"
         },
         {
-          "api_name": "ml_rims_acc_code/ml_RimsAccCode/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "mc_get_acc_internal/mc_AccInternal/"
         },
         {
-          "api_name": "ml_rims_acc_glmaster/ml_RimsAccGlmaster/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ml_rims_customer_data/ml_RimsCustomerData/"
         },
         {
-          "api_name": "mc_tta_list_cal_main/mc_TtaListCalMain/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ml_rims_acc_code/ml_RimsAccCode/"
         },
         {
-          "api_name": "mc_sysrun_logic/",
-          "checked": true,
-          "status": "completed",
-          "error": "direct to index, no error"
+          "api_name": "ml_rims_acc_glmaster/ml_RimsAccGlmaster/"
         },
         {
-          "api_name": "ts_tta_cal/check_tta/",
-          "checked": true,
-          "status": "completed",
-          "error": "POST only"
+          "api_name": "mc_tta_list_cal_main/mc_TtaListCalMain/"
         },
         {
-          "api_name": "ts_tta_cal/tta_vendor/",
-          "checked": true,
-          "status": "completed",
-          "error": "POST only"
+          "api_name": "mc_sysrun_logic/"
         },
         {
-          "api_name": "ts_cal_api/calculation/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ts_tta_cal/check_tta/"
         },
         {
-          "api_name": "ts_cal_api/check_cal/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ts_tta_cal/tta_vendor/"
         },
         {
-          "api_name": "ts_tta_cal_log/ts_TtaListCalLogs/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ts_cal_api/calculation/"
         },
         {
-          "api_name": "ts_tta_cndnamt/ts_TtaCndnAmt/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ts_cal_api/check_cal/"
         },
         {
-          "api_name": "ts_tta_invmain/ts_TtaInvmain/",
-          "checked": true,
-          "status": "completed",
-          "error": "no error"
+          "api_name": "ts_tta_cal_log/ts_TtaListCalLogs/"
+        },
+        {
+          "api_name": "ts_tta_cndnamt/ts_TtaCndnAmt/"
+        },
+        {
+          "api_name": "ts_tta_invmain/ts_TtaInvmain/"
         }
       ]
     </script>
@@ -533,80 +380,76 @@
         document.getElementById("checkApiData").textContent;
       let jsonData = JSON.parse(jsonDataString);
 
+      try {
+        let jsonData = JSON.parse(jsonDataString);
+        console.log("Parsed JSON data:", jsonData);
+      } catch (error) {
+        console.error("JSON Parsing Error:", error);
+      }
+
       const tableBody = document.querySelector("#apiTable tbody");
 
-      function updateTable() {
+      async function updateTable() {
         tableBody.innerHTML = ""; // Clear the table body
-        jsonData.forEach((item, index) => {
-          const row = `
-      <tr id="api_${index + 1}">
+        for (let index = 0; index < jsonData.length; index++) {
+          const item = jsonData[index];
+          const endpoint = `http://127.0.0.1:8000/${item.api_name}`;
+
+          try {
+            const response = await fetch(endpoint);
+            const statusText = response.statusText; // Get HTTP response status text
+
+            let status = "";
+            if (response.ok) {
+              status = "No error";
+            } else if (response.status === 400) {
+              status = "Bad Request";
+            } else if (response.status === 401) {
+              status = "Unauthorized";
+            } else if (response.status === 403) {
+              status = "Forbidden";
+            } else if (response.status === 404) {
+              status = "Not Found";
+            } else if (response.status === 405) {
+              status = "Method Not Allowed";
+            } else if (response.status === 408) {
+              status = "Request Timeout";
+            } else if (response.status === 500) {
+              status = "Internal Server Error";
+            } else if (response.status === 503) {
+              status = "Service Unavailable";
+            } else {
+              status = `HTTP Response Error: ${response.status}`;
+            }
+
+            const row = `
+        <tr id="api_${index + 1}">
           <td>${index + 1}</td>
-          <td><a href="
-            http://127.0.0.1:8000/${
-            item.api_name
-          }" target="_blank" style="color: #4f7849; text-decoration: none;">${
-            item.api_name
-          }</a></td>
-          <td><input type="checkbox" ${
-            item.checked ? "checked" : ""
-          } onchange="updateChecked(${index}, this.checked)"></td>
-          <td>${item.status}</td>
-          <td>${item.error}</td> <!-- Error column -->
-      </tr>
-  `;
-          tableBody.innerHTML += row;
-        });
-      }
-
-      // Function to update the 'checked' property in JSON data
-      function updateChecked(index, checked) {
-        jsonData[index].checked = checked;
-        // Here you can perform any other actions you need, such as updating the server or other UI elements
-      }
-
-      // Function to toggle the 'status' property in JSON data
-      function toggleStatus(index) {
-        switch (jsonData[index].status) {
-          case "pending":
-            jsonData[index].status = "completed";
-            break;
-          case "completed":
-            jsonData[index].status = "error";
-            break;
-          case "error":
-            jsonData[index].status = "?";
-            break;
-          case "?":
-            jsonData[index].status = "pending";
-            break;
+          <td>
+            <a href="${endpoint}" target="_blank" style="color: #4f7849; text-decoration: none;">${
+              item.api_name
+            }</a>
+          </td>
+          <td>${status}</td>
+        </tr>
+      `;
+            tableBody.innerHTML += row;
+          } catch (error) {
+            console.error(`Error fetching ${endpoint}:`, error);
+            const row = `
+        <tr id="api_${index + 1}">
+          <td>${index + 1}</td>
+          <td>
+            <a href="${endpoint}" target="_blank" style="color: #4f7849; text-decoration: none;">${
+              item.api_name
+            }</a>
+          </td>
+          <td>error: ${error.message}</td>
+        </tr>
+      `;
+            tableBody.innerHTML += row;
+          }
         }
-        updateTable(); // Update the table after toggling the status
-        // Here you can perform any other actions you need, such as updating the server or other UI elements
-      }
-
-      // Function to toggle the 'error' property in JSON data
-      function toggleError(index) {
-        switch (jsonData[index].error) {
-          case "no error":
-            jsonData[index].error = "operational error";
-            break;
-          case "operational error":
-            jsonData[index].error = "type error";
-            break;
-          case "type error":
-            jsonData[index].error = "value error";
-            break;
-          case "value error":
-            jsonData[index].error = "no models";
-            break;
-
-          case "no models":
-            jsonData[index].error = "no error";
-            break;
-        }
-
-        updateTable(); // Update the table after toggling the error status
-        //Here you can perform any other actions you need, such as updating the server or other UI elements
       }
 
       // Initial table population
