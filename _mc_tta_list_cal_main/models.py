@@ -14,23 +14,23 @@ from django.dispatch import receiver
 
 # Create your models here.
 class TtaListCalMain(models.Model):
-    cal_guid = models.CharField(primary_key=True, max_length=32)
-    customer_guid = models.CharField(max_length=32, blank=True, null=True)
-    docdate = models.DateField(blank=True, null=True)
-    outlet = models.CharField(max_length=32)
-    sup_code = models.CharField(max_length=20, blank=True, null=True)
-    sup_name = models.CharField(max_length=100, blank=True, null=True)
-    brand = models.CharField(max_length=20, blank=True, null=True)
-    brand_desc = models.CharField(max_length=100, blank=True, null=True)
-    gr_amt = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    gr_surchg = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    debitamt = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    debit_surchg = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    creditamt = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    credit_surchg = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True)
-    pdnamt = models.DecimalField(db_column='PDNamt', max_digits=16, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    pcnamt = models.DecimalField(db_column='PCNamt', max_digits=16, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    created_at = models.DateTimeField(blank=True, null=True)
+    cal_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cal Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
+    docdate = models.DateField(blank=True, null=True, verbose_name='Document Date')
+    outlet = models.CharField(max_length=32, verbose_name='Outlet')
+    sup_code = models.CharField(max_length=20, blank=True, null=True, verbose_name='Supplier Code')
+    sup_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Supplier Name')
+    brand = models.CharField(max_length=20, blank=True, null=True, verbose_name='Brand')
+    brand_desc = models.CharField(max_length=100, blank=True, null=True, verbose_name='Brand Description')
+    gr_amt = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='GR Amount')
+    gr_surchg = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='GR Surcharge')
+    debitamt = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='Debit Amount')
+    debit_surchg = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='Debit Surcharge')
+    creditamt = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='Credit Amount')
+    credit_surchg = models.DecimalField(max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='Credit Surcharge')
+    pdnamt = models.DecimalField(db_column='PDNamt', max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='PDN Amount')  
+    pcnamt = models.DecimalField(db_column='PCNamt', max_digits=16, decimal_places=2, blank=True, null=True, verbose_name='PCN Amount')  # Field name made lowercase.
+    created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
 
     class Meta:
         managed = False

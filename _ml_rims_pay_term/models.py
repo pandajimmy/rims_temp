@@ -2,12 +2,12 @@ from django.db import models
 
 # Create your models here.
 class RimsPayTerm(models.Model):
-    customer_guid = models.CharField(primary_key=True, max_length=32)
-    code = models.CharField(db_column='Code', max_length=15)  # Field name made lowercase.
-    description = models.CharField(db_column='Description', max_length=60, blank=True, null=True)  # Field name made lowercase.
-    setactive = models.SmallIntegerField(db_column='SetActive', blank=True, null=True)  # Field name made lowercase.
-    imported_at = models.DateTimeField(blank=True, null=True)
-    sync_guid = models.CharField(max_length=32, blank=True, null=True)
+    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer Globally Unique Identifier')
+    code = models.CharField(db_column='Code', max_length=15, verbose_name='Code')  # Field name made lowercase.
+    description = models.CharField(db_column='Description', max_length=60, blank=True, null=True, verbose_name='Description')  # Field name made lowercase.
+    setactive = models.SmallIntegerField(db_column='SetActive', blank=True, null=True, verbose_name='Set Active')  # Field name made lowercase.
+    imported_at = models.DateTimeField(blank=True, null=True, verbose_name='Imported at')
+    sync_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Sync Globally Unique Identifier')
 
     class Meta:
         managed = False

@@ -1,13 +1,13 @@
 from django.db import models
 
 class FormOption(models.Model):
-    option_guid = models.CharField(primary_key=True, max_length=32)
-    option_type = models.CharField(max_length=100, blank=True, null=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=100, blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=100, blank=True, null=True)
+    option_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Option Globally Unique Identifier')
+    option_type = models.CharField(max_length=100, blank=True, null=True, verbose_name='Option Type')
+    description = models.CharField(max_length=100, blank=True, null=True, verbose_name='Description')
+    created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
+    created_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Created by')
+    updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')
+    updated_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Updated by')
 
     class Meta:
         managed = False

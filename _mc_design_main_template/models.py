@@ -1,16 +1,16 @@
 from django.db import models
 
 class DesignMainTemplate(models.Model):
-    customer_guid = models.CharField(max_length=32, blank=True, null=True)
-    main_guid = models.CharField(primary_key=True, max_length=32)
-    main_name = models.CharField(max_length=100, blank=True, null=True)
-    main_description = models.CharField(max_length=250, blank=True, null=True)
-    isactive = models.IntegerField(blank=True, null=True)
-    isdefault = models.IntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=100, blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=100, blank=True, null=True)
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
+    main_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Main Globally Unique Identifier')
+    main_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Main Name')
+    main_description = models.CharField(max_length=250, blank=True, null=True, verbose_name='Main Description')
+    isactive = models.IntegerField(blank=True, null=True, verbose_name='Is Active')
+    isdefault = models.IntegerField(blank=True, null=True, verbose_name='Is Default')
+    created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
+    created_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Created by')
+    updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')
+    updated_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Updated by')
 
     class Meta:
         managed = False

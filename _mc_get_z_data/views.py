@@ -51,6 +51,12 @@ def home(request, customer_guid):
     # return HttpResponse(key)
 
 def pnl(request, customer_guid,list_guid, date_to, date_from, date):
+    #response = requests.get('https://api.covid19api.com/summary').json() 
+    response = requests.get('https://api.covid19api.com/summary') 
+    content = json.loads(response.content)
+    # change the JSON string into a JSON object
+    jsonObject = json.loads(response.content)
+    
     for key in jsonObject:
         value = jsonObject[key]
         HttpResponse("The key and value are ({}) = ({})".format(key, value))

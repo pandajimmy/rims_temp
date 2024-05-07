@@ -2,16 +2,16 @@ from django.db import models
 
 # Create your models here.
 class RimsDivDeptSdC(models.Model):
-    customer_guid = models.CharField(primary_key=True, max_length=32)
-    trans_guid = models.CharField(max_length=32)
-    group_code = models.CharField(max_length=120, blank=True, null=True)
-    group_desc = models.CharField(max_length=120, blank=True, null=True)
-    dept = models.CharField(max_length=120, blank=True, null=True)
-    dept_desc = models.CharField(max_length=120, blank=True, null=True)
-    subdept = models.CharField(max_length=120, blank=True, null=True)
-    subdeptdesc = models.CharField(max_length=120, blank=True, null=True)
-    category = models.CharField(max_length=120, blank=True, null=True)
-    category_desc = models.CharField(max_length=120, blank=True, null=True)
+    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer Globally Unique Identifier')
+    trans_guid = models.CharField(max_length=32, verbose_name='Transaction Globally Unique Identifier')
+    group_code = models.CharField(max_length=120, blank=True, null=True, verbose_name='Group Code')
+    group_desc = models.CharField(max_length=120, blank=True, null=True, verbose_name='Group Description')
+    dept = models.CharField(max_length=120, blank=True, null=True, verbose_name='Department')
+    dept_desc = models.CharField(max_length=120, blank=True, null=True, verbose_name='Department Description')
+    subdept = models.CharField(max_length=120, blank=True, null=True, verbose_name='Subdepartment')
+    subdeptdesc = models.CharField(max_length=120, blank=True, null=True, verbose_name='Subdepartment Description')
+    category = models.CharField(max_length=120, blank=True, null=True, verbose_name='Category')
+    category_desc = models.CharField(max_length=120, blank=True, null=True, verbose_name='Category Description')
 
     class Meta:
         managed = False

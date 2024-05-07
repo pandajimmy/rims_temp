@@ -3,51 +3,51 @@ from _ts_tta_cndnamt.models import TtaCndnAmt
 
 # Create your models here.
 class TtaCndnAmtC(models.Model):
-    customer_guid = models.CharField(max_length=32)
-    child_guid = models.CharField(primary_key=True, max_length=32)
-    cndn_guid = models.ForeignKey(TtaCndnAmt, models.DO_NOTHING, db_column='cndn_guid', related_name = 'cndn_guid_key')
-    seq = models.IntegerField(blank=True, null=True)
-    itemcode = models.CharField(max_length=20, blank=True, null=True)
-    description = models.CharField(db_column='Description', max_length=60, blank=True, null=True)  # Field name made lowercase.
-    qty = models.FloatField(db_column='Qty', blank=True, null=True)  # Field name made lowercase.
-    amount_c = models.FloatField(blank=True, null=True)
-    gst_tax_type = models.CharField(max_length=5, blank=True, null=True)
-    gst_tax_code = models.CharField(max_length=10, blank=True, null=True)
-    gst_tax_rate = models.FloatField(blank=True, null=True)
-    gst_tax_amount = models.FloatField(blank=True, null=True)
-    amount_c_include_tax = models.FloatField(blank=True, null=True)
-    remark = models.CharField(max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
-    created_by = models.CharField(max_length=20, blank=True, null=True)
-    updated_at = models.DateTimeField(blank=True, null=True)
-    updated_by = models.CharField(max_length=20, blank=True, null=True)
-    dept = models.CharField(db_column='Dept', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    subdept = models.CharField(db_column='SubDept', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    category = models.CharField(db_column='Category', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    brand = models.CharField(db_column='Brand', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    manufacturer = models.CharField(db_column='Manufacturer', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    barcode = models.CharField(db_column='Barcode', max_length=30, blank=True, null=True)  # Field name made lowercase.
-    reason = models.CharField(max_length=20, blank=True, null=True)
-    itemtype = models.CharField(max_length=35, blank=True, null=True)
-    ori_inv_no = models.CharField(max_length=30, blank=True, null=True)
-    ori_inv_date = models.DateField(blank=True, null=True)
-    postdatetime_c = models.DateTimeField(blank=True, null=True)
-    consign = models.SmallIntegerField(blank=True, null=True)
-    colour = models.CharField(db_column='Colour', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    size = models.CharField(db_column='Size', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    articleno = models.CharField(db_column='ArticleNo', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    packsize = models.FloatField(db_column='PackSize', blank=True, null=True)  # Field name made lowercase.
-    um = models.CharField(db_column='UM', max_length=5, blank=True, null=True)  # Field name made lowercase.
-    itemlink = models.CharField(db_column='ItemLink', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    hq_update = models.SmallIntegerField(blank=True, null=True)
-    unitprice = models.FloatField(db_column='UnitPrice', blank=True, null=True)  # Field name made lowercase.
-    byamt = models.SmallIntegerField(db_column='byAmt', blank=True, null=True)  # Field name made lowercase.
-    gst_manual = models.SmallIntegerField(blank=True, null=True)
-    taxintno = models.IntegerField(db_column='TaxIntNo', blank=True, null=True)  # Field name made lowercase.
-    taxcodemap = models.CharField(db_column='TaxCodeMap', max_length=15, blank=True, null=True)  # Field name made lowercase.
-    taxvalue = models.FloatField(db_column='TaxValue', blank=True, null=True)  # Field name made lowercase.
-    taxamount = models.FloatField(db_column='TaxAmount', blank=True, null=True)  # Field name made lowercase.
-    taxamountvariance = models.FloatField(db_column='TaxAmountVariance', blank=True, null=True)  # Field name made lowercase.
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
+    child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child Globally Unique Identifier')
+    cndn_guid = models.ForeignKey(TtaCndnAmt, models.DO_NOTHING, db_column='cndn_guid', related_name='cndn_guid_key', verbose_name='Cndn Globally Unique Identifier')
+    seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
+    itemcode = models.CharField(max_length=20, blank=True, null=True, verbose_name='Item Code')
+    description = models.CharField(db_column='Description', max_length=60, blank=True, null=True, verbose_name='Description')  # Field name made lowercase.
+    qty = models.FloatField(db_column='Qty', blank=True, null=True, verbose_name='Quantity')  # Field name made lowercase.
+    amount_c = models.FloatField(blank=True, null=True, verbose_name='Amount')
+    gst_tax_type = models.CharField(max_length=5, blank=True, null=True, verbose_name='GST Tax Type')
+    gst_tax_code = models.CharField(max_length=10, blank=True, null=True, verbose_name='GST Tax Code')
+    gst_tax_rate = models.FloatField(blank=True, null=True, verbose_name='GST Tax Rate')
+    gst_tax_amount = models.FloatField(blank=True, null=True, verbose_name='GST Tax Amount')
+    amount_c_include_tax = models.FloatField(blank=True, null=True, verbose_name='Amount Including Tax')
+    remark = models.CharField(max_length=50, blank=True, null=True, verbose_name='Remark')
+    created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
+    created_by = models.CharField(max_length=20, blank=True, null=True, verbose_name='Created by')
+    updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')
+    updated_by = models.CharField(max_length=20, blank=True, null=True, verbose_name='Updated by')
+    dept = models.CharField(db_column='Dept', max_length=5, blank=True, null=True, verbose_name='Department')  # Field name made lowercase.
+    subdept = models.CharField(db_column='SubDept', max_length=5, blank=True, null=True, verbose_name='Sub Department')  # Field name made lowercase.
+    category = models.CharField(db_column='Category', max_length=5, blank=True, null=True, verbose_name='Category')  # Field name made lowercase.
+    brand = models.CharField(db_column='Brand', max_length=5, blank=True, null=True, verbose_name='Brand')  # Field name made lowercase.
+    manufacturer = models.CharField(db_column='Manufacturer', max_length=5, blank=True, null=True, verbose_name='Manufacturer')  # Field name made lowercase.
+    barcode = models.CharField(db_column='Barcode', max_length=30, blank=True, null=True, verbose_name='Barcode')  # Field name made lowercase.
+    reason = models.CharField(max_length=20, blank=True, null=True, verbose_name='Reason')
+    itemtype = models.CharField(max_length=35, blank=True, null=True, verbose_name='Item Type')
+    ori_inv_no = models.CharField(max_length=30, blank=True, null=True, verbose_name='Original Invoice Number')
+    ori_inv_date = models.DateField(blank=True, null=True, verbose_name='Original Invoice Date')
+    postdatetime_c = models.DateTimeField(blank=True, null=True, verbose_name='Posted Date Time')
+    consign = models.SmallIntegerField(blank=True, null=True, verbose_name='Consign')
+    colour = models.CharField(db_column='Colour', max_length=20, blank=True, null=True, verbose_name='Colour')  # Field name made lowercase.
+    size = models.CharField(db_column='Size', max_length=20, blank=True, null=True, verbose_name='Size')  # Field name made lowercase.
+    articleno = models.CharField(db_column='ArticleNo', max_length=20, blank=True, null=True, verbose_name='Article Number')  # Field name made lowercase.
+    packsize = models.FloatField(db_column='PackSize', blank=True, null=True, verbose_name='Pack Size')  # Field name made lowercase.
+    um = models.CharField(db_column='UM', max_length=5, blank=True, null=True, verbose_name='Unit of Measurement')  # Field name made lowercase.
+    itemlink = models.CharField(db_column='ItemLink', max_length=20, blank=True, null=True, verbose_name='Item Link')  # Field name made lowercase.
+    hq_update = models.SmallIntegerField(blank=True, null=True, verbose_name='HQ Update')
+    unitprice = models.FloatField(db_column='UnitPrice', blank=True, null=True, verbose_name='Unit Price')  # Field name made lowercase.
+    byamt = models.SmallIntegerField(db_column='byAmt', blank=True, null=True, verbose_name='By Amount')  # Field name made lowercase.
+    gst_manual = models.SmallIntegerField(blank=True, null=True, verbose_name='GST Manual')
+    taxintno = models.IntegerField(db_column='TaxIntNo', blank=True, null=True, verbose_name='Tax Int Number')  # Field name made lowercase.
+    taxcodemap = models.CharField(db_column='TaxCodeMap', max_length=15, blank=True, null=True, verbose_name='Tax Code Map')  # Field name made lowercase.
+    taxvalue = models.FloatField(db_column='TaxValue', blank=True, null=True, verbose_name='Tax Value')  # Field name made lowercase.
+    taxamount = models.FloatField(db_column='TaxAmount', blank=True, null=True, verbose_name='Tax Amount')  # Field name made lowercase.
+    taxamountvariance = models.FloatField(db_column='TaxAmountVariance', blank=True, null=True, verbose_name='Tax Amount Variance')  # Field name made lowercase.
 
     class Meta:
         managed = False
