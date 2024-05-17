@@ -57,7 +57,7 @@ class Supcus(models.Model):
     consign = models.SmallIntegerField(db_column='Consign', blank=True, null=True, verbose_name='Consign')  # Field name made lowercase.
     block = models.SmallIntegerField(db_column='Block', blank=True, null=True, verbose_name='Block')  # Field name made lowercase.
     exclude_orderqty_control = models.SmallIntegerField(blank=True, null=True, verbose_name='Exclude Order Quantity Control')
-    supcus_guid = models.CharField(unique=True, max_length=32, blank=True, null=True, verbose_name='Supcus Globally Unique Identifier')
+    supcus_guid = models.CharField(unique=True, max_length=32, blank=True, null=True, verbose_name='Supcus guid')
     acc_no = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account No.')
     ord_w1 = models.SmallIntegerField(db_column='Ord_W1', blank=True, null=True, verbose_name='Ord W1')  # Field name made lowercase.
     ord_w2 = models.SmallIntegerField(db_column='Ord_W2', blank=True, null=True, verbose_name='Ord W2')  # Field name made lowercase.

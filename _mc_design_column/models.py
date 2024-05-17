@@ -2,8 +2,8 @@ from django.db import models
 from _mc_design_row.models import DesignRow 
 
 class DesignColumn(models.Model):
-    row_guid = models.ForeignKey(DesignRow, models.DO_NOTHING, db_column='row_guid', related_name='columns', verbose_name='Row Globally Unique Identifier')
-    column_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Column Globally Unique Identifier')
+    row_guid = models.ForeignKey(DesignRow, models.DO_NOTHING, db_column='row_guid', related_name='columns', verbose_name='Row guid')
+    column_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Column guid')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
     cols_size = models.IntegerField(blank=True, null=True, verbose_name='Column Size')
     sm_size = models.IntegerField(blank=True, null=True, verbose_name='Small Size')

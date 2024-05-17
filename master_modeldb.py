@@ -1324,12 +1324,12 @@ class TtaListDetails(models.Model):
     delivery_mode = models.CharField(max_length=200, blank=True, null=True, verbose_name='Delivery Mode')
     returnable = models.CharField(max_length=200, blank=True, null=True, verbose_name='Returnable')
     
-    # Supplier Person In Charge Information
-    supplier_pic = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Person In Charge')
-    supplier_pic_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Person In Charge Name')
-    supplier_pic_position = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Person In Charge Position')
-    supplier_pic_contact = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Person In Charge Contact')
-    supplier_pic_email = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Person In Charge Email')
+    # Supplier PIC Information
+    supplier_pic = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier PIC')
+    supplier_pic_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier PIC Name')
+    supplier_pic_position = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier PIC Position')
+    supplier_pic_contact = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier PIC Contact')
+    supplier_pic_email = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier PIC Email')
     
     #Banner
     banner = models.CharField(max_length=200, blank=True, null=True, verbose_name='Banner')

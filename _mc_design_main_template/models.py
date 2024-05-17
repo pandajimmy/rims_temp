@@ -1,8 +1,8 @@
 from django.db import models
 
 class DesignMainTemplate(models.Model):
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
-    main_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Main Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
+    main_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Main guid')
     main_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Main Name')
     main_description = models.CharField(max_length=250, blank=True, null=True, verbose_name='Main Description')
     isactive = models.IntegerField(blank=True, null=True, verbose_name='Is Active')

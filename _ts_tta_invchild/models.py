@@ -10,9 +10,9 @@ from django.db.models.signals import (
 
 # Create your models here.
 class TtaInvchild(models.Model):
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
-    invchild_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Child Globally Unique Identifier')
-    invmain_guid = models.ForeignKey(TtaInvmain, models.DO_NOTHING, db_column='invmain_guid', related_name='invchild_key', verbose_name='Invoice Main Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    invchild_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Child guid')
+    invmain_guid = models.ForeignKey(TtaInvmain, models.DO_NOTHING, db_column='invmain_guid', related_name='invchild_key', verbose_name='Invoice Main guid')
     line = models.IntegerField(blank=True, null=True, verbose_name='Line')
     pricetype = models.CharField(max_length=5, verbose_name='Price Type')
     itemcode = models.CharField(max_length=20, verbose_name='Item Code')

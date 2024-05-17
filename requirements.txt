@@ -1,7 +1,7 @@
 asgiref==3.8.1
 certifi==2024.2.2
 charset-normalizer==3.3.2
-Django==4.2.13
+Django==5.0.6
 django-cors-headers==4.3.1
 django-extensions==3.2.3
 django-filter==24.2
@@ -11,9 +11,9 @@ drf-yasg==1.21.7
 idna==3.7
 inflection==0.5.1
 mysqlclient==2.2.4
+numpy==1.26.4
 packaging==24.0
-numpy==1.24.4
-pandas==2.0.3
+pandas==2.2.2
 PyJWT==2.8.0
 python-dateutil==2.9.0.post0
 pytz==2024.1

@@ -2,8 +2,8 @@ from django.db import models
 from _mc_main_filter.models import MainFilter
 
 class MainFilterChild(models.Model):
-    main_filter_guid = models.ForeignKey(MainFilter, models.DO_NOTHING, db_column='main_filter_guid',related_name='child_filter_type', verbose_name='Main Filter Globally Unique Identifier')
-    child_filter_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child Filter Globally Unique Identifier')
+    main_filter_guid = models.ForeignKey(MainFilter, models.DO_NOTHING, db_column='main_filter_guid',related_name='child_filter_type', verbose_name='Main Filter guid')
+    child_filter_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child Filter guid')
     cols_size = models.IntegerField(blank=True, null=True, verbose_name='Column Size')
     sm_size = models.IntegerField(blank=True, null=True, verbose_name='Small Size')
     md_size = models.IntegerField(blank=True, null=True, verbose_name='Medium Size')

@@ -2,9 +2,9 @@ from django.db import models
 from _mc_get_tta_details.models import TtaListDetails
 
 class TtaListForm(models.Model):
-    list_guid_c = models.CharField(primary_key=True, max_length=32, verbose_name='List Globally Unique Identifier C')
-    list_guid = models.ForeignKey(TtaListDetails, models.DO_NOTHING, db_column='list_guid',related_name='dynamic_field', verbose_name='List Globally Unique Identifier')
-    tab_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tab Globally Unique Identifier')
+    list_guid_c = models.CharField(primary_key=True, max_length=32, verbose_name='List guid C')
+    list_guid = models.ForeignKey(TtaListDetails, models.DO_NOTHING, db_column='list_guid',related_name='dynamic_field', verbose_name='List guid')
+    tab_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tab guid')
     group = models.CharField(max_length=200, blank=True, null=True, verbose_name='Group')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
     key_description = models.CharField(max_length=100, blank=True, null=True, verbose_name='Key Description')

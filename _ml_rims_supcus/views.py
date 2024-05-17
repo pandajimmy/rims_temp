@@ -17,7 +17,7 @@ class RimsSupcusViewSet(viewsets.ModelViewSet):
     serializer_class = RimsSupcusSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     #filterset_fields = ['customer_guid','code','name', 'accountcode', 'type', 'block'] 
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["exact"], # note the 'in' field
         'code': ["exact"],
         'name': ["exact"],

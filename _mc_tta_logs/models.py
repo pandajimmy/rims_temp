@@ -3,8 +3,8 @@ import uuid
 from _lib import panda
 
 class TtaLogs(models.Model):
-    log_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Log Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
+    log_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Log guid')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
     log_module = models.CharField(max_length=255, blank=True, null=True, verbose_name='Log Module')
     log_ref = models.CharField(max_length=60, blank=True, null=True, verbose_name='Log Reference')
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')

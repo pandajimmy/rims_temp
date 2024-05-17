@@ -3,8 +3,8 @@ from _lib import panda
 
 # Create your models here.
 class TtaCndnAmt(models.Model):
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
-    cndn_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cndn Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    cndn_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cndn guid')
     trans_type = models.CharField(max_length=10, blank=True, null=True, verbose_name='Transaction Type')
     loc_group = models.CharField(max_length=20, blank=True, null=True, verbose_name='Location Group')
     location = models.CharField(max_length=20, blank=True, null=True, verbose_name='Location')

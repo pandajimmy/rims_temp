@@ -4,9 +4,9 @@ from _lib import panda
 # Create your models here.
 class DesignCot(models.Model):
     #cot_guid = models.CharField(primary_key=True, max_length=32)
-    cot_guid = models.CharField(primary_key=True, max_length=32, default=panda.panda_uuid, editable=False, verbose_name='COT Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
-    tab_guid = models.CharField(max_length=32, verbose_name='Tab Globally Unique Identifier')
+    cot_guid = models.CharField(primary_key=True, max_length=32, default=panda.panda_uuid, editable=False, verbose_name='COT guid')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    tab_guid = models.CharField(max_length=32, verbose_name='Tab guid')
     cot_group = models.CharField(max_length=120, blank=True, null=True, verbose_name='COT Group')
     cot_seq = models.SmallIntegerField(blank=True, null=True, verbose_name='COT Sequence')
     cot_description = models.CharField(max_length=120, blank=True, null=True, verbose_name='COT Description')

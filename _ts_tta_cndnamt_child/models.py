@@ -3,9 +3,9 @@ from _ts_tta_cndnamt.models import TtaCndnAmt
 
 # Create your models here.
 class TtaCndnAmtC(models.Model):
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
-    child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child Globally Unique Identifier')
-    cndn_guid = models.ForeignKey(TtaCndnAmt, models.DO_NOTHING, db_column='cndn_guid', related_name='cndn_guid_key', verbose_name='Cndn Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child guid')
+    cndn_guid = models.ForeignKey(TtaCndnAmt, models.DO_NOTHING, db_column='cndn_guid', related_name='cndn_guid_key', verbose_name='Cndn guid')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
     itemcode = models.CharField(max_length=20, blank=True, null=True, verbose_name='Item Code')
     description = models.CharField(db_column='Description', max_length=60, blank=True, null=True, verbose_name='Description')  # Field name made lowercase.

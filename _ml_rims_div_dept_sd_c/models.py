@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 class RimsDivDeptSdC(models.Model):
-    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer Globally Unique Identifier')
-    trans_guid = models.CharField(max_length=32, verbose_name='Transaction Globally Unique Identifier')
+    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer guid')
+    trans_guid = models.CharField(max_length=32, verbose_name='Transaction guid')
     group_code = models.CharField(max_length=120, blank=True, null=True, verbose_name='Group Code')
     group_desc = models.CharField(max_length=120, blank=True, null=True, verbose_name='Group Description')
     dept = models.CharField(max_length=120, blank=True, null=True, verbose_name='Department')

@@ -2,8 +2,8 @@ from django.db import models
 from _mc_design_main_template.models import DesignMainTemplate
 
 class DesignMenu(models.Model):
-    main_guid = models.ForeignKey(DesignMainTemplate, models.DO_NOTHING, db_column='main_guid',related_name='child_design_menu', verbose_name='Main Globally Unique Identifier')
-    design_menu_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Design Menu Globally Unique Identifier')
+    main_guid = models.ForeignKey(DesignMainTemplate, models.DO_NOTHING, db_column='main_guid',related_name='child_design_menu', verbose_name='Main guid')
+    design_menu_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Design Menu guid')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
     description = models.CharField(max_length=200, blank=True, null=True, verbose_name='Description')
     isactive = models.IntegerField(blank=True, null=True, verbose_name='Is Active')

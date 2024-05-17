@@ -1,8 +1,8 @@
 from django.db import models
 
 class Sysrun(models.Model):
-    sysrun_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Sysrun Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
+    sysrun_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Sysrun guid')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
     customer_prefix = models.CharField(max_length=5, verbose_name='Customer Prefix')
     type = models.CharField(db_column='Type', blank=True, max_length=10, verbose_name='Type')  # Field name made lowercase.
     code = models.CharField(db_column='Code', blank=True, max_length=10, verbose_name='Code')

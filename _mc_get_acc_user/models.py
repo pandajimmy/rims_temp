@@ -1,7 +1,7 @@
 from django.db import models
 
 class AccUser(models.Model):
-    acc_user_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Account User Globally Unique Identifier')
+    acc_user_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Account User guid')
     acc_user_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='Account User Identifier')
     acc_user_password = models.CharField(max_length=15, blank=True, null=True, verbose_name='Account User Password')
     acc_user_name = models.CharField(max_length=60, blank=True, null=True, verbose_name='Account User Name')
@@ -11,7 +11,7 @@ class AccUser(models.Model):
     created_by = models.CharField(max_length=255, blank=True, null=True, verbose_name='Created by')
     updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')
     updated_by = models.CharField(max_length=255, blank=True, null=True, verbose_name='Updated by')
-    acc_guid = models.CharField(max_length=32, verbose_name='Account Globally Unique Identifier')
+    acc_guid = models.CharField(max_length=32, verbose_name='Account guid')
     acc_name = models.CharField(max_length=120, blank=True, null=True, verbose_name='Account Name')
     user_count = models.CharField(max_length=120, blank=True, null=True, verbose_name='Number of User')
     driver_count = models.CharField(max_length=120, blank=True, null=True, verbose_name='Number of Driver')

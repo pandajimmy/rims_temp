@@ -1,7 +1,7 @@
 from django.db import models
 
 class MainFilter(models.Model):
-    main_filter_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Main Filter Globally Unique Identifier')
+    main_filter_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Main Filter guid')
     code = models.CharField(max_length=100, blank=True, null=True, verbose_name='Code')
     description = models.CharField(max_length=250, blank=True, null=True, verbose_name='Description')
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')

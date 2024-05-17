@@ -2,8 +2,8 @@ from django.db import models
 from _mc_form_option.models import FormOption 
 
 class FormOptionValue(models.Model):
-    option_guid = models.ForeignKey(FormOption, models.DO_NOTHING, db_column='option_guid',related_name='options', verbose_name='Option Globally Unique Identifier')
-    option_child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Option Child Globally Unique Identifier')
+    option_guid = models.ForeignKey(FormOption, models.DO_NOTHING, db_column='option_guid',related_name='options', verbose_name='Option guid')
+    option_child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Option Child guid')
     option_type = models.CharField(max_length=100, verbose_name='Option Type')
     option_seq = models.IntegerField(blank=True, null=True, verbose_name='Option Sequence')
     value = models.TextField(db_column='option_value')

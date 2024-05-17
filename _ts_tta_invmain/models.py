@@ -8,8 +8,8 @@ from django.db.models.signals import (
 )
 # Create your models here.
 class TtaInvmain(models.Model):
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
-    invmain_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Main Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    invmain_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Main guid')
     refno = models.CharField(max_length=20, blank=True, null=True, verbose_name='Reference Number')
     docno = models.CharField(max_length=25, blank=True, null=True, verbose_name='Document Number')
     invoice_date = models.DateField(blank=True, null=True, verbose_name='Invoice Date')

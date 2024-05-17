@@ -14,8 +14,8 @@ from django.dispatch import receiver
 
 # Create your models here.
 class TtaListCalMain(models.Model):
-    cal_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cal Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
+    cal_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cal guid')
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
     docdate = models.DateField(blank=True, null=True, verbose_name='Document Date')
     outlet = models.CharField(max_length=32, verbose_name='Outlet')
     sup_code = models.CharField(max_length=20, blank=True, null=True, verbose_name='Supplier Code')

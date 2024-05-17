@@ -1,12 +1,12 @@
 from django.db import models
 
 class TtaList(models.Model):
-    list_guid = models.CharField(primary_key=True, max_length=32, verbose_name="List Globally Unique Identifier")
-    customer_guid = models.CharField(max_length=32, verbose_name="Customer Globally Unique Identifier")
+    list_guid = models.CharField(primary_key=True, max_length=32, verbose_name="List guid")
+    customer_guid = models.CharField(max_length=32, verbose_name="Customer guid")
     refno = models.CharField(max_length=20, verbose_name="Reference Number")
-    supplier_guid = models.CharField(max_length=32, verbose_name="Supplier Globally Unique Identifier")
+    supplier_guid = models.CharField(max_length=32, verbose_name="Supplier guid")
     supplier_name = models.CharField(max_length=60, blank=True, null=True, verbose_name="Supplier Name")
-    bill_supp_guid = models.CharField(max_length=32, verbose_name="Billing Supplier Globally Unique Identifier")
+    bill_supp_guid = models.CharField(max_length=32, verbose_name="Billing Supplier guid")
     bill_supp_name = models.CharField(max_length=60, blank=True, null=True, verbose_name="Billing Supplier Name")
     negotiation_year = models.TextField(blank=True, null=True, verbose_name="Negotiation Year")
     co_reg_no = models.IntegerField(blank=True, null=True, verbose_name="Company Registration Number")

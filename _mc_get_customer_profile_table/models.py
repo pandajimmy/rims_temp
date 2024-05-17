@@ -1,7 +1,7 @@
 from django.db import models
 
 class CustomerProfileTable(models.Model):
-    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer Globally Unique Identifier')
+    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer guid')
     customer_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Customer Name')
     customer_regno = models.CharField(max_length=30, blank=True, null=True, verbose_name='Customer Registration No.')
     customer_gstno = models.CharField(max_length=30, blank=True, null=True, verbose_name='Customer GST No.')

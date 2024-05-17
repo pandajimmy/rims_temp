@@ -2,8 +2,8 @@ from django.db import models
 from _lib import panda
 
 class RimsAccGlmaster(models.Model):
-    glmaster_guid = models.CharField(primary_key=True, max_length=32, verbose_name='GL Master Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
+    glmaster_guid = models.CharField(primary_key=True, max_length=32, verbose_name='GL Master guid')
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
     acc_type = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account Type')
     acc_code = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account Code')
     acc_description = models.CharField(max_length=60, blank=True, null=True, verbose_name='Account Description')

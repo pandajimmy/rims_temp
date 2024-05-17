@@ -2,8 +2,8 @@ from django.db import models
 from _mc_design_column.models import DesignColumn
 
 class DesignComponent(models.Model):
-    column_guid = models.ForeignKey(DesignColumn, models.DO_NOTHING, db_column='column_guid',related_name='components', verbose_name='Column Globally Unique Identifier')
-    component_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Component Globally Unique Identifier')
+    column_guid = models.ForeignKey(DesignColumn, models.DO_NOTHING, db_column='column_guid',related_name='components', verbose_name='Column guid')
+    component_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Component guid')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
     cols_size = models.IntegerField(blank=True, null=True, verbose_name='Column Size')
     sm_size = models.IntegerField(blank=True, null=True, verbose_name='Small Size')

@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 class CustomerUrl(models.Model):
-    url_guid = models.CharField(primary_key=True, max_length=32, verbose_name='URL Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
+    url_guid = models.CharField(primary_key=True, max_length=32, verbose_name='URL guid')
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
     customer_url = models.CharField(max_length=120, blank=True, null=True, verbose_name='Customer URL')
     key = models.CharField(max_length=60, blank=True, null=True, verbose_name='Key')
     userid = models.CharField(max_length=32, blank=True, null=True, verbose_name='User ID')

@@ -2,8 +2,8 @@ from django.db import models
 from _lib import panda
 
 class RimsAccCode(models.Model):
-    acc_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Account Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
+    acc_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Account guid')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
     acc_type = models.CharField(max_length=32, blank=True, null=True, verbose_name='Account Type')
     tta_field = models.CharField(max_length=32, blank=True, null=True, verbose_name='TTA Field')
     tta_description = models.CharField(max_length=60, blank=True, null=True, verbose_name='TTA Description')

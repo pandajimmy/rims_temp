@@ -1418,6 +1418,7 @@ def export_excel3(request,customer_guid, date_from, date_to):
 
 @api_view(['GET'])
 def export_excel_old(request,customer_guid, date_from, date_to): 
+    bgs_data = []
     customer_guid = str('%s'%customer_guid)
     date_from = str('%s'%date_from)
     date_to = str('%s'%date_to) 

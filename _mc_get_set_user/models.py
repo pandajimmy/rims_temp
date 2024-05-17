@@ -1,12 +1,12 @@
 from django.db import models
 
 class SetUser(models.Model):
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
     loc_count = models.SmallIntegerField(blank=True, null=True, verbose_name='Count of Location')
     loc_group = models.CharField(max_length=32, blank=True, null=True, verbose_name='Group of Location')
-    user_group_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='User Group Globally Unique Identifier')
+    user_group_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='User Group guid')
     user_group_name = models.CharField(max_length=120, blank=True, null=True, verbose_name='User Group Name')
-    user_guid = models.CharField(primary_key=True, max_length=32, verbose_name='User Globally Unique Identifier')
+    user_guid = models.CharField(primary_key=True, max_length=32, verbose_name='User guid')
     user_id = models.CharField(max_length=255, blank=True, null=True, verbose_name='User Identifier')
     user_password = models.CharField(max_length=15, blank=True, null=True, verbose_name='User Password')
     user_name = models.CharField(max_length=60, blank=True, null=True, verbose_name='User Name')

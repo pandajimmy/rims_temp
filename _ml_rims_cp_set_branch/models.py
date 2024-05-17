@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 class RimsCpSetBranch(models.Model):
-    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer Globally Unique Identifier')
-    branch_guid = models.CharField(db_column='BRANCH_GUID', max_length=32, verbose_name='Branch Globally Unique Identifier')
+    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer guid')
+    branch_guid = models.CharField(db_column='BRANCH_GUID', max_length=32, verbose_name='Branch guid')
     branch_code = models.CharField(db_column='BRANCH_CODE', max_length=20, blank=True, null=True, verbose_name='Branch Code')
     branch_name = models.CharField(db_column='BRANCH_NAME', max_length=60, blank=True, null=True, verbose_name='Branch Name')
     branch_add = models.TextField(db_column='BRANCH_ADD', blank=True, null=True, verbose_name='Branch Address')

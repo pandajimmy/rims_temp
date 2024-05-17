@@ -5,9 +5,9 @@ from _lib import panda
 class DesignDynamic_S(models.Model):
     #dynamic_guid = models.CharField(primary_key=True, max_length=32)
     #dynamic_guid = models.CharField(primary_key=True, max_length=32,default=panda.panda_uuid,editable=False)
-    dynamic_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='Dynamic Globally Unique Identifier')
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer Globally Unique Identifier')
-    tab_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tab Globally Unique Identifier')
+    dynamic_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='Dynamic guid')
+    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
+    tab_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tab guid')
     isactive = models.SmallIntegerField(blank=True, null=True, verbose_name='Is Active')
     dynamic_seq = models.SmallIntegerField(blank=True, null=True, verbose_name='Dynamic sequence')
     dynamic_value = models.JSONField(blank=True, null=True, verbose_name='Dynamic value')

@@ -3,15 +3,15 @@ from django.db import connection
 
 # Create your models here.
 class TtaList_ts(models.Model):
-    list_guid = models.CharField(primary_key=True, max_length=32, verbose_name='List Globally Unique Identifier')
-    list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link Globally Unique Identifier')
+    list_guid = models.CharField(primary_key=True, max_length=32, verbose_name='List guid')
+    list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer Globally Unique Identifier')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
     refno = models.CharField(max_length=20, verbose_name='Reference Number')
-    supplier_guid = models.CharField(max_length=32, verbose_name='Supplier Globally Unique Identifier')
+    supplier_guid = models.CharField(max_length=32, verbose_name='Supplier guid')
     supplier_code = models.CharField(max_length=15, blank=True, null=True, verbose_name='Supplier Code')
     supplier_name = models.CharField(max_length=60, blank=True, null=True, verbose_name='Supplier Name')
-    bill_supp_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Bill Supplier Globally Unique Identifier')
+    bill_supp_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Bill Supplier guid')
     bill_supp_code = models.CharField(max_length=15, blank=True, null=True, verbose_name='Bill Supplier Code')
     bill_supp_name = models.CharField(max_length=60, blank=True, null=True, verbose_name='Bill Supplier Name')
     negotiation_year = models.TextField(blank=True, null=True, verbose_name='Negotiation Year')  # This field type is a guess.

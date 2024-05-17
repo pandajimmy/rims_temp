@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'drf_yasg',
+    'debug_toolbar',
     'nav_list',
     'django_filters',
     '_mc_design_template.apps.McDesignTemplateConfig',
@@ -56,6 +57,17 @@ INSTALLED_APPS = [
     '_mc_main_filter_child.apps.McMainFilterChildConfig',
     '_mc_tta_list.apps.McTtaListConfig',
     '_mc_tta_list_form.apps.McTtaListFormConfig',
+    '_mc_tta_list_purchase_n_rebates.apps.McTtaListPurchaseNRebatesConfig',
+    '_mc_tta_list_payment_n_discount.apps.McTtaListPaymentNDiscountConfig',
+    '_mc_tta_list_stock_n_deliveries.apps.McTtaListStockNDeliveriesConfig',
+    '_mc_tta_list_administration_fees.apps.McTtaListAdministrationFeesConfig',
+    '_mc_tta_list_business_growth_support.apps.McTtaListBusinessGrowthSupportConfig',
+    '_mc_tta_list_promotion_support.apps.McTtaListPromotionSupportConfig',
+    '_mc_tta_list_display_incentive.apps.McTtaListDisplayIncentiveConfig',
+    '_mc_tta_list_marketing_support.apps.McTtaListMarketingSupportConfig',
+    '_mc_tta_list_e_commerce_support.apps.McTtaListECommerceSupportConfig',
+    '_mc_tta_list_condition_of_trade.apps.McTtaListConditionOfTradeConfig',
+    '_mc_tta_list_trading_brand.apps.McTtaListTradingBrandConfig',
     '_mc_sysrun.apps.McSysrunConfig',
     '_mc_design_menu.apps.McDesignMenuConfig',
     '_mc_design_menu_child.apps.McDesignMenuChildConfig',
@@ -110,8 +122,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     
 ]
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda request: True,  # Always show the toolbar
+}
 
 ROOT_URLCONF = 'backend_rims.urls'
 
