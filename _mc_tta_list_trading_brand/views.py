@@ -13,8 +13,8 @@ class TtaListTradingBrandViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = TtaListTradingBrand.objects.all().order_by('brand_guid')
+    queryset = TtaListTradingBrand.objects.all().order_by('refno')
     serializer_class = TtaListTradingBrandSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
-    filterset_fields = ['brand_guid'] 
-    search_fields = ['brand_guid']
+    filterset_fields = ['refno'] 
+    search_fields = ['refno']

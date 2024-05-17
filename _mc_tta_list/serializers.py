@@ -27,8 +27,15 @@ class TtaListSerializer(serializers.ModelSerializer):
       def to_representation(self, instance):
         ret = super(TtaListSerializer, self).to_representation(instance)
         
+      # Accessing brand_code from the related TtaListTradingBrand instance
+        trading_brand_instance = instance.trading_brand_list.first()  # Assuming there's only one related trading brand
+        if trading_brand_instance:
+            ret['brand_code'] = trading_brand_instance.brand_code
+        else:
+            ret['brand_code'] = None  # Handle case where no related trading brand exists
+        
         # Tta Details
-        ret['trading_brand_list'] = TtaListTradingBrandSerializer(instance.trading_brand_list).data
+        ret['trading_brand_list'] = TtaListTradingBrandSerializer(instance.trading_brand_list, many=True).data
         ret['purchase_n_rebates_list'] = TtaListPurchaseNRebatesSerializer(instance.purchase_n_rebates_list).data
         ret['payment_n_discount_list'] = TtaListPaymentNDiscountSerializer(instance.payment_n_discount_list).data
         ret['stock_n_deliveries_list'] = TtaListStockNDeliveriesSerializer(instance.stock_n_deliveries_list).data

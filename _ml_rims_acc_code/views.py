@@ -22,7 +22,7 @@ class RimsAccCodeViewSet(viewsets.ModelViewSet):
     serializer_class = RimsAccCodeSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["in", "exact"],
         'acc_type': ["in", "exact"], # note the 'in' field 
         'tta_field': ["in","exact"],

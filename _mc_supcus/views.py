@@ -20,7 +20,7 @@ class SupcusViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['value','label']
 
-    filter_fields = {
+    filterset_fields = {
         #'code': ["in", "exact"], # note the 'in' field
         'name': ["exact"]
     }

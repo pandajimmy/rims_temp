@@ -16,7 +16,7 @@ class TtaInvmainViewSet(viewsets.ModelViewSet):
     serializer_class = TtaInvmainSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["exact"], # note the 'in' field
         'refno': ["in", "exact"], # note the 'in' field 
         'invmain_guid': ["in", "exact"], # note the 'in' field 

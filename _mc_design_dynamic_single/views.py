@@ -17,7 +17,7 @@ class DesignDynamic_SViewSet(viewsets.ModelViewSet):
     serializer_class = DesignDynamic_SSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     #filterset_fields = ['customer_guid','dynamic_guid', 'tab_guid'] 
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["exact"], # note the 'in' field
         'dynamic_guid': ["in","exact"],
         'tab_guid': ["in","exact"],

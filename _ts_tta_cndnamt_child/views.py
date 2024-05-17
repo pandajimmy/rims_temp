@@ -17,7 +17,7 @@ class TtaCndnAmtCViewSet(viewsets.ModelViewSet):
     serializer_class = TtaCndnAmtCSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["exact"], # note the 'in' field
         'child_guid': ["in", "exact"], # note the 'in' field 
         'cndn_guid': ["in", "exact"], # note the 'in' field 

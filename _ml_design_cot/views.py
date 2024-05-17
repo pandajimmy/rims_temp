@@ -17,7 +17,7 @@ class DesignCotViewSet(viewsets.ModelViewSet):
     serializer_class = DesignCotSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["in", "exact"], # note the 'in' field
         'tab_guid': ["in","exact"],
         'cot_group': ["in","exact"],

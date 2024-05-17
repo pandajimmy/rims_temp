@@ -17,7 +17,7 @@ class RimsBannerViewSet(viewsets.ModelViewSet):
     serializer_class = RimsBannerSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'concept': ["in", "exact"], # note the 'in' field
         'branch': ["in","exact"],
         'customer_guid': ["exact"],

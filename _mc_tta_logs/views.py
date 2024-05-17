@@ -17,7 +17,7 @@ class TtaLogsViewSet(viewsets.ModelViewSet):
     serializer_class = TtaLogsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'log_ref': ["in", "exact"], # note the 'in' field
         'log_guid': ["in","exact"]
     }

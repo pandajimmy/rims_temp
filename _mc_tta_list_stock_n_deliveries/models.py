@@ -8,7 +8,7 @@ class TtaListStockNDeliveries(models.Model):
     stock_guid = models.CharField(max_length=36, blank=True, editable=False, null=False, verbose_name='Stock guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
     customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
-    refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
+    refno = models.CharField(max_length=20, editable=False, verbose_name='Reference No.')
 
     # Cross Docking Allowance
     cross_docking_allowance_value = models.FloatField(blank=True, null=True, verbose_name='Cross Docking Allowance')

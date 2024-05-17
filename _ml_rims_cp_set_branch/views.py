@@ -19,7 +19,7 @@ class RimsCpSetBranchViewSet(viewsets.ModelViewSet):
     # filterset_fields = ['customer_guid','branch_code','branch_name'] 
     # search_fields = ['customer_guid','branch_code','branch_name'] 
 
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["in", "exact"], # note the 'in' field
         'branch_code': ["in","exact"],
         'branch_name': ["in","exact"],

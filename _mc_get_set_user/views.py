@@ -17,7 +17,7 @@ class SetUserViewSet(viewsets.ModelViewSet):
     serializer_class = SetUserSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
 #    filterset_fields = ['user_id','user_password'] 
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["in", "exact"], # note the 'in' field
         'user_id': ["in", "exact"], # note the 'in' field
         'user_password': ["exact"],

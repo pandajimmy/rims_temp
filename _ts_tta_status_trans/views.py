@@ -22,7 +22,7 @@ class TtaListStatusTransViewSet(viewsets.ModelViewSet):
     serializer_class = TtaListStatusTransSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'customer_guid': ["in", "exact"], # note the 'in' field 
         'list_guid': ["in","exact"],
         'trans_guid': ["in","exact"],

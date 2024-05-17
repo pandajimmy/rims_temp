@@ -17,7 +17,7 @@ class TtaListCalLogsViewSet(viewsets.ModelViewSet):
     serializer_class = TtaListCalLogsSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
-    filter_fields = {
+    filterset_fields = {
         'log_guid': ["in", "exact"],# note the 'in' field
         'customer_guid': ["in", "exact"], # note the 'in' field
         'list_guid': ["in","exact"],
