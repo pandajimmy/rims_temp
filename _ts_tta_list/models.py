@@ -3,23 +3,37 @@ from django.db import connection
 
 # Create your models here.
 class TtaList_ts(models.Model):
-    list_guid = models.CharField(primary_key=True, max_length=32, verbose_name='List guid')
+#list_guid = models.CharField(default=generate_uuid,primary_key=True, max_length=32)
+    list_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='List guid')
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
     customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
-    refno = models.CharField(max_length=20, verbose_name='Reference Number')
+    refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
+    
+    # Supplier Profile
     supplier_guid = models.CharField(max_length=32, verbose_name='Supplier guid')
     supplier_code = models.CharField(max_length=15, blank=True, null=True, verbose_name='Supplier Code')
     supplier_name = models.CharField(max_length=60, blank=True, null=True, verbose_name='Supplier Name')
     bill_supp_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Bill Supplier guid')
     bill_supp_code = models.CharField(max_length=15, blank=True, null=True, verbose_name='Bill Supplier Code')
     bill_supp_name = models.CharField(max_length=60, blank=True, null=True, verbose_name='Bill Supplier Name')
+    
+    # New Columns
+    supplier_add1 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
+    supplier_add2 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
+    supplier_add3 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
+    supplier_add4 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
+    supplier_add5 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
+    supplier_telno = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Tel No.')
+    supplier_faxno = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Fax No.')
+    
     negotiation_year = models.TextField(blank=True, null=True, verbose_name='Negotiation Year')  # This field type is a guess.
-    co_reg_no = models.CharField(max_length=32, blank=True, null=True, verbose_name='Company Registration Number')
+    co_reg_no = models.CharField(max_length=32,blank=True, null=True, verbose_name='Company Registration No.')
     tta_period_from = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tta Period From')
     tta_period_to = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tta Period To')
     internal_pic = models.CharField(max_length=60, blank=True, null=True, verbose_name='Internal PIC')
-    trading_group = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Group')
+    trading_group1 = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Group 1')
+    trading_group2 = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Group 2')    
     trading_type = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Type')
     delivery_mode = models.CharField(max_length=60, blank=True, null=True, verbose_name='Delivery Mode')
     returnable = models.CharField(max_length=10, blank=True, null=True, verbose_name='Returnable')
@@ -29,7 +43,10 @@ class TtaList_ts(models.Model):
     supplier_pic_contact = models.CharField(max_length=60, blank=True, null=True, verbose_name='Supplier PIC Contact')
     supplier_pic_email = models.CharField(max_length=60, blank=True, null=True, verbose_name='Supplier PIC Email')
     banner = models.TextField(blank=True, null=True, verbose_name='Banner')
-    outlet = models.TextField(blank=True, null=True, verbose_name='Outlet')
+    outlet1 = models.TextField(blank=True, null=True, verbose_name='Outlet1')
+    outlet2 = models.TextField(blank=True, null=True, verbose_name='Outlet2')
+    # exclude_outlet = models.TextField(blank=True, null=True, verbose_name='Exclude Outlet')
+    
     supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
     purchase_n_rebates = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
     payment_n_discount = models.JSONField(blank=True, null=True, verbose_name='Payment and Discount')

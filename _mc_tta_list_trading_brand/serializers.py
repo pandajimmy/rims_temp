@@ -9,3 +9,4 @@ class TtaListTradingBrandSerializer(serializers.ModelSerializer):
         model = TtaListTradingBrand
  #      depth = 1
         fields = '__all__'
+        read_only_fields = ['list_brand_guid', 'refno', 'code']

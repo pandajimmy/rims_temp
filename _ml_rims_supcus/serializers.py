@@ -23,7 +23,8 @@ class RimsSupcusSerializer(serializers.ModelSerializer):
     class Meta:
         model = RimsSupcus
         #  depth = 1
-        # fields = '__all__'
+        fields = '__all__'
+        '''
         fields = (
             'value',
             'label',
@@ -35,9 +36,9 @@ class RimsSupcusSerializer(serializers.ModelSerializer):
             'gst_no',
             'reg_no',
             'name_reg',
-            'term',
-            
+            'term',   
         )
+        '''
     
     def to_representation(self, instance):
         ret = super(RimsSupcusSerializer, self).to_representation(instance)

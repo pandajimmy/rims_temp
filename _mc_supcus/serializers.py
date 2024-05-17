@@ -18,11 +18,11 @@ class SupcusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supcus
  #      depth = 1
-        # fields = '__all__'
-        fields = (
-            'value',
-            'label',
-        )
+        fields = '__all__'
+        # fields = (
+        #    'value',
+        #    'label',
+        #)
     
     def to_representation(self, instance):
         ret = super(SupcusSerializer, self).to_representation(instance)
