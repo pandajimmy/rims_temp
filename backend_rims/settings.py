@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     '_mc_tta_list_business_growth_support.apps.McTtaListBusinessGrowthSupportConfig',
     '_mc_tta_list_promotion_support.apps.McTtaListPromotionSupportConfig',
     '_mc_tta_list_display_incentive.apps.McTtaListDisplayIncentiveConfig',
+    '_mc_tta_list_display_incentive_table.apps.McTtaListDisplayIncentiveTableConfig',
     '_mc_tta_list_marketing_support.apps.McTtaListMarketingSupportConfig',
     '_mc_tta_list_e_commerce_support.apps.McTtaListECommerceSupportConfig',
     '_mc_tta_list_condition_of_trade.apps.McTtaListConditionOfTradeConfig',

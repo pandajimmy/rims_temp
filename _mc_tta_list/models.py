@@ -55,7 +55,8 @@ class TtaList(models.Model):
     outlet1 = models.TextField(blank=True, null=True, verbose_name='Outlet1')
     outlet2 = models.TextField(blank=True, null=True, verbose_name='Outlet2')
     # exclude_outlet = models.TextField(blank=True, null=True, verbose_name='Exclude Outlet')
-    
+
+    '''
     supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
     purchase_n_rebates = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
     payment_n_discount = models.JSONField(blank=True, null=True, verbose_name='Payment and Discount')
@@ -70,6 +71,7 @@ class TtaList(models.Model):
     data_sharing_plan = models.JSONField(blank=True, null=True, verbose_name='Data Sharing Plan')
     condition_of_trade = models.JSONField(blank=True, null=True, verbose_name='Condition of Trade')
     effective_date = models.CharField(max_length=32, blank=True, null=True, verbose_name='Effective Date')
+    '''
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
     created_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Created by')
     updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')

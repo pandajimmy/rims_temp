@@ -19,7 +19,7 @@ class TtaListDisplayIncentive(models.Model):
     display_incentive_outlet_type = models.CharField(max_length=200, blank=True, null=True, verbose_name='Display Incentive Outlet Type')
     
     #Display Incentive Table
-    display_incentive_table_type = models.JSONField(blank=True, null=True, verbose_name='Display Incentive Table Type')
+    # display_incentive_table_type = models.JSONField(blank=True, null=True, verbose_name='Display Incentive Table Type')
     
     # Details of Creation
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')

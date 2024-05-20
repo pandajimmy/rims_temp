@@ -9,6 +9,7 @@ from _mc_tta_list_administration_fees.serializers import TtaListAdministrationFe
 from _mc_tta_list_business_growth_support.serializers import TtaListBusinessGrowthSupportSerializer
 from _mc_tta_list_promotion_support.serializers import TtaListPromotionSupportSerializer
 from _mc_tta_list_display_incentive.serializers import TtaListDisplayIncentiveSerializer
+from _mc_tta_list_display_incentive_table.serializers import TtaListDisplayIncentiveTableSerializer
 from _mc_tta_list_marketing_support.serializers import TtaListMarketingSupportSerializer
 from _mc_tta_list_e_commerce_support.serializers import TtaListECommerceSupportSerializer
 from _mc_tta_list_condition_of_trade.serializers import TtaListConditionOfTradeSerializer
@@ -37,6 +38,7 @@ class TtaListSerializer(serializers.ModelSerializer):
         ret['business_growth_support_list'] = TtaListBusinessGrowthSupportSerializer(instance.business_growth_support_list).data
         ret['promotion_support_list'] = TtaListPromotionSupportSerializer(instance.promotion_support_list).data
         ret['display_incentive_list'] = TtaListDisplayIncentiveSerializer(instance.display_incentive_list).data
+        ret['display_incentive_table_list'] = TtaListDisplayIncentiveTableSerializer(instance.display_incentive_table_list, many=True).data
         ret['marketing_support_list'] = TtaListMarketingSupportSerializer(instance.marketing_support_list).data
         ret['e_commerce_support_list'] = TtaListECommerceSupportSerializer(instance.e_commerce_support_list).data
         ret['condition_of_trade_list'] = TtaListConditionOfTradeSerializer(instance.condition_of_trade_list).data
