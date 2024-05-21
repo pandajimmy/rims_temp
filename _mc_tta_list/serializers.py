@@ -30,18 +30,18 @@ class TtaListSerializer(serializers.ModelSerializer):
         
  
         # Tta Details
-        ret['trading_brand_list'] = TtaListTradingBrandSerializer(instance.trading_brand_list, many=True).data
-        ret['purchase_n_rebates_list'] = TtaListPurchaseNRebatesSerializer(instance.purchase_n_rebates_list).data
-        ret['payment_n_discount_list'] = TtaListPaymentNDiscountSerializer(instance.payment_n_discount_list).data
-        ret['stock_n_deliveries_list'] = TtaListStockNDeliveriesSerializer(instance.stock_n_deliveries_list).data
-        ret['administration_fees_list'] = TtaListAdministrationFeesSerializer(instance.administration_fees_list).data
-        ret['business_growth_support_list'] = TtaListBusinessGrowthSupportSerializer(instance.business_growth_support_list).data
-        ret['promotion_support_list'] = TtaListPromotionSupportSerializer(instance.promotion_support_list).data
-        ret['display_incentive_list'] = TtaListDisplayIncentiveSerializer(instance.display_incentive_list).data
-        ret['display_incentive_table_list'] = TtaListDisplayIncentiveTableSerializer(instance.display_incentive_table_list, many=True).data
-        ret['marketing_support_list'] = TtaListMarketingSupportSerializer(instance.marketing_support_list).data
-        ret['e_commerce_support_list'] = TtaListECommerceSupportSerializer(instance.e_commerce_support_list).data
-        ret['condition_of_trade_list'] = TtaListConditionOfTradeSerializer(instance.condition_of_trade_list).data
+        ret['trading_brand'] = TtaListTradingBrandSerializer(instance.trading_brand, many=True).data
+        ret['purchase_n_rebates'] = TtaListPurchaseNRebatesSerializer(instance.purchase_n_rebates).data
+        ret['payment_n_discount'] = TtaListPaymentNDiscountSerializer(instance.payment_n_discount).data
+        ret['stock_n_deliveries'] = TtaListStockNDeliveriesSerializer(instance.stock_n_deliveries).data
+        ret['administration_fees'] = TtaListAdministrationFeesSerializer(instance.administration_fees).data
+        ret['business_growth_support'] = TtaListBusinessGrowthSupportSerializer(instance.business_growth_support).data
+        ret['promotion_support'] = TtaListPromotionSupportSerializer(instance.promotion_support).data
+        ret['display_incentive'] = TtaListDisplayIncentiveSerializer(instance.display_incentive).data
+        ret['display_incentive_table'] = TtaListDisplayIncentiveTableSerializer(instance.display_incentive_table, many=True).data
+        ret['marketing_support'] = TtaListMarketingSupportSerializer(instance.marketing_support).data
+        ret['e_commerce_support'] = TtaListECommerceSupportSerializer(instance.e_commerce_support).data
+        ret['condition_of_trade'] = TtaListConditionOfTradeSerializer(instance.condition_of_trade).data
 
         # check the request is list view or detail view
         is_list_view = isinstance(self.instance, list)

@@ -6,7 +6,7 @@ from _ml_rims_brand.models import RimsBrand
 
 class TtaListTradingBrand(models.Model):
     list_brand_guid = models.CharField(primary_key=True, max_length=32, verbose_name='List Brand Guid')
-    list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='trading_brand_list')
+    list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='trading_brand')
     brand_guid = models.ForeignKey(RimsBrand, max_length=32, on_delete=models.DO_NOTHING, db_column='brand_guid', verbose_name='Brand guid', related_name='trading_brand_guid_list')
     customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
 

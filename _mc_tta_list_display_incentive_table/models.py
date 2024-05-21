@@ -5,7 +5,7 @@ from _ml_rims_cp_set_branch.models import RimsCpSetBranch
 class TtaListDisplayIncentiveTable(models.Model):
     # Main Details
     tta_display_incentive_table_guid = models.CharField(primary_key=True, max_length=36, blank=True, null=False, editable=False, verbose_name='TTA List Display Incentive Table guid')
-    list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='display_incentive_table_list')
+    list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='display_incentive_table')
     customer_guid = models.CharField(max_length= 32, verbose_name='Customer guid')
 
     branch_guid = models.OneToOneField(RimsCpSetBranch, on_delete=models.DO_NOTHING, db_column='branch_guid', verbose_name='Branch guid', related_name='display_incentive_table_branch_list')

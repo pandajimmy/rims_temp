@@ -3,7 +3,7 @@ from _mc_tta_list.models import TtaList  # Import your TtaList model
 
 class TtaListStockNDeliveries(models.Model):
     # Main Details
-    list_guid = models.OneToOneField(TtaList, primary_key=True,on_delete=models.DO_NOTHING,db_column='list_guid', verbose_name='List guid', related_name='stock_n_deliveries_list')
+    list_guid = models.OneToOneField(TtaList, primary_key=True,on_delete=models.DO_NOTHING,db_column='list_guid', verbose_name='List guid', related_name='stock_n_deliveries')
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     stock_guid = models.CharField(max_length=36, blank=True, editable=False, null=False, verbose_name='Stock guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')

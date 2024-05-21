@@ -23,16 +23,16 @@ class TtaListViewSet(viewsets.ModelViewSet):
         
 
     queryset = TtaList.objects.all().order_by('refno').select_related(
-        'purchase_n_rebates_list',
-        'payment_n_discount_list',
-        'stock_n_deliveries_list',
-        'administration_fees_list',
-        'business_growth_support_list',
-        'promotion_support_list',
-        'display_incentive_list',
-        'marketing_support_list',
-        'e_commerce_support_list',
-        'condition_of_trade_list' 
+        'purchase_n_rebates',
+        'payment_n_discount',
+        'stock_n_deliveries',
+        'administration_fees',
+        'business_growth_support',
+        'promotion_support',
+        'display_incentive',
+        'marketing_support',
+        'e_commerce_support',
+        'condition_of_trade' 
       )
     serializer_class = TtaListSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
