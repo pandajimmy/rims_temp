@@ -2,6 +2,7 @@ from .models import TtaList
 from rest_framework import serializers
 from rest_framework.response import Response
 from _mc_tta_list_trading_brand.serializers import TtaListTradingBrandSerializer
+from _mc_tta_list_exclude_outlet.serializers import TtaListExcludeOutletSerializer
 from _mc_tta_list_purchase_n_rebates.serializers import TtaListPurchaseNRebatesSerializer
 from _mc_tta_list_payment_n_discount.serializers import TtaListPaymentNDiscountSerializer
 from _mc_tta_list_stock_n_deliveries.serializers import TtaListStockNDeliveriesSerializer
@@ -31,6 +32,7 @@ class TtaListSerializer(serializers.ModelSerializer):
  
         # Tta Details
         ret['trading_brand'] = TtaListTradingBrandSerializer(instance.trading_brand, many=True).data
+        ret['exclude_outlet'] = TtaListExcludeOutletSerializer(instance.exclude_outlet, many=True).data
         ret['purchase_n_rebates'] = TtaListPurchaseNRebatesSerializer(instance.purchase_n_rebates).data
         ret['payment_n_discount'] = TtaListPaymentNDiscountSerializer(instance.payment_n_discount).data
         ret['stock_n_deliveries'] = TtaListStockNDeliveriesSerializer(instance.stock_n_deliveries).data

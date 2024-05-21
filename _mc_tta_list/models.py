@@ -54,8 +54,7 @@ class TtaList(models.Model):
     banner = models.TextField(blank=True, null=True, verbose_name='Banner')
     outlet1 = models.TextField(blank=True, null=True, verbose_name='Outlet1')
     outlet2 = models.TextField(blank=True, null=True, verbose_name='Outlet2')
-    # exclude_outlet = models.TextField(blank=True, null=True, verbose_name='Exclude Outlet')
-
+    
     '''
     supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
     purchase_n_rebates = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
@@ -83,8 +82,8 @@ class TtaList(models.Model):
     reject_at = models.DateTimeField(blank=True, null=True, verbose_name='Reject at')
     reject_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Reject by')
     list_status = models.CharField(max_length=20, blank=True, null=True, verbose_name='List Status')
-    ecommerce_support = models.JSONField(blank=True, null=True, verbose_name='Ecommerce Support')
-    purchase_rebate_tier = models.JSONField(blank=True, null=True, verbose_name='Purchase Rebate Tier')
+    # ecommerce_support = models.JSONField(blank=True, null=True, verbose_name='Ecommerce Support')
+    # purchase_rebate_tier = models.JSONField(blank=True, null=True, verbose_name='Purchase Rebate Tier')
 
     class Meta:
         managed = False
