@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 class RimsSupcus(models.Model):
-    supcus_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Supcus guid')
-    customer_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Customer guid')
+    supcus_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Supcus guid')
+    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
     type = models.CharField(db_column='Type', max_length=1, verbose_name='Type')  # Field name made lowercase.
     code = models.CharField(db_column='Code', max_length=15, blank=True, null=True, verbose_name='Code')  # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=60, blank=True, null=True, verbose_name='Name')  # Field name made lowercase.
@@ -60,7 +60,6 @@ class RimsSupcus(models.Model):
     consign = models.SmallIntegerField(db_column='Consign', blank=True, null=True, verbose_name='Consign')  # Field name made lowercase.
     block = models.SmallIntegerField(db_column='Block', blank=True, null=True, verbose_name='Block')  # Field name made lowercase.
     exclude_orderqty_control = models.SmallIntegerField(blank=True, null=True, verbose_name='Exclude Order Quantity Control')
-    supcus_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Supcus guid')
     acc_no = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account No.')
     ord_w1 = models.SmallIntegerField(db_column='Ord_W1', blank=True, null=True, verbose_name='Ord W1')  # Field name made lowercase.
     ord_w2 = models.SmallIntegerField(db_column='Ord_W2', blank=True, null=True, verbose_name='Ord W2')  # Field name made lowercase.

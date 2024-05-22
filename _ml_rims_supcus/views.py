@@ -31,4 +31,4 @@ class RimsSupcusViewSet(viewsets.ModelViewSet):
     }
     search_fields = ['customer_guid','code','name', 'accountcode', 'type',
             'block', 'gst_no', 'reg_no', 'name_reg', 'term'] 
-    paginator = None
+    #paginator = None

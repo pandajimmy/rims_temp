@@ -24,4 +24,4 @@ class RimsBrandViewSet(viewsets.ModelViewSet):
         'description': ["in","exact"], 
     }
     search_fields = ['customer_guid','mcode','code','description']
-    paginator = None
+    # paginator = None
