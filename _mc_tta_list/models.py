@@ -29,10 +29,10 @@ class TtaList(models.Model):
     
     # New Columns
     supplier_add1 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
-    supplier_add2 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
-    supplier_add3 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
-    supplier_add4 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
-    supplier_add5 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 1')
+    supplier_add2 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 2')
+    supplier_add3 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 3')
+    supplier_add4 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 4')
+    supplier_add5 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Address 5')
     supplier_telno = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Tel No.')
     supplier_faxno = models.CharField(max_length=200, blank=True, null=True, verbose_name='Supplier Fax No.')
     
