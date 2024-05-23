@@ -159,10 +159,10 @@ WSGI_APPLICATION = 'backend_rims.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend_rims',                          #<= database name
-        'USER': 'root',
-        'PASSWORD': 'panda_web',
-        'HOST': 'localhost',                             #<=Based on your own setting
+        'NAME': 'backend_rims_new',                          #<= database name
+        'USER': 'panda_dev',
+        'PASSWORD': 'Dev@3323966',
+        'HOST': '192.168.9.246',                             #<=Based on your own setting
         'PORT': 3306,
     }
 }

@@ -1047,8 +1047,8 @@ class RimsSupcus(models.Model):
 
 
 class RimsSupcusLink(models.Model):
-    customer_guid = models.CharField(primary_key=True, max_length=32)
-    link_guid = models.CharField(max_length=32)
+    customer_guid = models.CharField(max_length=32)
+    link_guid = models.CharField(primary_key=True, max_length=32)
     supcus_guid = models.CharField(max_length=32, blank=True, null=True)
     selected_guid = models.CharField(max_length=32, blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)

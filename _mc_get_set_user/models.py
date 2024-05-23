@@ -1,7 +1,8 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
 
 class SetUser(models.Model):
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='set_user_customer_profile')
     loc_count = models.SmallIntegerField(blank=True, null=True, verbose_name='Count of Location')
     loc_group = models.CharField(max_length=32, blank=True, null=True, verbose_name='Group of Location')
     user_group_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='User Group guid')
