@@ -2057,7 +2057,7 @@ def export_excel(request,customer_guid, date_from, date_to):
     # return Response(result[0].payment_n_discount, status=status.HTTP_200_OK)
 # Create your views here.
 
-
+'''
 @api_view(['GET'])
 def testing(request):
     data = {
@@ -2082,7 +2082,7 @@ def testing(request):
                 } 
                 ]
             }
-
+'''
 
 #def export_excel_cal_main(request,customer_guid, date_from, date_to):
 # @api_view(['GET'])

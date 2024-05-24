@@ -1,9 +1,10 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
 
 # Create your models here.
 class RimsSupcus(models.Model):
     supcus_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Supcus guid')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='rims_supcus_customer_profile')
     type = models.CharField(db_column='Type', max_length=1, verbose_name='Type')  # Field name made lowercase.
     code = models.CharField(db_column='Code', max_length=15, blank=True, null=True, verbose_name='Code')  # Field name made lowercase.
     name = models.CharField(db_column='Name', max_length=60, blank=True, null=True, verbose_name='Name')  # Field name made lowercase.

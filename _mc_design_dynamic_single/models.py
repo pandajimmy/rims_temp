@@ -1,4 +1,6 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
+from _mc_design_tab.models import DesignTab
 from _lib import panda
 
 # Create your models here.
@@ -6,8 +8,8 @@ class DesignDynamic_S(models.Model):
     #dynamic_guid = models.CharField(primary_key=True, max_length=32)
     #dynamic_guid = models.CharField(primary_key=True, max_length=32,default=panda.panda_uuid,editable=False)
     dynamic_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='Dynamic guid')
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
-    tab_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tab guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='design_dynamic_single_customer_profile')
+    tab_guid = models.ForeignKey(DesignTab, on_delete=models.DO_NOTHING, db_column='tab_guid', verbose_name='Tab guid', related_name='design_dynamic_single_tab_guid')
     isactive = models.SmallIntegerField(blank=True, null=True, verbose_name='Is Active')
     dynamic_seq = models.SmallIntegerField(blank=True, null=True, verbose_name='Dynamic sequence')
     dynamic_value = models.JSONField(blank=True, null=True, verbose_name='Dynamic value')

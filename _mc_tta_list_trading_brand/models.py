@@ -3,12 +3,13 @@ import hashlib
 from django.db import models
 from _mc_tta_list.models import TtaList  # Import your TtaList model
 from _ml_rims_brand.models import RimsBrand
+from _mc_get_customer_profile.models import CustomerProfile
 
 class TtaListTradingBrand(models.Model):
     list_brand_guid = models.CharField(primary_key=True, max_length=32, verbose_name='List Brand Guid')
     list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='trading_brand')
     brand_guid = models.ForeignKey(RimsBrand, max_length=32, on_delete=models.DO_NOTHING, db_column='brand_guid', verbose_name='Brand guid', related_name='trading_brand_guid_list')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_trading_brand_customer_profile')
 
     class Meta:
         managed = False

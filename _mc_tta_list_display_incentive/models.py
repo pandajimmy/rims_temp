@@ -1,5 +1,6 @@
 from django.db import models
 from _mc_tta_list.models import TtaList  # Import your TtaList model
+from _mc_get_customer_profile.models import CustomerProfile
 
 class TtaListDisplayIncentive(models.Model):
     # Main Details
@@ -7,7 +8,7 @@ class TtaListDisplayIncentive(models.Model):
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     display_guid = models.CharField(max_length=36, blank=True, null=False, editable=False, verbose_name='Display Incentive guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_display_incentive_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
 
     # Incentive Type

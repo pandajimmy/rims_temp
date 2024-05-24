@@ -1,9 +1,10 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
 
 # Create your models here.
 class RimsBanner(models.Model):
     banner_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Banner guid')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='rims_banner_customer_profile')
     concept_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Concept guid')
     concept = models.CharField(max_length=100, blank=True, null=True, verbose_name='Concept')
     concept_inactive = models.SmallIntegerField(blank=True, null=True, verbose_name='Concept Inactive')

@@ -1,7 +1,8 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
 
 class DesignMainTemplate(models.Model):
-    customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='design_main_template_option_customer_profile')
     main_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Main guid')
     main_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Main Name')
     main_description = models.CharField(max_length=250, blank=True, null=True, verbose_name='Main Description')

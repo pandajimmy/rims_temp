@@ -1,12 +1,13 @@
 from django.db import models
 from _mc_tta_list.models import TtaList 
 from _ml_rims_cp_set_branch.models import RimsCpSetBranch
+from _mc_get_customer_profile.models import CustomerProfile
 
 class TtaListExcludeOutlet(models.Model):
     # Main Details
     tta_exclude_outlet_guid = models.CharField(primary_key=True, max_length=32, blank=True, null=False, editable=False, verbose_name='TTA List Exclude Outlet guid')
     list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='exclude_outlet')
-    customer_guid = models.CharField(max_length= 32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_exclude_outlet_customer_profile')
 
     branch_guid = models.OneToOneField(RimsCpSetBranch, on_delete=models.DO_NOTHING, db_column='branch_guid', verbose_name='Branch guid', related_name='exclude_outlet_branch')
     outlet = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet')

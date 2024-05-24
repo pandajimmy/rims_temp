@@ -1,9 +1,10 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
 
 class TtaListDetails(models.Model):
     # Main Details
     list_guid = models.CharField(primary_key=True, max_length=32, verbose_name='List guid')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_details_customer_profile')
     refno = models.CharField(max_length=20, verbose_name='Reference Number')
 
     # Supplier ID and Name

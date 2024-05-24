@@ -1,4 +1,5 @@
 from django.db import models
+from _mc_get_customer_profile.models import CustomerProfile
 from django.db import connection
 
 # Create your models here.
@@ -7,7 +8,7 @@ class TtaList_ts(models.Model):
     list_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='List guid')
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
-    customer_guid = models.CharField(max_length=32, verbose_name='Customer guid')
+    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='ts_tta_list_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
     
     # Supplier Profile
