@@ -18,7 +18,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('list_guid', models.OneToOneField(db_column='list_guid', on_delete=django.db.models.deletion.DO_NOTHING, primary_key=True, serialize=False, to='_mc_tta_list.ttalist', verbose_name='List guid')),
                 ('list_link_guid', models.CharField(blank=True, max_length=32, null=True, verbose_name='List Link guid')),
-                ('bgs_guid', models.CharField(blank=True, editable=False, max_length=36, verbose_name='Business Growth Support guid')),
                 ('revision', models.CharField(blank=True, max_length=100, null=True, verbose_name='Revision')),
                 ('customer_guid', models.CharField(max_length=32, verbose_name='Customer guid')),
                 ('refno', models.CharField(editable=False, max_length=20, verbose_name='Reference No.')),

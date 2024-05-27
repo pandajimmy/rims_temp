@@ -54,11 +54,11 @@ class TtaList(models.Model):
     outlet1 = models.TextField(blank=True, null=True, verbose_name='Outlet1')
     outlet2 = models.TextField(blank=True, null=True, verbose_name='Outlet2')
     
-    '''
-    supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
     
-    purchase_n_rebates_list = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
-
+    #supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
+    
+    #purchase_n_rebates_list = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
+    '''
     payment_n_discount = models.JSONField(blank=True, null=True, verbose_name='Payment and Discount')
     stock_n_deliveries = models.JSONField(blank=True, null=True, verbose_name='Stock and Deliveries')
     administration_fees = models.JSONField(blank=True, null=True, verbose_name='Administration Fees')
@@ -90,7 +90,7 @@ class TtaList(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'tta_list_backup'
+        db_table = 'tta_list'
         ordering = ('refno','list_guid')
 
     def __str__(self):
