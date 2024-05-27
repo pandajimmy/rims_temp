@@ -5,7 +5,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 # Create your models here.
 class DesignDynamic(models.Model):
     dynamic_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Dynamic guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='design_dynamic_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='design_dynamic_customer_profile')
     tab_guid = models.ForeignKey(DesignTab, models.DO_NOTHING, db_column='tab_guid',related_name='child_design_tab', verbose_name='Tab guid')
     isactive = models.SmallIntegerField(blank=True, null=True, verbose_name='Is Active')
     dynamic_seq = models.SmallIntegerField(blank=True, null=True, verbose_name='Dynamic sequence')

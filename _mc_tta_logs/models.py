@@ -5,7 +5,7 @@ from _lib import panda
 
 class TtaLogs(models.Model):
     log_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Log guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_logs_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_logs_customer_profile')
     log_module = models.CharField(max_length=255, blank=True, null=True, verbose_name='Log Module')
     log_ref = models.CharField(max_length=60, blank=True, null=True, verbose_name='Log Reference')
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')

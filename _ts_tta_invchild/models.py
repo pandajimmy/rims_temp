@@ -11,7 +11,7 @@ from django.db.models.signals import (
 
 # Create your models here.
 class TtaInvchild(models.Model):
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_invchild_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_invchild_customer_profile')
     invchild_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Child guid')
     invmain_guid = models.ForeignKey(TtaInvmain, models.DO_NOTHING, db_column='invmain_guid', related_name='invchild_key', verbose_name='Invoice Main guid')
     line = models.IntegerField(blank=True, null=True, verbose_name='Line')

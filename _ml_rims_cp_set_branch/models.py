@@ -3,7 +3,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 
 # Create your models here.
 class RimsCpSetBranch(models.Model):
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='rims_cp_set_branch_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='rims_cp_set_branch_customer_profile')
     branch_guid = models.CharField(primary_key=True, db_column='BRANCH_GUID', max_length=32, verbose_name='Branch guid')
     branch_code = models.CharField(db_column='BRANCH_CODE', max_length=20, blank=True, null=True, verbose_name='Branch Code')
     branch_name = models.CharField(db_column='BRANCH_NAME', max_length=60, blank=True, null=True, verbose_name='Branch Name')

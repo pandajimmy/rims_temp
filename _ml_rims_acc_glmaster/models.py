@@ -4,7 +4,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 
 class RimsAccGlmaster(models.Model):
     glmaster_guid = models.CharField(primary_key=True, max_length=32, verbose_name='GL Master guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='acc_glmaster_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='acc_glmaster_customer_profile')
     acc_type = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account Type')
     acc_code = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account Code')
     acc_description = models.CharField(max_length=60, blank=True, null=True, verbose_name='Account Description')

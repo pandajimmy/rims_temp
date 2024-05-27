@@ -8,7 +8,7 @@ class TtaListPromotionSupport(models.Model):
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     promotion_guid = models.CharField(max_length=36, blank=True, null=False, editable=False, verbose_name='Promotion Support guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_promotion_support_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_promotion_support_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
 
     # Middle Year Big Sales

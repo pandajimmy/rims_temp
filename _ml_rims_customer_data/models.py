@@ -5,7 +5,7 @@ from _mc_tta_list.models import TtaList
 # Create your models here.
 class RimsCustomerData(models.Model):
     data_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Data guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='rims_customer_data_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='rims_customer_data_customer_profile')
     list_guid = models.OneToOneField(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='rims_customer_data_tta_list')
     module_type = models.CharField(max_length=60, blank=True, null=True, verbose_name='Module Type')
     date_from = models.DateField(blank=True, null=True, verbose_name='Date From')

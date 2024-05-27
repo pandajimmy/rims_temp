@@ -4,7 +4,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 
 # Create your models here.
 class TtaCndnAmt(models.Model):
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cndnamt_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cndnamt_customer_profile')
     cndn_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cndn guid')
     trans_type = models.CharField(max_length=10, blank=True, null=True, verbose_name='Transaction Type')
     loc_group = models.CharField(max_length=20, blank=True, null=True, verbose_name='Location Group')

@@ -4,7 +4,7 @@ from _lib import panda
 
 # Create your models here.
 class TtaListStatusTrans(models.Model):
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='ts_tta_status_trans_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='ts_tta_status_trans_customer_profile')
     list_guid = models.CharField(max_length=32, verbose_name='List guid', blank=True, null=True)
     trans_guid = models.CharField(primary_key=True, max_length=32, editable=False, verbose_name='Transaction guid')
     status_key = models.CharField(max_length=30, verbose_name='Status Key', blank=True, null=True)

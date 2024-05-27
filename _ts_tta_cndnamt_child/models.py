@@ -4,7 +4,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 
 # Create your models here.
 class TtaCndnAmtC(models.Model):
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cndn_amt_child_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cndn_amt_child_customer_profile')
     child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child guid')
     cndn_guid = models.ForeignKey(TtaCndnAmt, models.DO_NOTHING, db_column='cndn_guid', related_name='cndn_guid_key', verbose_name='Cndn guid')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')

@@ -9,7 +9,7 @@ from django.db.models.signals import (
 )
 # Create your models here.
 class TtaInvmain(models.Model):
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_invmain_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_invmain_customer_profile')
     invmain_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Main guid')
     refno = models.CharField(max_length=20, blank=True, null=True, verbose_name='Reference Number')
     docno = models.CharField(max_length=25, blank=True, null=True, verbose_name='Document Number')

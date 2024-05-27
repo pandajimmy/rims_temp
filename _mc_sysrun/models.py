@@ -3,7 +3,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 
 class Sysrun(models.Model):
     sysrun_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Sysrun guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='sysrun_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='sysrun_customer_profile')
     customer_prefix = models.CharField(max_length=5, verbose_name='Customer Prefix')
     type = models.CharField(db_column='Type', blank=True, max_length=10, verbose_name='Type')  # Field name made lowercase.
     code = models.CharField(db_column='Code', blank=True, max_length=10, verbose_name='Code')

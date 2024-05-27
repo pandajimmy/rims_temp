@@ -8,7 +8,7 @@ class TtaList_ts(models.Model):
     list_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='List guid')
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='ts_tta_list_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='ts_tta_list_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
     
     # Supplier Profile
@@ -48,6 +48,7 @@ class TtaList_ts(models.Model):
     outlet2 = models.TextField(blank=True, null=True, verbose_name='Outlet2')
     # exclude_outlet = models.TextField(blank=True, null=True, verbose_name='Exclude Outlet')
     
+    '''
     supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
     purchase_n_rebates = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
     payment_n_discount = models.JSONField(blank=True, null=True, verbose_name='Payment and Discount')
@@ -61,6 +62,8 @@ class TtaList_ts(models.Model):
     concess_n_consign = models.JSONField(blank=True, null=True, verbose_name='Concession and Consignment')
     data_sharing_plan = models.JSONField(blank=True, null=True, verbose_name='Data Sharing Plan')
     condition_of_trade = models.JSONField(blank=True, null=True, verbose_name='Condition of Trade')
+    '''
+
     effective_date = models.CharField(max_length=32, blank=True, null=True, verbose_name='Effective Date')
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
     created_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Created by')
@@ -73,8 +76,10 @@ class TtaList_ts(models.Model):
     reject_at = models.DateTimeField(blank=True, null=True, verbose_name='Reject Date')
     reject_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Reject by')
     list_status = models.CharField(max_length=20, blank=True, null=True, verbose_name='List Status')
+    '''
     ecommerce_support = models.JSONField(blank=True, null=True, verbose_name='E-commerce Support')
     purchase_rebate_tier = models.JSONField(blank=True, null=True, verbose_name='Purchase Rebate Tier')
+    '''
 
     class Meta: 
         managed = False

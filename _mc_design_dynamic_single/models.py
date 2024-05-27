@@ -8,7 +8,7 @@ class DesignDynamic_S(models.Model):
     #dynamic_guid = models.CharField(primary_key=True, max_length=32)
     #dynamic_guid = models.CharField(primary_key=True, max_length=32,default=panda.panda_uuid,editable=False)
     dynamic_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='Dynamic guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='design_dynamic_single_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='design_dynamic_single_customer_profile')
     tab_guid = models.ForeignKey(DesignTab, on_delete=models.DO_NOTHING, db_column='tab_guid', verbose_name='Tab guid', related_name='design_dynamic_single_tab_guid')
     isactive = models.SmallIntegerField(blank=True, null=True, verbose_name='Is Active')
     dynamic_seq = models.SmallIntegerField(blank=True, null=True, verbose_name='Dynamic sequence')

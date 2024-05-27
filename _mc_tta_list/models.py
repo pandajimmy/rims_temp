@@ -15,7 +15,7 @@ class TtaList(models.Model):
     list_guid = models.CharField(primary_key=True, max_length=32,editable=False, verbose_name='List guid')
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_list_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_list_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
     
     # Supplier Profile
@@ -56,7 +56,9 @@ class TtaList(models.Model):
     
     '''
     supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
-    purchase_n_rebates = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
+    
+    purchase_n_rebates_list = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
+
     payment_n_discount = models.JSONField(blank=True, null=True, verbose_name='Payment and Discount')
     stock_n_deliveries = models.JSONField(blank=True, null=True, verbose_name='Stock and Deliveries')
     administration_fees = models.JSONField(blank=True, null=True, verbose_name='Administration Fees')
@@ -70,6 +72,8 @@ class TtaList(models.Model):
     condition_of_trade = models.JSONField(blank=True, null=True, verbose_name='Condition of Trade')
     effective_date = models.CharField(max_length=32, blank=True, null=True, verbose_name='Effective Date')
     '''
+    calMethod =  models.CharField(max_length=100, blank=True, null=True, verbose_name='Cal Method')
+    calValue =  models.FloatField(blank=True, null=True, verbose_name='Cal Value')
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
     created_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Created by')
     updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')
@@ -86,7 +90,7 @@ class TtaList(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'tta_list'
+        db_table = 'tta_list_backup'
         ordering = ('refno','list_guid')
 
     def __str__(self):

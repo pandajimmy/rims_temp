@@ -5,7 +5,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 # Create your models here.
 class TtaListCalLogs(models.Model):
     log_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Log guid')
-    customer_guid = models.OneToOneField(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cal_log_customer_profile')
+    customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cal_log_customer_profile')
     list_guid = models.CharField(max_length=32, verbose_name='List guid')
     log_module = models.CharField(max_length=255, blank=True, null=True, verbose_name='Log Module')
     log_ref = models.CharField(max_length=60, blank=True, null=True, verbose_name='Log Reference')
