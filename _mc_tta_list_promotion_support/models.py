@@ -6,7 +6,6 @@ class TtaListPromotionSupport(models.Model):
     # Main Details
     list_guid = models.OneToOneField(TtaList, primary_key=True,on_delete=models.DO_NOTHING,db_column='list_guid', verbose_name='List guid', related_name="promotion_support")
     list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
-    promotion_guid = models.CharField(max_length=36, blank=True, null=False, editable=False, verbose_name='Promotion Support guid')
     revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_promotion_support_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
