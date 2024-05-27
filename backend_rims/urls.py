@@ -101,6 +101,7 @@ ts_included_endpoints = [
     path('ts_tta_cal_log/', include('_ts_tta_cal_log.urls')),
     path('ts_tta_cndnamt/', include('_ts_tta_cndnamt.urls')),
     path('ts_tta_invmain/', include('_ts_tta_invmain.urls')),
+    path('ts_tta_status_trans/', include('_ts_tta_status_trans.urls')),
 ]
 
 # Full API schema view
@@ -254,4 +255,7 @@ urlpatterns = [
     path('ts_tta_cal_log/', include('_ts_tta_cal_log.urls')),
     path('ts_tta_cndnamt/', include('_ts_tta_cndnamt.urls')),
     path('ts_tta_invmain/', include('_ts_tta_invmain.urls')),
+
+    path('ts_tta_status_trans/', include('_ts_tta_status_trans.urls')),
+
 ]
