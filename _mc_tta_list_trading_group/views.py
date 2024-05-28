@@ -1,21 +1,21 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status
-from .models import TtaListOutlet
+from .models import TtaListTradingGroup
 
 # Create your views here.
 from rest_framework import viewsets
-from .serializers import TtaListOutletSerializer
+from .serializers import TtaListTradingGroupSerializer
 from rest_framework import filters
 import django_filters.rest_framework
 
 
-class TtaListOutletViewSet(viewsets.ModelViewSet):
+class TtaListTradingGroupViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = TtaListOutlet.objects.all()
-    serializer_class = TtaListOutletSerializer
+    queryset = TtaListTradingGroup.objects.all()
+    serializer_class = TtaListTradingGroupSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     filterset_fields = [] 
     search_fields = []
@@ -32,8 +32,8 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
         
         # Additional logic for setting fields based on related objects
         instance = serializer.instance  # Get the newly created instance
-        if not instance.tta_outlet_guid:
-            instance.tta_outlet_guid = instance.generate_unique_guid()  # Generate unique tta_outlet_guid
+        if not instance.list_group_guid:
+            instance.list_group_guid = instance.generate_unique_guid()  # Generate unique list_group_guid
         
         instance.save()  # Save the instance with the updated fields
 
@@ -44,17 +44,3 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        # Check if branch_guid has changed
-        instance = serializer.instance
-        old_branch_guid = instance.branch_guid
-        new_branch_guid = serializer.validated_data.get('branch_guid')
-        
-        if old_branch_guid != new_branch_guid:
-            # If branch_guid has changed, update the code
-            if new_branch_guid:
-                instance.branch_guid =new_branch_guid
-                instance.code = new_branch_guid.code
-        
-        instance.save()  # Save the instance with the updated fields

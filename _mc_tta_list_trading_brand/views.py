@@ -34,10 +34,6 @@ class TtaListTradingBrandViewSet(viewsets.ModelViewSet):
         instance = serializer.instance  # Get the newly created instance
         if not instance.list_brand_guid:
             instance.list_brand_guid = instance.generate_unique_guid()  # Generate unique list_brand_guid
-        if not instance.refno and instance.list_guid:
-            instance.refno = instance.list_guid.refno  # Set refno from related TtaList instance
-        if not instance.code and instance.brand_guid:
-            instance.code = instance.brand_guid.code  # Set code from related RimsBrand instance
         
         instance.save()  # Save the instance with the updated fields
 
@@ -48,17 +44,3 @@ class TtaListTradingBrandViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        # Check if brand_guid has changed
-        instance = serializer.instance
-        old_brand_guid = instance.brand_guid
-        new_brand_guid = serializer.validated_data.get('brand_guid')
-        
-        if old_brand_guid != new_brand_guid:
-            # If brand_guid has changed, update the code
-            if new_brand_guid:
-                instance.brand_guid =new_brand_guid
-                instance.code = new_brand_guid.code
-        
-        instance.save()  # Save the instance with the updated fields

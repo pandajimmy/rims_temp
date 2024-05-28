@@ -9,7 +9,7 @@ class TtaListDisplayIncentiveTable(models.Model):
     list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='display_incentive_table')
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_display_incentive_table_customer_profile')
 
-    branch_guid = models.OneToOneField(RimsCpSetBranch, on_delete=models.DO_NOTHING, db_column='branch_guid', verbose_name='Branch guid', related_name='display_incentive_table_branch')
+    branch_guid = models.ForeignKey(RimsCpSetBranch, on_delete=models.DO_NOTHING, db_column='branch_guid', verbose_name='Branch guid', related_name='display_incentive_table_branch')
     
     code = models.CharField(max_length=200, blank=True, null=True, verbose_name='Code')
     outlet = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet')

@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     '_mc_tta_list_e_commerce_support.apps.McTtaListECommerceSupportConfig',
     '_mc_tta_list_condition_of_trade.apps.McTtaListConditionOfTradeConfig',
     '_mc_tta_list_trading_brand.apps.McTtaListTradingBrandConfig',
+    '_mc_tta_list_trading_group.apps.McTtaListTradingGroupConfig',
     '_mc_tta_list_outlet.apps.McTtaListOutletConfig',
     '_mc_tta_list_exclude_outlet.apps.McTtaListExcludeOutletConfig',
     '_mc_sysrun.apps.McSysrunConfig',

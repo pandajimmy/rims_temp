@@ -1,3 +1,5 @@
+import uuid
+import hashlib
 from django.db import models
 from _mc_tta_list.models import TtaList 
 from _ml_rims_cp_set_branch.models import RimsCpSetBranch
@@ -8,7 +10,7 @@ class TtaListOutlet(models.Model):
     tta_outlet_guid = models.CharField(primary_key=True, max_length=32, blank=True, null=False, editable=False, verbose_name='TTA List Exclude Outlet guid')
     list_guid = models.ForeignKey(TtaList, on_delete=models.DO_NOTHING, db_column='list_guid', verbose_name='List guid', related_name='outlet')
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_outlet_customer_profile')
-    branch_guid = models.OneToOneField(RimsCpSetBranch, on_delete=models.DO_NOTHING, db_column='branch_guid', verbose_name='Branch guid', related_name='outlet_branch')
+    branch_guid = models.ForeignKey(RimsCpSetBranch, on_delete=models.DO_NOTHING, db_column='branch_guid', verbose_name='Branch guid', related_name='outlet_branch')
     
     outlet_type = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet Type')
     outlet_code = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet Code')
@@ -33,4 +35,17 @@ class TtaListOutlet(models.Model):
         return self.list_guid
 
     def get_absolute_url(self):
-        return f'/{self.list_guid}/'  
+        return f'/{self.list_guid}/'
+
+    def save(self, *args, **kwargs):
+        # Ensure tta_outlet_guid is set
+        if not self.tta_outlet_guid:
+            self.tta_outlet_guid = self.generate_unique_guid()
+        
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def generate_unique_guid():
+        def random_guid_part():
+            return hashlib.md5(uuid.uuid4().bytes).hexdigest()[:8].upper()
+        return ''.join(random_guid_part() for _ in range(4))

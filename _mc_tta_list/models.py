@@ -40,8 +40,7 @@ class TtaList(models.Model):
     tta_period_from = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tta Period From')
     tta_period_to = models.CharField(max_length=32, blank=True, null=True, verbose_name='Tta Period To')
     internal_pic = models.CharField(max_length=60, blank=True, null=True, verbose_name='Internal PIC')
-    trading_group1 = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Group 1')
-    trading_group2 = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Group 2')    
+    trading_group_type = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Group Type')
     trading_type = models.CharField(max_length=60, blank=True, null=True, verbose_name='Trading Type')
     delivery_mode = models.CharField(max_length=60, blank=True, null=True, verbose_name='Delivery Mode')
     returnable = models.CharField(max_length=10, blank=True, null=True, verbose_name='Returnable')
@@ -51,14 +50,11 @@ class TtaList(models.Model):
     supplier_pic_contact = models.CharField(max_length=60, blank=True, null=True, verbose_name='Supplier PIC Contact')
     supplier_pic_email = models.CharField(max_length=60, blank=True, null=True, verbose_name='Supplier PIC Email')
     banner = models.TextField(blank=True, null=True, verbose_name='Banner')
-    outlet1 = models.TextField(blank=True, null=True, verbose_name='Outlet1')
-    outlet2 = models.TextField(blank=True, null=True, verbose_name='Outlet2')
+    outlet_type = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet Type')
     
-    
-    #supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
-    
-    #purchase_n_rebates_list = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
-    '''
+    '''    
+    supplier_profile = models.JSONField(blank=True, null=True, verbose_name='Supplier Profile')
+    purchase_n_rebates_list = models.JSONField(blank=True, null=True, verbose_name='Purchase and Rebates')
     payment_n_discount = models.JSONField(blank=True, null=True, verbose_name='Payment and Discount')
     stock_n_deliveries = models.JSONField(blank=True, null=True, verbose_name='Stock and Deliveries')
     administration_fees = models.JSONField(blank=True, null=True, verbose_name='Administration Fees')

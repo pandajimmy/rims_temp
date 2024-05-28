@@ -24,8 +24,7 @@ class TtaListDetails(models.Model):
     internal_pic = models.CharField(max_length=200, blank=True, null=True, verbose_name='Internal PIC')
     
     # Trading Information
-    trading_group1 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Trading Group 1')
-    trading_group2 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Trading Group 2')
+    trading_group_type = models.CharField(max_length=200, blank=True, null=True, verbose_name='Trading Group Type')
     trading_type = models.CharField(max_length=200, blank=True, null=True, verbose_name='Trading Type')
     delivery_mode = models.CharField(max_length=200, blank=True, null=True, verbose_name='Delivery Mode')
     returnable = models.CharField(max_length=200, blank=True, null=True, verbose_name='Returnable')
@@ -41,10 +40,7 @@ class TtaListDetails(models.Model):
     banner = models.CharField(max_length=200, blank=True, null=True, verbose_name='Banner')
 
     #Outlet
-    outlet1 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet 1')
-    outlet2 = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet 2')
-
-    
+    outlet_type = models.CharField(max_length=200, blank=True, null=True, verbose_name='Outlet Type')
 
     #Status of the Tta List Details
     effective_date = models.CharField(max_length=200, blank=True, null=True, verbose_name='Effective Date')
