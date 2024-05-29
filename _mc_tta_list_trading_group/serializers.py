@@ -7,7 +7,7 @@ from rest_framework import serializers
 class TtaListTradingGroupSerializer(serializers.ModelSerializer):
  #       subdept_key = SubdeptSerializer(many=True, read_only=True)
 
-    group_details = RimsDivDeptSdCSerializer(required=False)    
+    group_details = RimsDivDeptSdCSerializer(read_only=True, source='trans_guid')    
 
     class Meta:
         model = TtaListTradingGroup
