@@ -80,7 +80,7 @@ def calRebate(calType,calValue,calAmount):
     if calType == '%':
         return round((calValue/100) * float(calAmount), 4)
 
-def rebate(param):
+def rebate(param): 
     json = []
     purchase = gr_sum(param)
     if purchase["status"] == False:

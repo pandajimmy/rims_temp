@@ -115,6 +115,11 @@ def daterange_condition(label , cal_date, var_date_from, var_date_to):
 
 #create data into inv child and header
 def create_inv_header_child(data, customer_guid, result, calval_method):
+                            print(f"Data type: {type(data)}")
+                            print(f"Data content: {data}")
+                            print(f"Result type: {type(result)}")
+                            print(f"Result content: {result}")
+
                             if(calval_method == 'non_tier'):
                                 if(result['value'] != 0):
                                     if(data['prefix1'] == '%'): 
@@ -305,7 +310,7 @@ def check_tta(request):
 
         consolidate_result = []
         tier_result = {}
-        dicts = [] 
+        dicts = []
 
         live_mode = True 
 
@@ -333,37 +338,96 @@ def check_tta(request):
             # return Response({"status":"true","result":'Bypass Date Out of Range'})
         
         # Extract individual columns from the request
-        supplier_guid = request.POST.get('supplier_guid')
-        supplier_name = request.POST.get('supplier_name')
-        outlet1 = request.POST.get('outlet1')
-        outlet2 = request.POST.get('outlet2')
+        for result_1 in consolidate_result:
+            supplier_guid = result_1.supplier_guid
+            supplier_name = result_1.supplier_name
+            outlet_type = result_1.outlet_type
+
+        #Numbers of List
+        outlet_list = []
+        exclude_outlet_list = []
+        trading_brand_list = []
+        purchase_list = []
+        payment_list = []
+        stock_list = []
+        administration_list = []
+        business_growth_support_list = []
+        promotion_support_list = []
+        marketing_support_list = []
+        e_commerce_support_list = []
+          
+        for list_guid in list_guid_array:
+            result_1 = TtaList.objects.get(customer_guid=customer_guid, list_guid=list_guid)
+            outlet_list.append(result_1.outlet.values()) 
+            exclude_outlet_list.append(result_1.exclude_outlet.values_list('tta_exclude_outlet_guid', flat=True))
+            trading_brand_list.extend(result_1.trading_brand.values_list('brand_guid_id', flat=True)) 
+            purchase_list.append(result_1.purchase_n_rebates)
+            payment_list.append(result_1.payment_n_discount)
+            stock_list.append(result_1.stock_n_deliveries)
+            administration_list.append(result_1.administration_fees)
+            business_growth_support_list.append(result_1.business_growth_support)
+            promotion_support_list.append(result_1.promotion_support)
+            marketing_support_list.append(result_1.marketing_support)
+            e_commerce_support_list.append(result_1.e_commerce_support)
+
+        #Outlet
+        print("Outlet Type: ", outlet_type)
+
+        outlet_branch_guids = []
+
+        for outlet_item in outlet_list:
+            for item in outlet_item:
+                #print("Outlet Item: ", item)
+                outlet_branch_guids.append(item['branch_guid_id'])  # Accessing the 'branch_guid' key of the dictionary
 
         # Process each field individually using the extracted values
-        if outlet1 == "All":
+        if outlet_type == "All":
             q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
             outlet = list(q_outlet)
-        elif outlet1 == "Outlet" and outlet2:
-            val_outlet = outlet2.split(',')
-            q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=val_outlet).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
+        elif outlet_type == "Outlet":
+            q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=outlet_branch_guids).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
             outlet = list(q_outlet)
         else:
             outlet = []  # Default value when conditions don't match
 
-        exclude_outlets = request.POST.getlist('exclude_outlet[]')  # Assuming 'exclude_outlet' is an array in the POST data
-        excluded_branch_guids = []
+        
+        print("Outlet Info: ", outlet)
 
-        for exclude_outlet in exclude_outlets:
-            excluded_branch_guids.append(exclude_outlet['branch']['branch_guid'])
+        #Exclude Outlet
+        print("Exclude Outlet List: ", exclude_outlet_list)
 
-        q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).exclude(branch_guid__in=excluded_branch_guids).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-        outlet = list(q_outlet) 
+        tta_exclude_outlet_guids = []
 
-        trading_brands = request.POST.getlist('trading_brand[]')  # Assuming 'trading_brand' is an array in the POST data
-        brands = []  # Initialize an empty list to store the brand codes
-        for trading_brand in trading_brands:
-            brand_guid = trading_brand['brand']['brand_guid']
-            q_brand = RimsBrand.objects.filter(brand_guid=brand_guid, customer_guid=customer_guid).values_list('code', flat=True)
-            brands.extend(q_brand) 
+        for exclude_item in exclude_outlet_list:
+            print("Brand Item: ", exclude_item)
+            tta_exclude_outlet_guids.append(exclude_item) 
+        
+        # Process each field individually using the extracted values
+        if len(exclude_outlet_list) != 0:  # Fixing the if condition
+            q_brand = RimsCpSetBranch.objects.exclude(set_active=0).exclude(branch_guid__in=tta_exclude_outlet_guids).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
+            outlet = list(q_outlet)
+        else:
+            outlet = []  # Default value when conditions don't match
+
+        print("Exclude Outlet Info: ", outlet)
+
+        #Trading Brand
+        print("Trading Brand List: ", trading_brand_list)
+
+        trading_brand_guids = []
+
+        for brand_item in trading_brand_list:
+            print("Brand Item: ", brand_item)
+            trading_brand_guids.append(brand_item) 
+
+        # Process each field individually using the extracted values
+        if len(trading_brand_list) != 0:  # Fixing the if condition
+            q_brand = RimsBrand.objects.filter(brand_guid__in=trading_brand_guids, customer_guid=customer_guid).values_list('code', flat=True)
+            brands = list(q_brand)
+        else:
+            brands = []  # Default value when conditions don't match
+
+        print("Trading Brand Info: ", brands)
 
         # Process 'supplier_name' field
         if supplier_name:
@@ -371,217 +435,70 @@ def check_tta(request):
             q_supcode = RimsSupcus.objects.filter(supcus_guid__in=val_supplier_guid).filter(customer_guid=customer_guid).values_list('code', flat=True)
             supcode = list(q_supcode)
 
-        for result_1 in consolidate_result:
-            purchase_n_rebates = result_1.purchase_n_rebates
-            payment_n_discount = result_1.payment_n_discount
-            stock_n_deliveries = result_1.stock_n_deliveries
-            administration_fees = result_1.administration_fees
-            supcode = result_1.bill_supp_code
-        
-        # Purchase_n_rebates 
-        purchase_list = []
+        #Purchase N Rebates
+        print("Purchase List: ", purchase_list)
 
-        for list_guid in list_guid_array:
-            result_1 = TtaList.objects.get(customer_guid=customer_guid, list_guid=list_guid)
-            purchase_list.append(result_1.purchase_n_rebates)
+        # Define the rebate fields to look for
+        rebate_fields = [
+            "unconditional_rebate_value", "commission_value", "auto_replenishment_rebate_value",
+            "common_assortment_rebate_value", "monthly_discount_value",
+            "target_purchase_tier_1_value1", "target_purchase_tier_1_value2", "target_purchase_tier_2_value1",
+            "target_purchase_tier_2_value2", "target_purchase_tier_3_value1", "target_purchase_tier_3_value2",
+            "target_growth_tier_1_value1", "target_growth_tier_1_value2", "target_growth_tier_2_value1",
+            "target_growth_tier_2_value2", "target_growth_tier_3_value1", "target_growth_tier_3_value2"
+        ]
 
-        print(purchase_list)
-
+        # Iterating over each purchase and rebates object
         for purchase in purchase_list:
-            for rebate_key, rebate_value in purchase.__dict__.items():
-                # Skip non-rebate fields and fields with zero value
-                if rebate_key.endswith('_value') and rebate_value > 0.0:
-                    rebate_type_key = rebate_key.replace('_value', '_type')
-                    rebate_type_value = getattr(purchase, rebate_type_key)
-                    rebate_value_type_key = rebate_key.replace('_value', '_value_type')
-                    rebate_value_type_value = getattr(purchase, rebate_value_type_key)
+            print("Processing Purchase and Rebates: ", purchase.refno)
+            
+            for rebate_key in rebate_fields:
+                rebate_value = getattr(purchase, rebate_key, None)
+                if rebate_value is not None and rebate_value > 0.0:
+                    print(f"Key: {rebate_key}, Value: {rebate_value}")
 
-                    print("Rebate Value: ", rebate_value)
-                    print("Rebate Type Key: ", rebate_type_key)
-                    print("Rebate Type Value: ", rebate_type_value)
-                    print("Rebate Value Type Key: ", rebate_value_type_key)
-                    print("Rebate Value Type Value: ", rebate_value_type_value)
-
-                    if rebate_value_type_value in ['GPV', 'NPV', 'Monthly', 'Yearly']:
-                        q_type = 'gr_gross_sum' if rebate_value_type_value == 'GPV' else 'gr_net_sum' if rebate_value_type_value == 'NPV' else 'Monthly' if rebate_value_type_value == 'Monthly' else 'Yearly'
-
-                    label = rebate_key.replace('_value', '').replace('_', ' ').title()
-
-                    print("Q Type: ", q_type)
-                    print("Label: ", label)
-
-                    data = {
-                        "customer_guid": customer_guid,
-                        "refno": result_1.refno,
-                        "code": result_1.supplier_code,
-                        "name": result_1.supplier_name,
-                        "prefix1": rebate_type_value,
-                        "type": q_type,
-                        "label": label,
-                        "startDate": datefrom,
-                        "endDate": dateto,
-                        "outlet": outlet,
-                        "brand": brands,
-                        "supcode": supcode,
-                        "bf_amount": rebate_value,
-                        "rebate_method": [
-                            {
-                                "range": Decimal(0.00),
-                                "type": '%',
-                                "value": Decimal(0.00)
-                            }
-                        ]
-                    }
-
-                    print("Customer GUID: ", customer_guid)
-                    print("Ref No.: ", result_1.refno)
-                    print("Supplier Code: ", result_1.supplier_code)
-                    print("Supplier Name: ", result_1.supplier_name)
-                    print("SupCode: ", supcode)
-                    print("Outlet: ", outlet)
-                    print("Start Date: ", datefrom)
-                    print("End Date: ", dateto)
-
-                    result = rims_data_functions.gr_sum(data)
-                    if result['status'] == live_mode:
-                        calval_method = 'non_tier'
-                        add_data = create_inv_header_child(data, result, calval_method)
+                    # Determine the appropriate fee_type_key and fee_value_type_key
+                    if '_value1' in rebate_key:
+                        rebate_type_key = rebate_key.replace('_value1', '_type1')
+                        rebate_value_type_key = rebate_key.replace('_value1', '_value_type')
+                    elif '_value2' in rebate_key:
+                        rebate_type_key = rebate_key.replace('_value2', '_type2')
+                        rebate_value_type_key = rebate_key.replace('_value2', '_value_type')
                     else:
-                        error_log(list_guid, 'check_tta', data, result)
+                        rebate_type_key = rebate_key.replace('_value', '_type')
+                        rebate_value_type_key = rebate_key.replace('_value', '_value_type')
 
-    
-        #payment_n_discount
-        for discount_key, discount_value in payment_n_discount.items():
-            # Skip non-discount fields and fields with zero value
-            if discount_key.endswith('_value') and discount_value > 0:
-                discount_type_key = discount_key.replace('_value', '_type')
-                discount_type_value = payment_n_discount[discount_type_key]
+                    rebate_type_value = getattr(purchase, rebate_type_key, None)
+                    rebate_value_type_value = getattr(purchase, rebate_value_type_key, None)
 
-                q_type = 'Yearly'  # Default type, change as necessary
+                    if rebate_type_value is not None and rebate_value_type_value is not None:
+                        print("Rebate Value: ", rebate_value)
+                        print("Rebate Type Key: ", rebate_type_key)
+                        print("Rebate Type Value: ", rebate_type_value)
+                        print("Rebate Value Type Key: ", rebate_value_type_key)
+                        print("Rebate Value Type Value: ", rebate_value_type_value)
 
-                if discount_type_value in ['GPV', 'NPV', 'Monthly', 'Yearly']:
-                    q_type = 'gr_gross_sum' if discount_type_value == 'GPV' else 'gr_net_sum' if discount_type_value == 'NPV' else 'Monthly' if discount_type_value == 'Monthly' else 'Yearly'
+                        q_type = 'gr_gross_sum' if rebate_value_type_value == 'GPV' else 'gr_net_sum' if rebate_value_type_value == 'NPV' else 'Monthly' if rebate_value_type_value == 'Monthly' else 'Yearly' if rebate_value_type_value == 'Yearly' else 'unknown'
 
-                label = discount_key.replace('_value', '').replace('_', ' ').title()
+                        label = rebate_key.replace('_value', '').replace('_', ' ').title()
 
-                data = {
-                    "customer_guid": customer_guid,
-                    "refno": result_1.refno,
-                    "code": result_1.supplier_code,
-                    "name": result_1.supplier_name,
-                    "prefix1": discount_type_value,
-                    "type": q_type,
-                    "label": label,
-                    "startDate": datefrom,
-                    "endDate": dateto,
-                    "outlet": outlet,
-                    "brand": brands,
-                    "supcode": supcode,
-                    "bf_amount": discount_value,
-                    "rebate_method": [
-                        {
-                            "range": Decimal(0.00),
-                            "type": '%',
-                            "value": Decimal(0.00)
-                        }
-                    ]
-                }
-
-                result = rims_data_functions.gr_sum(data)
-                if result['status'] == live_mode:
-                    calval_method = 'non_tier'
-                    add_data = create_inv_header_child(data, result, calval_method)
-                else:
-                    error_log(list_guid, 'check_tta', data, result)
-
-        #stock_n_deliveries 
-        query_snd = consolidate_result[0].stock_n_deliveries 
-        for snd in query_snd:
-            try:   
-                if(snd['calMethod'] == 'Method1') and (snd['input1'] > '0.00'):  
-                    if snd['radio1']['value'] == 'GPV':
-                        q_type = 'gr_gross_sum'
-                    elif  snd['radio1']['value'] == 'NPV':
-                        q_type = 'gr_net_sum'
-                    elif  snd['radio1']['value'] == 'Monthly':
-                        q_type = 'Monthly'
-                    elif  snd['radio1']['value'] == 'Yearly':
-                        q_type = 'Yearly'            
-                    else:
-                        q_type = 'unknown'
-                    
-                    field = snd['field']
-                    label = snd['label']
-                    input1 = snd['input1']
-                    radio = snd['radio1']['value']
-                    prefix1 = snd['prefix1']['value']
-
-                    calmethod = 'sum_method'
-
-                    if calmethod == 'sum_method': 
-                        data = {
-                            "customer_guid":customer_guid, 
-                            "refno":result_1.refno, 
-                            "code":result_1.supplier_code, 
-                            "name":result_1.supplier_name, 
-                            "prefix1": prefix1,
-                            "type":q_type,  
-                            "label":label,
-                            "startDate":datefrom,
-                            "endDate":dateto, 
-                            "outlet" : outlet,
-                            "brand": brands, 
-                            "supcode":supcode,
-                            "bf_amount":input1.replace(',', ''),
-                            "rebate_method":[
-                            {
-                                "range":0,
-                                "type":'%',
-                                "value":0
-                            } 
-                            ]
-                        }
-
-                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                            #to cal gr_sum 
-                            result = rims_data_functions.gr_sum(data)    
-                            if result['status'] == live_mode:  
-                                calval_method = 'non_tier'
-                                add_data = create_inv_header_child(data, result, calval_method)  
-                            else:
-                                    error_log(list_guid, 'check_tta', data, result)
-                
-            except KeyError:
-                # Key is not present
-                pass 
-        
-        #administration_fees 
-        for fee_key, fee_value in administration_fees.items():
-            # Skip non-fee fields
-            if fee_key not in ['list_guid', 'list_link_guid', 'revision', 'created_at', 'created_by', 'updated_at', 'updated_by', 'customer_guid']:
-                if fee_value > 0:  # Check if fee is applicable
-                    if fee_key.endswith('_value'):  # Check if it's a fee value field
-                        fee_type_key = fee_key.replace('_value', '_type')
-                        fee_type_value = administration_fees[fee_type_key]
-                        q_type = 'Yearly'  # Default type, change as necessary
-
-                        if fee_type_value in ['GPV', 'NPV', 'Monthly', 'Yearly']:
-                            q_type = 'gr_gross_sum' if fee_type_value == 'GPV' else 'gr_net_sum' if fee_type_value == 'NPV' else 'Monthly' if fee_type_value == 'Monthly' else 'Yearly'
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
 
                         data = {
                             "customer_guid": customer_guid,
                             "refno": result_1.refno,
                             "code": result_1.supplier_code,
                             "name": result_1.supplier_name,
-                            "prefix1": fee_type_value,
+                            "prefix1": rebate_type_value,
                             "type": q_type,
-                            "label": fee_key.replace('_value', ''),
+                            "label": label,
                             "startDate": datefrom,
                             "endDate": dateto,
                             "outlet": outlet,
                             "brand": brands,
                             "supcode": supcode,
-                            "bf_amount": fee_value,
+                            "bf_amount": rebate_value,
                             "rebate_method": [
                                 {
                                     "range": Decimal(0.00),
@@ -590,526 +507,924 @@ def check_tta(request):
                                 }
                             ]
                         }
-                        result = rims_data_functions.gr_sum(data)
-                        if result['status'] == live_mode:
-                            calval_method = 'non_tier'
-                            add_data = create_inv_header_child(data, result, calval_method)
-                        else:
-                            error_log(list_guid, 'check_tta', data, result)
 
-        #business_growth_support
-        query_bgs = consolidate_result[0].business_growth_support
-        for bgs in query_bgs:
-            try:
-                if(bgs['calMethod'] == 'Method1'):
-                    try:
-                        #got date range then how
-                        if(bgs['daterange']):
-                            bgs_from = datetime.strptime(bgs['daterange']['from'],'%Y-%m-%d')
-                            bgs_to = datetime.strptime(bgs['daterange']['to'],'%Y-%m-%d')
+                        print("Data Prepared: ", data)
 
-                            check_daterange = daterange_condition(bgs['label'], cal_date, bgs['daterange']['from'], bgs['daterange']['to']) 
-                            # print(bgs['label'])
-
-                            if(bgs['input1'] > '0.00' ):
-                                if bgs['radio1']['value'] == 'GPV':
-                                    q_type = 'gr_gross_sum'
-                                elif  bgs['radio1']['value'] == 'NPV':
-                                    q_type = 'gr_net_sum'
-                                elif  bgs['radio1']['value'] == 'Monthly':
-                                    q_type = 'Monthly'
-                                elif  bgs['radio1']['value'] == 'Yearly':
-                                    q_type = 'Yearly'   
-                                else:
-                                    q_type = 'unknown'
-
-                                field = bgs['field']
-                                label = bgs['label']
-                                input1 = bgs['input1']
-                                radio = bgs['radio1']['value']
-                                prefix1 = bgs['prefix1']['value']
-
-                                calmethod = 'sum_method'
-
-                                if calmethod == 'sum_method': 
-                                    data = {
-                                        "customer_guid":customer_guid, 
-                                        "refno":result_1.refno, 
-                                        "code":result_1.supplier_code, 
-                                        "name":result_1.supplier_name, 
-                                        "prefix1": prefix1,
-                                        "type":q_type,  
-                                        "label":label, 
-                                        "startDate":check_daterange['date_from'],
-                                        "endDate":check_daterange['date_to'], 
-                                        "outlet" : outlet,
-                                        "brand": brands,
-                                        "supcode":supcode,
-                                        "bf_amount":input1.replace(',', ''),
-                                        "rebate_method":[
-                                        {
-                                            "range":0,
-                                            "type":'%',
-                                            "value":0
-                                        } 
-                                        ]
-                                    }
-
-                                if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                    #to cal gr_sum 
-                                    result = rims_data_functions.gr_sum(data)    
-                                    if result['status'] == live_mode:  
-                                        calval_method = 'non_tier'
-                                        add_data = create_inv_header_child(data, result, calval_method)   
-                                    else:
-                                        error_log(list_guid, 'check_tta', data, result) 
+                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            # To calculate gr_sum
+                            result = rims_data_functions.gr_sum(data)
+                            print("Result: ", result)
                             
-                    except:
-                        #no date range method
-                        #print('no daterange', bgs['label'])
-                        if(bgs['input1'] > '0.00' ):
-                            if bgs['radio1']['value'] == 'GPV':
-                                q_type = 'gr_gross_sum'
-                            elif  bgs['radio1']['value'] == 'NPV':
-                                q_type = 'gr_net_sum'
-                            elif  bgs['radio1']['value'] == 'Monthly':
-                                    q_type = 'Monthly'
-                            elif  bgs['radio1']['value'] == 'Yearly':
-                                    q_type = 'Yearly'  
-                            else:
-                                q_type = 'unknown'
-
-                            field = bgs['field']
-                            label = bgs['label']
-                            input1 = bgs['input1']
-                            radio = bgs['radio1']['value']
-                            prefix1 = bgs['prefix1']['value']
-
-                            calmethod = 'sum_method'
-
-                            if calmethod == 'sum_method': 
-                                data = {
-                                    "customer_guid":customer_guid, 
-                                    "refno":result_1.refno, 
-                                    "code":result_1.supplier_code, 
-                                    "name":result_1.supplier_name, 
-                                    "prefix1": prefix1,
-                                    "type":q_type,  
-                                    "label":label, 
-                                    "startDate":datefrom,
-                                    "endDate":dateto, 
-                                    "outlet" : outlet,
-                                    "brand": brands,
-                                    "supcode":supcode,
-                                    "bf_amount":input1.replace(',', ''),
-                                    "rebate_method":[
-                                    {
-                                        "range":0,
-                                        "type":'%',
-                                        "value":0
-                                    } 
-                                    ]
-                                }
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                #to cal gr_sum 
-                                result = rims_data_functions.gr_sum(data)    
-                                if result['status'] == live_mode:  
-                                    calval_method = 'non_tier'
-                                    add_data = create_inv_header_child(data, result, calval_method)   
-                                else:
-                                    error_log(list_guid, 'check_tta', data, result) 
-
-            except KeyError:
-                pass
-
-        #promotion_support
-        query_ps  = consolidate_result[0].promotion_support
-        for ps in query_ps:
-            try:
-                if(ps['calMethod'] == 'Method1'):
-                    try: 
-                        #got date range then how
-                        if(ps['daterange']):  
-
-                            # ps_from = datetime.strptime(ps['daterange']['from'],'%Y-%m-%d')
-                            # ps_to = datetime.strptime(ps['daterange']['to'],'%Y-%m-%d')
-                            
-                            check_daterange = daterange_condition(ps['label'], cal_date, ps['daterange']['from'], ps['daterange']['to'])
-                        
-                            if(ps['input1'] > '0.00' ):
-                                if ps['radio1']['value'] == 'GPV':
-                                    q_type = 'gr_gross_sum'
-                                elif  ps['radio1']['value'] == 'NPV':
-                                    q_type = 'gr_net_sum'
-                                elif  ps['radio1']['value'] == 'Monthly':
-                                        q_type = 'Monthly'
-                                elif  ps['radio1']['value'] == 'Yearly':
-                                        q_type = 'Yearly'  
-                                else:
-                                    q_type = 'unknown'
-
-                                field = ps['field']
-                                label = ps['label']
-                                input1 = ps['input1']
-                                radio = ps['radio1']['value']
-                                prefix1 = ps['prefix1']['value']
-
-                                calmethod = 'sum_method'
-
-                                if calmethod == 'sum_method': 
-                                    data = {
-                                        "customer_guid":customer_guid, 
-                                        "refno":result_1.refno, 
-                                        "code":result_1.supplier_code, 
-                                        "name":result_1.supplier_name, 
-                                        "prefix1": prefix1,
-                                        "type":q_type,  
-                                        "label":label, 
-                                        "startDate":check_daterange['date_from'],
-                                        "endDate":check_daterange['date_to'], 
-                                        "outlet" : outlet,
-                                        "brand": brands,
-                                        "supcode":supcode,
-                                        "bf_amount":input1.replace(',', ''), 
-                                        "rebate_method":[
-                                        {
-                                            "range":0,
-                                            "type":'%',
-                                            "value":0
-                                        } 
-                                        ]
-                                    }
-                                # error_log(list_guid, 'check_tta', data, '')
-                                if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                    #to cal gr_sum 
-                                    result = rims_data_functions.gr_sum(data)  
-                                    if result['status'] == live_mode:  
-                                        calval_method = 'non_tier' 
-                                        add_data = create_inv_header_child(data, result, calval_method)   
-                                    else:
-                                        error_log(list_guid, 'check_tta', data, result)  
+                            if result['status'] == live_mode:
+                                calval_method = 'non_tier'
+                                print("Calling create_inv_header_child with calval_method:", calval_method)
+                                print("Data:", data)
+                                print("Result:", result)
                                 
-                    except:
-                        #no date range method
-                        #print('no daterange', ps['label'])
-                        if(ps['input1'] > '0.00' ):
-                            if ps['radio1']['value'] == 'GPV':
-                                q_type = 'gr_gross_sum'
-                            elif  ps['radio1']['value'] == 'NPV':
-                                q_type = 'gr_net_sum'
-                            elif  ps['radio1']['value'] == 'Monthly':
-                                        q_type = 'Monthly'
-                            elif  ps['radio1']['value'] == 'Yearly':
-                                        q_type = 'Yearly'      
+                                add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                print("Function executed successfully with result:", add_data)
                             else:
-                                q_type = 'unknown'
+                                error_log(list_guid, 'check_tta', data, result)
+                    else:
+                        print(f"Skipping {rebate_key}: Missing type values")
+                else:
+                    print(f"Skipping {rebate_key}: Value is None or zero")
 
-                            field = ps['field']
-                            label = ps['label']
-                            input1 = ps['input1']
-                            radio = ps['radio1']['value']
-                            prefix1 = ps['prefix1']['value']
+        # Debugging the complete dictionary to see all keys and values
+        for purchase in purchase_list:
+            print("Debugging complete purchase object:", vars(purchase))
 
-                            calmethod = 'sum_method'
 
-                            if calmethod == 'sum_method': 
-                                data = {
+        #Payment N Discount
+        print("Payment List: ", payment_list)
+
+        # Define the discount fields to look for
+        discount_fields = [
+            "early_payment_terms_value", "early_payment_discount_value", "prompt_payment_discount_value"
+        ]
+
+         # Iterating over each payment and discount object
+        for payment in payment_list:
+            print("Processing Payment and Discount: ", payment.refno)
+
+            for discount_key in discount_fields:
+                discount_value = getattr(payment, discount_key, None)
+                if discount_value is not None and discount_value > 0.0:
+                    print(f"Key: {discount_key}, Value: {discount_value}")
+
+                 # Determine the appropriate fee_type_key and fee_value_type_key
+                    if '_value1' in discount_key:
+                        discount_type_key = discount_key.replace('_value1', '_type1')
+                        discount_value_type_key = discount_key.replace('_value1', '_value_type')
+                    elif '_value2' in discount_key:
+                        discount_type_key = discount_key.replace('_value2', '_type2')
+                        discount_value_type_key = discount_key.replace('_value2', '_value_type')
+                    else:
+                        discount_type_key = discount_key.replace('_value', '_type')
+                        discount_value_type_key = discount_key.replace('_value', '_value_type')
+
+                    discount_type_value = getattr(payment, discount_type_key, None)
+                    discount_value_type_value = getattr(payment, discount_value_type_key, None)
+
+                    if discount_type_value is not None and discount_value_type_value is not None:
+                        print("Discount Value: ", discount_value)
+                        print("Discount Type Key: ", discount_type_key)
+                        print("Discount Type Value: ", discount_type_value)
+                        print("Discount Value Type Key: ", discount_value_type_key)
+                        print("Discount Value Type Value: ", discount_value_type_value)
+                    
+                        q_type = 'gr_gross_sum' if discount_value_type_value == 'GIV' else 'gr_net_sum' if discount_value_type_value == 'NPV' else 'Monthly' if discount_value_type_value == 'Monthly' else 'Yearly' if discount_value_type_value == 'Yearly' else 'unknown'
+
+                        label = discount_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+
+                        data = {
                                     "customer_guid":customer_guid, 
                                     "refno":result_1.refno, 
                                     "code":result_1.supplier_code, 
                                     "name":result_1.supplier_name, 
-                                    "prefix1": prefix1,
+                                    "prefix1": discount_type_value,
+                                    "label":label,
                                     "type":q_type,  
-                                    "label":label, 
                                     "startDate":datefrom,
                                     "endDate":dateto, 
                                     "outlet" : outlet,
                                     "brand": brands,
                                     "supcode":supcode,
-                                    "bf_amount":input1.replace(',', ''),
+                                    "bf_amount":discount_value,
+                                    "rebate_method":[
+                                    {
+                                        "range":0,
+                                        "type":'%',
+                                        "value":0
+                                    } 
+                                    ]
+                                }
+
+                        print("Data Prepared: ", data)
+
+                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            # To calculate gr_sum
+                            result = rims_data_functions.gr_sum(data)
+                            print("Result: ", result)
+                            
+                            if result['status'] == live_mode:
+                                calval_method = 'non_tier'
+                                print("Calling create_inv_header_child with calval_method:", calval_method)
+                                print("Data:", data)
+                                print("Result:", result)
+                                
+                                add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+
+                    else:
+                        print(f"Skipping {discount_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {discount_key}: Value is None or zero")
+
+        # Debugging the complete dictionary to see all keys and values
+        for payment in payment_list:
+            print("Debugging complete payment object:", vars(payment))
+
+        #Stock N Deliveries
+        print("Stock List: ", stock_list)
+
+        # Define the stock fields to look for
+        stock_fields = [
+            "cross_docking_allowance_value", "conventional_flow_thru_allowance_value", "shrinkage_pilferage_allowance_value",
+            "non_returnable_goods_allowance_value", "east_malaysia_orders_allowance_value", "damage_good_allowance_value",
+            "non_compliance_packaging_allowance_value", "purchase_order_fulfillment_value", "unfulfilled_penalty_value",
+            "lost_of_profit_penalty_value", "purchase_order_lead_time_value", "lead_time_penalty_value",
+            "ullarge_value", "target_service_level_value", "target_service_level_unfulfilled_penalty_value"
+        ]
+
+         # Iterating over each stock and deliveries object
+        for stock in stock_list:
+            print("Processing Stock and Deliveries: ", stock.refno)
+
+            for stock_key in stock_fields:
+                stock_value = getattr(stock, stock_key, None)
+                if stock_value is not None and stock_value > 0.0:
+                    print(f"Key: {stock_key}, Value: {stock_value}")
+
+                    stock_type_key = stock_key.replace('_value', '_type')
+                    stock_type_value = getattr(stock, stock_type_key, None)
+
+                    stock_value_type_key = stock_key.replace('_value', '_value_type')
+                    stock_value_type_value = getattr(stock, stock_value_type_key, None)
+
+                    if stock_type_value is not None and stock_value_type_value is not None:
+                        print("Stock Value: ", stock_value)
+                        print("Stock Type Key: ", stock_type_key)
+                        print("Stock Type Value: ", stock_type_value)
+                        print("Stock Value Type Key: ", stock_value_type_key)
+                        print("Stock Value Type Value: ", stock_value_type_value)
+
+                        q_type = 'gr_gross_sum' if stock_value_type_value == 'GPV' else 'gr_net_sum' if stock_value_type_value == 'NPV' else 'Monthly' if stock_value_type_value == 'Monthly' else 'Yearly' if stock_value_type_value == 'Yearly' else 'unknown'
+
+                        label = stock_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+                        
+                        data = {
+                                    "customer_guid":customer_guid, 
+                                    "refno":result_1.refno, 
+                                    "code":result_1.supplier_code, 
+                                    "name":result_1.supplier_name, 
+                                    "prefix1": stock_type_value,
+                                    "label":label,
+                                    "type":q_type,  
+                                    "startDate":datefrom,
+                                    "endDate":dateto, 
+                                    "outlet" : outlet,
+                                    "brand": brands,
+                                    "supcode":supcode,
+                                    "bf_amount":stock_value,
+                                    "rebate_method":[
+                                    {
+                                        "range":0,
+                                        "type":'%',
+                                        "value":0
+                                    } 
+                                    ]
+                                }
+
+                        print("Data Prepared: ", data)
+
+                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            # To calculate gr_sum
+                            result = rims_data_functions.gr_sum(data)
+                            print("Result: ", result)
+                            
+                            if result['status'] == live_mode:
+                                calval_method = 'non_tier'
+                                print("Calling create_inv_header_child with calval_method:", calval_method)
+                                print("Data:", data)
+                                print("Result:", result)
+                                
+                                add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+
+                    else:
+                        print(f"Skipping {stock_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {stock_key}: Value is None or zero")
+        
+        #Administration Fees
+        print("Administration List: ", administration_list)
+
+        # Define the fee fields to look for
+        administration_fields = [
+            "account_administration_fee_value", "product_registration_fee_value", "sku_replacement_value",
+            "new_line_fee_value", "new_item_listing_value", "new_item_first_order_discount_value1",
+            "new_item_first_order_discount_value2", "change_of_purchase_type_value", "maintenance_of_vendor_information_value",
+            "new_vcr_barcode_value"
+        ]
+
+         # Iterating over each administration fees object
+        for fee in administration_list:
+            print("Processing Administration Fees: ", fee.refno)
+
+            for fee_key in administration_fields:
+                fee_value = getattr(fee, fee_key, None)
+                if fee_value is not None and fee_value > 0.0:
+                    print(f"Key: {fee_key}, Value: {fee_value}")
+
+                # Determine the appropriate fee_type_key and fee_value_type_key
+                    if '_value1' in fee_key:
+                        fee_type_key = fee_key.replace('_value1', '_type1')
+                        fee_value_type_key = fee_key.replace('_value1', '_value_type')
+                    elif '_value2' in fee_key:
+                        fee_type_key = fee_key.replace('_value2', '_type2')
+                        fee_value_type_key = fee_key.replace('_value2', '_value_type')
+                    else:
+                        fee_type_key = fee_key.replace('_value', '_type')
+                        fee_value_type_key = fee_key.replace('_value', '_value_type')
+
+                    fee_type_value = getattr(fee, fee_type_key, None)
+                    fee_value_type_value = getattr(fee, fee_value_type_key, None)
+
+                    if fee_type_value is not None and fee_value_type_value is not None:
+                        print("Fee Value: ", fee_value)
+                        print("Fee Type Key: ", fee_type_key)
+                        print("Fee Type Value: ", fee_type_value)
+                        print("Fee Value Type Key: ", fee_value_type_key)
+                        print("Fee Value Type Value: ", fee_value_type_value)
+
+                        q_type = 'gr_gross_sum' if fee_value_type_value == 'GPV' else 'gr_net_sum' if fee_value_type_value == 'NPV' else 'Monthly' if fee_value_type_value == 'Monthly' else 'Yearly' if fee_value_type_value == 'Yearly' else 'unknown'
+
+                        label = fee_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+                        
+                        data = {
+                                    "customer_guid":customer_guid, 
+                                    "refno":result_1.refno, 
+                                    "code":result_1.supplier_code, 
+                                    "name":result_1.supplier_name, 
+                                    "prefix1": fee_type_value,
+                                    "label":label,
+                                    "type":q_type,  
+                                    "startDate":datefrom,
+                                    "endDate":dateto, 
+                                    "outlet" : outlet,
+                                    "brand": brands,
+                                    "supcode":supcode,
+                                    "bf_amount":fee_value,
+                                    "rebate_method":[
+                                    {
+                                        "range":0,
+                                        "type":'%',
+                                        "value":0
+                                    } 
+                                    ]
+                                }
+
+                        print("Data Prepared: ", data)
+
+                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            # To calculate gr_sum
+                            result = rims_data_functions.gr_sum(data)
+                            print("Result: ", result)
+                            
+                            if result['status'] == live_mode:
+                                calval_method = 'non_tier'
+                                print("Calling create_inv_header_child with calval_method:", calval_method)
+                                print("Data:", data)
+                                print("Result:", result)
+                                
+                                add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+
+                    else:
+                        print(f"Skipping {fee_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {fee_key}: Value is None or zero")
+        
+        #Business Growth Support
+        print("Business Growth Support List: ", business_growth_support_list)
+
+        # Define the fee fields to look for
+        bgs_fields = [
+            "category_development_fund_value", "business_development_fund_value", "data_sharing_fee_value",
+            "new_store_opening_value", "new_store_first_order_discount_value1", "new_store_first_order_discount_value2",
+            "refurbish_store_value", "anniversary_sales_allowance_value", "anniversary_orders_rebate_value"
+        ]
+
+        # Iterating over each bgs object
+        for bgs in business_growth_support_list:
+            print("Processing Business Growth Support: ", bgs.refno)
+
+            for bgs_key in bgs_fields:
+                bgs_value = getattr(bgs, bgs_key, None)
+                if bgs_value is not None and bgs_value > 0.0:
+                    print(f"Key: {bgs_key}, Value: {bgs_value}")
+
+                # Determine the appropriate bgs_type_key and bgs_value_type_key
+                    if '_value1' in bgs_key:
+                        bgs_type_key = bgs_key.replace('_value1', '_type1')
+                        bgs_value_type_key = bgs_key.replace('_value1', '_value_type')
+                    elif '_value2' in bgs_key:
+                        bgs_type_key = bgs_key.replace('_value2', '_type2')
+                        bgs_value_type_key = bgs_key.replace('_value2', '_value_type')
+                    else:
+                        bgs_type_key = bgs_key.replace('_value', '_type')
+                        bgs_value_type_key = bgs_key.replace('_value', '_value_type')
+
+                    bgs_type_value = getattr(bgs, bgs_type_key, None)
+                    bgs_value_type_value = getattr(bgs, bgs_value_type_key, None)
+
+                    if bgs_type_value is not None and bgs_value_type_value is not None:
+                        print("bgs Value: ", bgs_value)
+                        print("bgs Type Key: ", bgs_type_key)
+                        print("bgs Type Value: ", bgs_type_value)
+                        print("bgs Value Type Key: ", bgs_value_type_key)
+                        print("bgs Value Type Value: ", bgs_value_type_value)
+
+                        q_type = 'gr_gross_sum' if bgs_value_type_value == 'GPV' else 'gr_net_sum' if bgs_value_type_value == 'NPV' else 'Monthly' if bgs_value_type_value == 'Monthly' else 'Yearly' if bgs_value_type_value == 'Yearly' else 'unknown'
+
+                        label = bgs_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+
+                        # Date range fields
+                        date_from_key = bgs_key.replace('_value', '_date_from')
+                        date_to_key = bgs_key.replace('_value', '_date_to')
+                        date_from = getattr(bgs, date_from_key, None)
+                        date_to = getattr(bgs, date_to_key, None)
+
+                        if date_from and date_to:
+                            print(f"There is date range for {bgs_key}")
+
+                            bgs_from = datetime.strptime(date_from, '%Y-%m-%d')
+                            bgs_to = datetime.strptime(date_to, '%Y-%m-%d')
+
+                            check_daterange = daterange_condition(label, cal_date, date_from, date_to)
+
+                            calmethod = 'sum_method'
+
+                            if calmethod == 'sum_method': 
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": bgs_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":check_daterange['date_from'],
+                                            "endDate":check_daterange['date_to'], 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":bgs_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
+
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
                                     
-                                    "rebate_method":[
-                                    {
-                                        "range":0,
-                                        "type":'%',
-                                        "value":0
-                                    } 
-                                    ]
-                                }
-                            # error_log(list_guid, 'check_tta', data, '')
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                #to cal gr_sum 
-                                result = rims_data_functions.gr_sum(data)    
-                                if result['status'] == live_mode:  
-                                    calval_method = 'non_tier'
-                                    add_data = create_inv_header_child(data, result, calval_method)  
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
                                 else:
-                                    error_log(list_guid, 'check_tta', data, result) 
-            except KeyError:
-                pass
-
-        #marketing_support
-        query_ms  = consolidate_result[0].marketing_support
-        for ms in query_ms:
-            try:
-                if(ms['calMethod'] == 'Method1'):
-                    try:
-                        #got date range then how
-                        if(ms['daterange']):
-                            ms_from = datetime.strptime(ms['daterange']['from'],'%Y-%m-%d')
-                            ms_to = datetime.strptime(ms['daterange']['to'],'%Y-%m-%d')
-
-                            check_daterange = daterange_condition(ms['label'], cal_date, ms['daterange']['from'], ms['daterange']['to'])
-
-                            # if ms_from <= cal_date <= ms_to:
-                            #     datefrom1 = cal_date.replace(day=1).strftime('%Y-%m-%d')
-                            #     dateto1 = str(last_day_of_month(datetime.date(cal_date)))
-                            # elif ms_to <= cal_date : 
-                            #     datefrom1 =  str(ms_to).strftime('%Y-%m-%d')
-                            #     dateto1 = str(ms_to).strftime('%Y-%m-%d')
-                            # else:
-                            #     datefrom1 = '2099-12-01'
-                            #     dateto1 =  '2099-12-31'  
-                            # print(bgs['label'])
-
-                            if(ms['input1'] > '0.00' ):
-                                if ms['radio1']['value'] == 'GPV':
-                                    q_type = 'gr_gross_sum'
-                                elif  ms['radio1']['value'] == 'NPV':
-                                    q_type = 'gr_net_sum'
-                                elif  ms['radio1']['value'] == 'Monthly':
-                                        q_type = 'Monthly'
-                                elif  ms['radio1']['value'] == 'Yearly':
-                                        q_type = 'Yearly'  
-                                else:
-                                    q_type = 'unknown'
-
-                                field = ms['field']
-                                label = ms['label']
-                                input1 = ms['input1']
-                                radio = ms['radio1']['value']
-                                prefix1 = ms['prefix1']['value']
-
-                                calmethod = 'sum_method'
-
-                                if calmethod == 'sum_method': 
-                                    data = {
-                                        "customer_guid":customer_guid, 
-                                        "refno":result_1.refno, 
-                                        "code":result_1.supplier_code, 
-                                        "name":result_1.supplier_name, 
-                                        "prefix1": prefix1,
-                                        "type":q_type,  
-                                        "label":label, 
-                                        "startDate":check_daterange['date_from'],
-                                        "endDate":check_daterange['date_to'], 
-                                        "outlet" : outlet,
-                                        "brand": brands,
-                                        "supcode":supcode,
-                                        "bf_amount":input1.replace(',', ''),
-                                        "rebate_method":[
-                                        {
-                                            "range":0,
-                                            "type":'%',
-                                            "value":0
-                                        } 
-                                        ]
-                                    }
-
-                                if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                    #to cal gr_sum 
-                                    result = rims_data_functions.gr_sum(data)    
-                                    if result['status'] == live_mode:  
-                                        calval_method = 'non_tier'
-                                        add_data = create_inv_header_child(data, result, calval_method)   
-                                    else:
-                                        error_log(list_guid, 'check_tta', data, result)  
-
-                            
-                    except:
-                        #no date range method
-                        #print('no daterange', ms['label'])
-                        if(ms['input1'] > '0.00' ):
-                            if ms['radio1']['value'] == 'GPV':
-                                q_type = 'gr_gross_sum'
-                            elif  ms['radio1']['value'] == 'NPV':
-                                q_type = 'gr_net_sum'
-                            elif  ms['radio1']['value'] == 'Monthly':
-                                        q_type = 'Monthly'
-                            elif  ms['radio1']['value'] == 'Yearly':
-                                        q_type = 'Yearly'  
-                            else:
-                                q_type = 'unknown'
-
-                            field = ms['field']
-                            label = ms['label']
-                            input1 = ms['input1']
-                            radio = ms['radio1']['value']
-                            prefix1 = ms['prefix1']['value']
+                                    error_log(list_guid, 'check_tta', data, result)
+                        else:
+                            print(f"No date range for {bgs_key}")
 
                             calmethod = 'sum_method'
 
                             if calmethod == 'sum_method': 
-                                data = {
-                                    "customer_guid":customer_guid, 
-                                    "refno":result_1.refno, 
-                                    "code":result_1.supplier_code, 
-                                    "name":result_1.supplier_name, 
-                                    "prefix1": prefix1,
-                                    "type":q_type,  
-                                    "label":label, 
-                                    "startDate":datefrom,
-                                    "endDate":dateto,  
-                                    "outlet" : outlet,
-                                    "brand": brands,
-                                    "supcode":supcode,
-                                    "bf_amount":input1.replace(',', ''),
-                                    "rebate_method":[
-                                    {
-                                        "range":0,
-                                        "type":'%',
-                                        "value":0
-                                    } 
-                                    ]
-                                }
-
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                #to cal gr_sum 
-                                result = rims_data_functions.gr_sum(data)    
-                                if result['status'] == live_mode:  
-                                    calval_method = 'non_tier'
-                                    add_data = create_inv_header_child(data, result, calval_method)  
-                                else:
-                                    error_log(list_guid, 'check_tta', data, result) 
-
-            except KeyError:
-                pass
-
-        #e_commerce_support
-        query_ecs  = consolidate_result[0].e_commerce_support
-        for ecs in query_ecs:
-            try:
-                if(ecs['calMethod'] == 'Method1'):
-                    try:
-                        #got date range then how
-                        if(ecs['daterange']): 
-                            ecs_from = datetime.strptime(ecs['daterange']['from'],'%Y-%m-%d')
-                            ecs_to = datetime.strptime(ecs['daterange']['to'],'%Y-%m-%d')
-
-                            check_daterange = daterange_condition(ecs['label'], cal_date, ecs['daterange']['from'], ecs['daterange']['to'])
-
-                            if(ecs['input1'] > '0.00' ):
-                                if ecs['radio1']['value'] == 'GPV':
-                                    q_type = 'gr_gross_sum'
-                                elif  ecs['radio1']['value'] == 'NPV':
-                                    q_type = 'gr_net_sum'
-                                elif  ecs['radio1']['value'] == 'Monthly':
-                                        q_type = 'Monthly'
-                                elif  ecs['radio1']['value'] == 'Yearly':
-                                        q_type = 'Yearly'  
-                                else:
-                                    q_type = 'unknown'
-
-                                field = ecs['field']
-                                label = ecs['label']
-                                input1 = ecs['input1']
-                                radio = ecs['radio1']['value']
-                                prefix1 = ecs['prefix1']['value']
-
-                                calmethod = 'sum_method'
-
-                                if calmethod == 'sum_method': 
                                     data = {
-                                        "customer_guid":customer_guid, 
-                                        "refno":result_1.refno, 
-                                        "code":result_1.supplier_code, 
-                                        "name":result_1.supplier_name, 
-                                        "prefix1": prefix1,
-                                        "type":q_type,  
-                                        "label":label, 
-                                        "startDate":check_daterange['date_from'],
-                                        "endDate":check_daterange['date_to'], 
-                                        "outlet" : outlet,
-                                        "brand": brands,
-                                        "supcode":supcode,
-                                        "bf_amount":input1.replace(',', ''),
-                                        "rebate_method":[
-                                        {
-                                            "range":0,
-                                            "type":'%',
-                                            "value":0
-                                        } 
-                                        ]
-                                    }
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": bgs_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":datefrom,
+                                            "endDate":dateto, 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":bgs_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
 
-                                if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                    #to cal gr_sum 
-                                    result = rims_data_functions.gr_sum(data)    
-                                    if result['status'] == live_mode:  
-                                        calval_method = 'non_tier'
-                                        add_data = create_inv_header_child(data, result, calval_method)   
-                                    else:
-                                        error_log(list_guid, 'check_tta', data, result)  
+                            print("Data Prepared: ", data)
 
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
 
-                            
-                    except:
-                        #no date range method
-                        #print('no daterange', ecs['label'])
-                        if(ecs['input1'] > '0.00' ):
-                            if ecs['radio1']['value'] == 'GPV':
-                                q_type = 'gr_gross_sum'
-                            elif  ecs['radio1']['value'] == 'NPV':
-                                q_type = 'gr_net_sum'
-                            elif  ecs['radio1']['value'] == 'Monthly':
-                                        q_type = 'Monthly'
-                            elif  ecs['radio1']['value'] == 'Yearly':
-                                        q_type = 'Yearly'  
-                            else:
-                                q_type = 'unknown'
+                    else:
+                        print(f"Skipping {bgs_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {bgs_key}: Value is None or zero")
 
-                            field = ecs['field']
-                            label = ecs['label']
-                            input1 = ecs['input1']
-                            radio = ecs['radio1']['value']
-                            prefix1 = ecs['prefix1']['value']
+        #Promotion Support
+        print("Promotion Support List: ", promotion_support_list)
+
+        # Define the promotion fields to look for
+        promotion_fields = [
+            "middle_year_big_sales_value", "top_brand_value", "anniversary_value",
+            "gawai_value", "anniversary_sales_value", "chinese_new_year_sales_value",
+            "hari_raya_sales_value", "christmas_sales_value", "promotion_commission_value"
+        ]
+
+        for promotion in promotion_support_list:
+            print("Processing Promotion Support: ", promotion.refno)
+
+            for promotion_key in promotion_fields:
+                promotion_value = getattr(promotion, promotion_key, None)
+                if promotion_value is not None and promotion_value > 0.0:
+                    print(f"Key: {promotion_key}, Value: {promotion_value}")
+
+                    promotion_type_key = promotion_key.replace('_value', '_type')
+                    promotion_value_type_key = promotion_key.replace('_value', '_value_type')
+
+                    promotion_type_value = getattr(promotion, promotion_type_key, None)
+                    promotion_value_type_value = getattr(promotion, promotion_value_type_key, None)
+
+                    if promotion_type_value is not None and promotion_value_type_value is not None:
+                        print("Promotion Value: ", promotion_value)
+                        print("Promotion Type Key: ", promotion_type_key)
+                        print("Promotion Type Value: ", promotion_type_value)
+                        print("Promotion Value Type Key: ", promotion_value_type_key)
+                        print("Promotion Value Type Value: ", promotion_value_type_value)
+
+                        q_type = 'gr_gross_sum' if promotion_value_type_value == 'GPV' else 'gr_net_sum' if promotion_value_type_value == 'NPV' else 'Monthly' if promotion_value_type_value == 'Monthly' else 'Yearly' if promotion_value_type_value == 'Yearly' else 'unknown'
+
+                        label = promotion_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+
+                        # Date range fields
+                        date_from_key = promotion_key.replace('_value', '_date_from')
+                        date_to_key = promotion_key.replace('_value', '_date_to')
+                        date_from = getattr(promotion, date_from_key, None)
+                        date_to = getattr(promotion, date_to_key, None)
+
+                        if date_from and date_to:
+                            print(f"There is date range for {promotion_key}")
+
+                            promotion_from = datetime.strptime(date_from, '%Y-%m-%d')
+                            promotion_to = datetime.strptime(date_to, '%Y-%m-%d')
+
+                            check_daterange = daterange_condition(label, cal_date, date_from, date_to)
 
                             calmethod = 'sum_method'
 
                             if calmethod == 'sum_method': 
-                                data = {
-                                    "customer_guid":customer_guid, 
-                                    "refno":result_1.refno, 
-                                    "code":result_1.supplier_code, 
-                                    "name":result_1.supplier_name, 
-                                    "prefix1": prefix1,
-                                    "type":q_type,  
-                                    "label":label, 
-                                    "startDate":datefrom,
-                                    "endDate":dateto, 
-                                    "outlet" : outlet,
-                                    "brand": brands,
-                                    "supcode":supcode,
-                                    "bf_amount":input1.replace(',', ''),
-                                    "rebate_method":[
-                                    {
-                                        "range":0,
-                                        "type":'%',
-                                        "value":0
-                                    } 
-                                    ]
-                                }
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": promotion_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":check_daterange['date_from'],
+                                            "endDate":check_daterange['date_to'], 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":promotion_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'): 
-                                #to cal gr_sum 
-                                result = rims_data_functions.gr_sum(data)    
-                                if result['status'] == live_mode:  
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
                                     calval_method = 'non_tier'
-                                    add_data = create_inv_header_child(data, result, calval_method)  
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
                                 else:
-                                    error_log(list_guid, 'check_tta', data, result) 
-            except KeyError:
-                pass
+                                    error_log(list_guid, 'check_tta', data, result)
+                        else:
+                            print(f"No date range for {promotion_key}")
+
+                            calmethod = 'sum_method'
+
+                            if calmethod == 'sum_method': 
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": promotion_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":datefrom,
+                                            "endDate":dateto, 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":promotion_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
+
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                    else:
+                        print(f"Skipping {promotion_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {promotion_key}: Value is None or zero")
+
+        #Marketing Support
+        print("Marketing Support List: ", marketing_support_list)
+
+        # Define the marketing fields to look for
+        marketing_fields = [
+            "packaging_fee_value", "loyalty_program_value", "anniversary_event_value",
+            "crm_event_value", "marketing_event_value", "concourse_event_value"
+        ]
+
+        for marketing in marketing_support_list:
+            print("Processing Marketing Support: ", marketing.refno)
+
+            for marketing_key in marketing_fields:
+                marketing_value = getattr(marketing, marketing_key, None)
+                if marketing_value is not None and marketing_value > 0.0:
+                    print(f"Key: {marketing_key}, Value: {marketing_value}")
+
+                    marketing_type_key = marketing_key.replace('_value', '_type')
+                    marketing_value_type_key = marketing_key.replace('_value', '_value_type')
+
+                    marketing_type_value = getattr(marketing, marketing_type_key, None)
+                    marketing_value_type_value = getattr(marketing, marketing_value_type_key, None)
+
+                    if marketing_type_value is not None and marketing_value_type_value is not None:
+                        print("Marketing Value: ", marketing_value)
+                        print("Marketing Type Key: ", marketing_type_key)
+                        print("Marketing Type Value: ", marketing_type_value)
+                        print("Marketing Value Type Key: ", marketing_value_type_key)
+                        print("Marketing Value Type Value: ", marketing_value_type_value)
+
+                        q_type = 'gr_gross_sum' if marketing_value_type_value == 'GPV' else 'gr_net_sum' if marketing_value_type_value == 'NPV' else 'Monthly' if marketing_value_type_value == 'Monthly' else 'Yearly' if marketing_value_type_value == 'Yearly' else 'unknown'
+
+                        label = marketing_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+
+                        # Date range fields
+                        date_from_key = marketing_key.replace('_value', '_date_from')
+                        date_to_key = marketing_key.replace('_value', '_date_to')
+                        date_from = getattr(marketing, date_from_key, None)
+                        date_to = getattr(marketing, date_to_key, None)
+
+                        if date_from and date_to:
+                            print(f"There is date range for {marketing_key}")
+
+                            marketing_from = datetime.strptime(date_from, '%Y-%m-%d')
+                            marketing_to = datetime.strptime(date_to, '%Y-%m-%d')
+
+                            check_daterange = daterange_condition(label, cal_date, date_from, date_to)
+
+                            # Determine datefrom1 and dateto1 based on cal_date in relation to marketing_from and marketing_to
+                            if marketing_from <= cal_date <= marketing_to:
+                                datefrom1 = cal_date.replace(day=1).strftime('%Y-%m-%d')
+                                dateto1 = str(last_day_of_month(cal_date.date()))
+                            elif cal_date > marketing_to:
+                                datefrom1 = marketing_to.strftime('%Y-%m-%d')
+                                dateto1 = marketing_to.strftime('%Y-%m-%d')
+                            else:
+                                datefrom1 = '2099-12-01'
+                                dateto1 = '2099-12-31'
+
+                            print(f"label: {label}, datefrom1: {datefrom1}, dateto1: {dateto1}")
+
+                            calmethod = 'sum_method'
+
+                            if calmethod == 'sum_method': 
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": marketing_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":check_daterange['date_from'],
+                                            "endDate":check_daterange['date_to'], 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":marketing_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
+
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                        else:
+                            print(f"No date range for {marketing_key}")
+
+                            calmethod = 'sum_method'
+
+                            if calmethod == 'sum_method': 
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": marketing_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":datefrom,
+                                            "endDate":dateto, 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":marketing_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
+
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                    else:
+                        print(f"Skipping {marketing_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {marketing_key}: Value is None or zero")
+
+        #E_Commerce Support
+        print("E-Commerce List: ", e_commerce_support_list)
+
+        # Define the e-commerce fields to look for
+        e_commerce_fields = [
+            "e_commerce_sales_value", "system_setup_n_maintenance_value", "digital_communication_value",
+            "social_media_post_value", "market_place_event_value"
+        ]
+
+        for e_commerce in e_commerce_support_list:
+            print("Processing E-Commerce Support: ", e_commerce.refno)
+
+            for e_commerce_key in e_commerce_fields:
+                e_commerce_value = getattr(e_commerce, e_commerce_key, None)
+                if e_commerce_value is not None and e_commerce_value > 0.0:
+                    print(f"Key: {e_commerce_key}, Value: {e_commerce_value}")
+
+                    e_commerce_type_key = e_commerce_key.replace('_value', '_type')
+                    e_commerce_value_type_key = e_commerce_key.replace('_value', '_value_type')
+
+                    e_commerce_type_value = getattr(e_commerce, e_commerce_type_key, None)
+                    e_commerce_value_type_value = getattr(e_commerce, e_commerce_value_type_key, None)
+
+                    if e_commerce_type_value is not None and e_commerce_value_type_value is not None:
+                        print("E-Commerce Value: ", e_commerce_value)
+                        print("E-Commerce Type Key: ", e_commerce_type_key)
+                        print("E-Commerce Type Value: ", e_commerce_type_value)
+                        print("E-Commerce Value Type Key: ", e_commerce_value_type_key)
+                        print("E-Commerce Value Type Value: ", e_commerce_value_type_value)
+
+                        q_type = 'gr_gross_sum' if e_commerce_value_type_value == 'GPV' else 'gr_net_sum' if e_commerce_value_type_value == 'NPV' else 'Monthly' if e_commerce_value_type_value == 'Monthly' else 'Yearly' if e_commerce_value_type_value == 'Yearly' else 'unknown'
+
+                        label = e_commerce_key.replace('_value', '').replace('_', ' ').title()
+
+                        print("Q Type: ", q_type)
+                        print("Label: ", label)
+
+                        # Date range fields
+                        date_from_key = e_commerce_key.replace('_value', '_date_from')
+                        date_to_key = e_commerce_key.replace('_value', '_date_to')
+                        date_from = getattr(e_commerce, date_from_key, None)
+                        date_to = getattr(e_commerce, date_to_key, None)
+
+                        if date_from and date_to:
+                            print(f"There is date range for {e_commerce_key}")
+
+                            e_commerce_from = datetime.strptime(date_from, '%Y-%m-%d')
+                            e_commerce_to = datetime.strptime(date_to, '%Y-%m-%d')
+
+                            check_daterange = daterange_condition(label, cal_date, date_from, date_to)
+
+                            calmethod = 'sum_method'
+
+                            if calmethod == 'sum_method': 
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": e_commerce_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":check_daterange['date_from'],
+                                            "endDate":check_daterange['date_to'], 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":e_commerce_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
+
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                        else:
+                            print(f"No date range for {e_commerce_key}")
+
+                            calmethod = 'sum_method'
+
+                            if calmethod == 'sum_method': 
+                                    data = {
+                                            "customer_guid":customer_guid, 
+                                            "refno":result_1.refno, 
+                                            "code":result_1.supplier_code, 
+                                            "name":result_1.supplier_name, 
+                                            "prefix1": e_commerce_type_value,
+                                            "type":q_type,  
+                                            "label":label, 
+                                            "startDate":datefrom,
+                                            "endDate":dateto, 
+                                            "outlet" : outlet,
+                                            "brand": brands,
+                                            "supcode":supcode,
+                                            "bf_amount":e_commerce_value,
+                                            "rebate_method":[
+                                            {
+                                                "range":0,
+                                                "type":'%',
+                                                "value":0
+                                            } 
+                                            ]
+                                        }
+
+                            print("Data Prepared: ", data)
+
+                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                                # To calculate gr_sum
+                                result = rims_data_functions.gr_sum(data)
+                                print("Result: ", result)
+                                
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                    else:
+                        print(f"Skipping {e_commerce_key}: Missing type values")
+                
+                else:
+                    print(f"Skipping {e_commerce_key}: Value is None or zero")
 
         result_status = result['status']
 

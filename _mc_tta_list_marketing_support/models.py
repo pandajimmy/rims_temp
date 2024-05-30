@@ -5,8 +5,8 @@ from _mc_get_customer_profile.models import CustomerProfile
 class TtaListMarketingSupport(models.Model):
     # Main Details
     list_guid = models.OneToOneField(TtaList, primary_key=True,on_delete=models.DO_NOTHING,db_column='list_guid', verbose_name='List guid', related_name='marketing_support')
-    list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
-    revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
+    #list_link_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='List Link guid')
+    #revision = models.CharField(max_length=100, blank=True, null=True, verbose_name='Revision')
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_marketing_support_customer_profile')
     refno = models.CharField(max_length=20,editable=False, verbose_name='Reference No.')
 

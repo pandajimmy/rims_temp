@@ -55,6 +55,5 @@ class TtaListExcludeOutletViewSet(viewsets.ModelViewSet):
             # If branch_guid has changed, update the code
             if new_branch_guid:
                 instance.branch_guid =new_branch_guid
-                instance.code = new_branch_guid.code
         
         instance.save()  # Save the instance with the updated fields
