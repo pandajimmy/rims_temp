@@ -15,7 +15,7 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
     queryset = TtaListOutlet.objects.all()
     serializer_class = TtaListOutletSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
-    filterset_fields = []
+    filterset_fields = [] 
     search_fields = []
 
     def create(self, request, *args, **kwargs):
@@ -66,30 +66,35 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
             return Response({"error": "list_guid is required"}, status=status.HTTP_400_BAD_REQUEST)
         
         if not outlets_data:  # Handling empty input
-            # Check for display incentives before deleting all
-            existing_outlets = TtaListOutlet.objects.filter(list_guid=list_guid)
-            existing_branch_guids = existing_outlets.values_list('branch_guid', flat=True)
-
-            if TtaListDisplayIncentiveTable.objects.filter(branch_guid__in=existing_branch_guids).exists():
-                return Response({"error": "Display incentives exist for outlets that will be deleted. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
-
             # Delete all existing outlets for the given list_guid
-            existing_outlets.delete()
+            existing_outlets = TtaListOutlet.objects.filter(list_guid=list_guid)
+            existing_outlet_branch_guids = set(outlet.branch_guid for outlet in existing_outlets)
+            
+            # Check for display incentives associated with existing outlets
+            display_incentives_exist = TtaListDisplayIncentiveTable.objects.filter(branch_guid__in=existing_outlet_branch_guids).exists()
+            if display_incentives_exist:
+                return Response({"error": "Display incentives exist for outlets that will be deleted. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Delete all outlets for the given list_guid
+            TtaListOutlet.objects.filter(list_guid=list_guid).delete()
             return Response({"message": "All outlets deleted successfully"}, status=status.HTTP_200_OK)
 
         existing_outlets = TtaListOutlet.objects.filter(list_guid=list_guid)
         existing_outlet_guids = set(existing_outlets.values_list('tta_outlet_guid', flat=True))
         provided_outlet_guids = set(outlet.get('tta_outlet_guid') for outlet in outlets_data)
 
-        # Check for display incentives before deleting outlets
-        to_delete_guids = existing_outlet_guids - provided_outlet_guids
-        to_delete_branches = existing_outlets.filter(tta_outlet_guid__in=to_delete_guids).values_list('branch_guid', flat=True)
+        existing_outlet_branch_guids = set(outlet.branch_guid for outlet in existing_outlets)
+        provided_outlet_branch_guids = set(outlet.get('branch_guid') for outlet in outlets_data if outlet.get('branch_guid'))
 
-        if TtaListDisplayIncentiveTable.objects.filter(branch_guid__in=to_delete_branches).exists():
+        # Check for display incentives associated with existing outlets that will be deleted
+        to_delete_branch_guids = existing_outlet_branch_guids - provided_outlet_branch_guids
+        display_incentives_exist = TtaListDisplayIncentiveTable.objects.filter(branch_guid__in=to_delete_branch_guids).exists()
+        if display_incentives_exist:
             return Response({"error": "Display incentives exist for outlets that will be deleted. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Delete outlets not in provided data
-        TtaListOutlet.objects.filter(tta_outlet_guid__in=to_delete_guids).delete()
+        to_delete = existing_outlet_guids - provided_outlet_guids
+        TtaListOutlet.objects.filter(tta_outlet_guid__in=to_delete).delete()
 
         # Update or create outlets
         for outlet_data in outlets_data:
