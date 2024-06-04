@@ -115,10 +115,6 @@ class TtaListStockNDeliveries(models.Model):
             self.list_guid = uuid
             self.created_at=panda.panda_today()
             self.created_by=self.created_by
-
-        if self.list_link_guid == None:
-            self.list_link_guid = uuid
-            self.revision = '0'
             
 
         #allresult = Sysrun.objects.filter(customer_guid=self.customer_guid).first()
@@ -137,4 +133,4 @@ class TtaListStockNDeliveries(models.Model):
         
         self.updated_at=panda.panda_today()
         self.updated_by=self.updated_by
-        super(TtaList,self).save(*args, **kwargs)
+        super(TtaListStockNDeliveries,self).save(*args, **kwargs)
