@@ -305,6 +305,9 @@ def check_tta(request):
         list_guid_array = request_data['list_guid']
         
         cal_date = datetime.strptime(request_data['cal_date'],'%Y-%m-%d')
+
+        # Initialize result at the beginning
+        result = None
         
         #get_TtaListCalLogs = TtaListCalLogs.objects.all()
 
@@ -437,7 +440,7 @@ def check_tta(request):
 
         #Purchase N Rebates
         print("Purchase List: ", purchase_list)
-
+            
         # Define the rebate fields to look for
         rebate_fields = [
             "unconditional_rebate_value", "commission_value", "auto_replenishment_rebate_value",
@@ -448,10 +451,11 @@ def check_tta(request):
             "target_growth_tier_2_value2", "target_growth_tier_3_value1", "target_growth_tier_3_value2"
         ]
 
-        # Iterating over each purchase and rebates object
         for purchase in purchase_list:
             print("Processing Purchase and Rebates: ", purchase.refno)
-            
+
+            tier_results = []
+
             for rebate_key in rebate_fields:
                 rebate_value = getattr(purchase, rebate_key, None)
                 if rebate_value is not None and rebate_value > 0.0:
@@ -479,11 +483,12 @@ def check_tta(request):
                         print("Rebate Value Type Value: ", rebate_value_type_value)
 
                         q_type = 'gr_gross_sum' if rebate_value_type_value == 'GPV' else 'gr_net_sum' if rebate_value_type_value == 'NPV' else 'Monthly' if rebate_value_type_value == 'Monthly' else 'Yearly' if rebate_value_type_value == 'Yearly' else 'unknown'
-
-                        label = rebate_key.replace('_value', '').replace('_', ' ').title()
+                        
+                        # Handle labels properly
+                        label = rebate_key.replace('_value1', '_Value 1').replace('_value2', '_Value 2').replace('_value', '').replace('_', ' ').title()
 
                         print("Q Type: ", q_type)
-                        print("Label: ", label)
+                        print("Label: ", label)    
 
                         data = {
                             "customer_guid": customer_guid,
@@ -510,30 +515,102 @@ def check_tta(request):
 
                         print("Data Prepared: ", data)
 
-                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                        if q_type in ['gr_gross_sum', 'gr_net_sum']:
                             # To calculate gr_sum
                             result = rims_data_functions.gr_sum(data)
                             print("Result: ", result)
-                            
+
                             if result['status'] == live_mode:
                                 calval_method = 'non_tier'
                                 print("Calling create_inv_header_child with calval_method:", calval_method)
                                 print("Data:", data)
                                 print("Result:", result)
-                                
                                 add_data = create_inv_header_child(data, customer_guid, result, calval_method)
                                 print("Function executed successfully with result:", add_data)
                             else:
                                 error_log(list_guid, 'check_tta', data, result)
+                        else:
+                            # If it's a tiered rebate, collect tier results
+                            if 'target_purchase_tier' in rebate_key or 'target_growth_tier' in rebate_key:
+                                tier_result = {
+                                    "range": Decimal(rebate_value),
+                                    "type": rebate_value_type_value,
+                                    "value": Decimal(rebate_type_value)
+                                }
+                                tier_results.append(tier_result)
                     else:
                         print(f"Skipping {rebate_key}: Missing type values")
                 else:
                     print(f"Skipping {rebate_key}: Value is None or zero")
 
+            # Handle tiered results if any
+            if len(tier_results) > 0:
+                # Get the last day of the month from a given date  
+                dt = datetime.strptime(dateto, '%Y-%m-%d') 
+                input_dt = datetime(dt.year, dt.month, dt.day)  
+                month, year = (input_dt.month-1, input_dt.year) if input_dt.month != 1 else (12, input_dt.year-1) 
+                aa_last_month = input_dt.replace(day=1, month=month, year=year)
+                actual_last_day_of_month = last_day_of_month(aa_last_month).strftime('%Y-%m-%d')
+
+                bf_data = {
+                    "customer_guid": customer_guid,
+                    "refno": result_1.refno,
+                    "code": result_1.supplier_code,
+                    "name": result_1.supplier_name,
+                    "prefix1": tier_results[0]['type'],
+                    "type": q_type,
+                    "label": label,
+                    "startDate": consolidate_result[0].tta_period_from,
+                    "endDate": actual_last_day_of_month,
+                    "outlet": outlet,
+                    "brand": brands,
+                    "supcode": supcode,
+                    "bf_amount": Decimal(0.00),
+                    "rebate_method": [
+                        {
+                            "range": Decimal(0.00),
+                            "type": '%',
+                            "value": Decimal(0.00)
+                        }
+                    ]
+                }
+
+                bf_result = rims_data_functions.gr_sum(bf_data)
+                final_bf_result = bf_result['value']
+                print("Tier Calculation bf_result:", bf_result)
+
+                data = {
+                    "customer_guid": customer_guid,
+                    "refno": result_1.refno,
+                    "code": result_1.supplier_code,
+                    "name": result_1.supplier_name,
+                    "prefix1": tier_results[0]['type'],
+                    "label": label,
+                    "type": q_type,
+                    "startDate": datefrom,
+                    "endDate": dateto,
+                    "outlet": outlet,
+                    "brand": brands,
+                    "supcode": supcode,
+                    "bf_amount": final_bf_result,
+                    "rebate_method": tier_results
+                }
+
+                print("Tier Data Prepared:", data)
+
+                result = rims_data_functions.rebate(data)
+                print("Tier Result:", result)
+
+                if result['status'] == live_mode:
+                    calval_method = 'tier'
+                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                    print("Function executed successfully with result:", add_data)
+                else:
+                    error_log(list_guid, 'check_tta', data, result)
+
         # Debugging the complete dictionary to see all keys and values
         for purchase in purchase_list:
             print("Debugging complete purchase object:", vars(purchase))
-
 
         #Payment N Discount
         print("Payment List: ", payment_list)
@@ -1401,7 +1478,7 @@ def check_tta(request):
                                             } 
                                             ]
                                         }
-
+ 
                             print("Data Prepared: ", data)
 
                             if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
@@ -1426,25 +1503,26 @@ def check_tta(request):
                 else:
                     print(f"Skipping {e_commerce_key}: Value is None or zero")
 
-        result_status = result['status']
+        # Handling the case where result might be None
+        if result is not None:
+            result_status = result['status']
+            data = {
+                "status": result_status,
+                "message": list_guid_array,
+                "retailer_guid": customer_guid
+            }                    
 
-        data = {
-            "status": result_status,
-            "message": list_guid_array,
-            "retailer_guid": customer_guid
-        }
-                            
-      
-        #return data
-        #print(result['status'])
-        if result_status == False:
+            if result_status == False:
+                return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            data = {
+                "status": False,
+                "message": "We couldn't process your request. Please ensure that all values are correctly entered and try again",
+                "retailer_guid": customer_guid
+            }
             return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
-        return Response(data, status=status.HTTP_200_OK)
-        #return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        #return Response({"status":"true","result":list_guid_array})   
-    else:
-        return HttpResponse("Invalid Method")
 
 
 # Create your views here.
