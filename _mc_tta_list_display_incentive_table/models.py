@@ -1,4 +1,7 @@
 from django.db import models
+import uuid
+import hashlib
+from _lib import panda
 from _mc_tta_list.models import TtaList 
 from _ml_rims_cp_set_branch.models import RimsCpSetBranch
 from _mc_get_customer_profile.models import CustomerProfile
@@ -16,12 +19,12 @@ class TtaListDisplayIncentiveTable(models.Model):
     percent = models.FloatField(blank=True, null=True, verbose_name='Percent')
 
     # Details of Creation
-    '''
+    
     created_at = models.DateTimeField(blank=True, null=True, verbose_name='Created at')
     created_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Created by')
     updated_at = models.DateTimeField(blank=True, null=True, verbose_name='Updated at')
     updated_by = models.CharField(max_length=100, blank=True, null=True, verbose_name='Updated by')
-    '''
+    
 
     class Meta:
         managed = False
@@ -35,3 +38,16 @@ class TtaListDisplayIncentiveTable(models.Model):
 
     def get_absolute_url(self):
         return f'/{self.list_guid}/'  
+    
+    def save(self, *args, **kwargs):
+        # Ensure tta_display_incentive_table_guid is set
+        if not self.tta_display_incentive_table_guid:
+            self.tta_display_incentive_table_guid = self.generate_unique_guid()
+        
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def generate_unique_guid():
+        def random_guid_part():
+            return hashlib.md5(uuid.uuid4().bytes).hexdigest()[:8].upper()
+        return ''.join(random_guid_part() for _ in range(4))
