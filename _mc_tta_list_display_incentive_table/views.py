@@ -52,7 +52,7 @@ class TtaListDisplayIncentiveTableViewSet(viewsets.ModelViewSet):
         data = request.data.copy()
         data['code'] = branch_code
         data['outlet'] = branch_name
-        #data['percent'] = percent
+        data['percent'] = request.data.get('percent', 0)  # Default value 0 if percent is not provided
         data['created_at'] = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
         data['created_by'] = customer_name
 
