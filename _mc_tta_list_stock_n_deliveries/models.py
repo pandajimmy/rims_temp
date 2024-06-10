@@ -108,29 +108,22 @@ class TtaListStockNDeliveries(models.Model):
     
     def save(self, *args, **kwargs):
         print(self.customer_guid)
-        
-        uuid = panda.panda_uuid()
 
-        if self.list_guid =='':
-            self.list_guid = uuid
-            self.created_at=panda.panda_today()
-            self.created_by=self.created_by
-            
+        # Generate a new UUID if list_guid is empty (should be set correctly by OneToOneField)
+        if not self.list_guid_id:  # Using list_guid_id to check the actual value
+            self.list_guid_id = panda.panda_uuid()
+            self.created_at = panda.panda_today()
+            self.created_by = self.created_by or "system"  # Default to 'system' if created_by is None
 
-        #allresult = Sysrun.objects.filter(customer_guid=self.customer_guid).first()
-        allresult = Sysrun.objects.filter(customer_guid=self.customer_guid, type='TTA').first()
-        new_refno = str(allresult.customer_prefix) + str(allresult.type) + str(allresult.yyyy)[:2] + str(allresult.mm).zfill(2) + str(allresult.nodigit).zfill(4)
+        # Fetch the related TtaList object
+        tta_list = TtaList.objects.get(pk=self.list_guid_id)
+        new_refno = tta_list.refno
 
-        
-        
-        
-        if self.refno == '':
+        # Only update refno if it's empty
+        if not self.refno:
             self.refno = new_refno
-            t =  Sysrun.objects.get(customer_guid=self.customer_guid, type='TTA')
-            t.nodigit += 1  # change field
-            t.save() # this will update only
 
-        
-        self.updated_at=panda.panda_today()
-        self.updated_by=self.updated_by
-        super(TtaListStockNDeliveries,self).save(*args, **kwargs)
+        self.updated_at = panda.panda_today()
+        self.updated_by = self.updated_by or "system"  # Default to 'system' if updated_by is None
+
+        super(TtaListStockNDeliveries, self).save(*args, **kwargs)

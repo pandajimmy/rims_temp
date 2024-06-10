@@ -529,7 +529,7 @@ def check_tta(request):
                             "customer_guid": customer_guid,
                             "refno": result_1.refno,
                             "code": result_1.supplier_code,
-                            "name": result_1.supplier_name,
+                            "name": result_1.supplier_name, 
                             "prefix1": rebate_type_value,
                             "type": q_type,
                             "label": label,
@@ -662,11 +662,11 @@ def check_tta(request):
             for discount_key in discount_fields:
                 discount_value = getattr(payment, discount_key, None)
                 if discount_value is not None and discount_value > 0.0:
-                    print(f"Key: {discount_key}, Value: {discount_value}")
+                    print(f"Key: {discount_key}, Value: {discount_value}") 
 
                  # Determine the appropriate fee_type_key and fee_value_type_key
                     if '_value1' in discount_key:
-                        discount_type_key = discount_key.replace('_value1', '_type1')
+                        discount_type_key = discount_key.replace('_value1', '_type1') 
                         discount_value_type_key = discount_key.replace('_value1', '_value_type')
                     elif '_value2' in discount_key:
                         discount_type_key = discount_key.replace('_value2', '_type2')
@@ -1557,7 +1557,5 @@ def check_tta(request):
                 "retailer_guid": customer_guid
             }
             return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
-
-
 
 # Create your views here.
