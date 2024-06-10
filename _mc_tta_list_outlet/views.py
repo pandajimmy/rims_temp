@@ -101,7 +101,7 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
         to_delete_branch_guids = existing_outlet_branch_guids - provided_outlet_branch_guids
 
         print("To Delete Branch Guids: ", to_delete_branch_guids)
-        
+
         for branch_guid in to_delete_branch_guids:
             if TtaListDisplayIncentiveTable.objects.filter(branch_guid=branch_guid, list_guid=list_guid).exists():
                 return Response({"error": f"Display incentives exist for outlet {branch_guid}. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
@@ -126,7 +126,7 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
 
             if serializer.is_valid():
                 serializer.save()
-            else:
+            else:  
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"message": "Outlets updated successfully"}, status=status.HTTP_200_OK)

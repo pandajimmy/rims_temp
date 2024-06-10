@@ -44,7 +44,7 @@ def error_log(list_guid, log_module, data, result):
 
 class rebateSerializer(serializers.Serializer):
     range = serializers.FloatField(max_value=None, min_value=0)
-    type = serializers.ChoiceField(choices=('$','%',))
+    type = serializers.ChoiceField(choices=('$', 'RM', '%',))
     value = serializers.FloatField(max_value=None, min_value=0)
 
 class fgr_sumSerializer(serializers.Serializer):
@@ -130,11 +130,11 @@ def gr_sum(param):
         gr_sum = 0
     return {"status":True, "value":gr_sum}
 
-def calRebate(calType,calValue,calAmount):
-    if calType == '$':
+def calRebate(calType, calValue, calAmount):
+    if calType == '$' or calType == 'RM':
         return calValue
     if calType == '%':
-        return round((calValue/100) * Decimal(calAmount), 4)
+        return round((calValue / 100) * Decimal(calAmount), 4)
 
 def rebate(param):
     json = []

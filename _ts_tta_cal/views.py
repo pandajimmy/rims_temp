@@ -144,45 +144,52 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                                 check_invmain_exist = TtaInvmain.objects.get(docno=data['refno'], customer_guid=data['customer_guid']) 
                                 #print('#############################',data['refno'])
                             except TtaInvmain.DoesNotExist:
-                                check_invmain_exist = TtaInvmain(docno=data['refno']
-                                        , customer_guid=data['customer_guid']
-                                        , invoice_date=date.today()
-                                        , code=data['code']
-                                        , name=data['name']
-                                        , created_by='system'
-                                        , updated_by='system'
-                                        )
+                                # If TtaInvmain does not exist, create a new instance
+                                try:
+                                    # Check if the customer_guid exists in CustomerProfile
+                                    customer_profile = CustomerProfile.objects.get(customer_guid=data['customer_guid'])
+                                except CustomerProfile.DoesNotExist:
+                                    print("CustomerProfile with the given customer_guid does not exist.")
+                                    # Handle the error accordingly
+                                    return
+
+                                # Create a new TtaInvmain instance
+                                check_invmain_exist = TtaInvmain(
+                                    docno=data['refno'],
+                                    customer_guid=customer_profile,  # Use the CustomerProfile instance
+                                    invoice_date=date.today(),
+                                    code=data['code'],
+                                    name=data['name'],
+                                    created_by='system',
+                                    updated_by='system'
+                                )
                                 check_invmain_exist.save()   
 
-                                
+                                # Query the TtaList object to get the required fields directly
+                                update_profile = TtaList.objects.filter(refno=data['refno'], customer_guid=data['customer_guid']).values(
+                                    'bill_supp_name', 'supplier_add1', 'supplier_add2', 'supplier_add3', 'supplier_add4', 'supplier_pic'
+                                )
 
-                                #update_profile = TtaList.objects.get(refno=data['refno'], customer_guid=data['customer_guid'])  
-                                update_profile = TtaList.objects.filter(refno=data['refno']).filter(customer_guid=data['customer_guid']).values_list('supplier_profile', flat=True)
-                                
-                                get_data = update_profile[0]
-                                for data1 in get_data:
-                                    if data1['field'] == "bill_supp_name":
-                                        option_value = data1['prefix1']['options']
-                                        
-                                    if data1['field'] == "supplier_pic":
-                                        pic = data1['input1']
-                                
-                                        
-                                for opt_val in option_value:
-                                    add1 = opt_val['add1']
-                                    add2 = opt_val['add2']
-                                    add3 = opt_val['add3']
-                                    add4 = opt_val['add4']
-                                    term = opt_val['term']
+                                # Assuming the query returns a single result, extract the first result
+                                if update_profile.exists():
+                                    profile = update_profile[0]
                                     
-                                
-                                TtaInvmain.objects.filter(docno=data['refno'], customer_guid=data['customer_guid']).update(
-                                    add_1=add1
-                                    , add_2=add2
-                                    , add_3=add3
-                                    , add_4=add4
-                                    , term=term 
-                                    , attn=pic
+                                    # Assign the values from the query to variables
+                                    add1 = profile['supplier_add1']
+                                    add2 = profile['supplier_add2']
+                                    add3 = profile['supplier_add3']
+                                    add4 = profile['supplier_add4']
+                                    #term = profile['term'] 
+                                    pic = profile['supplier_pic']
+                                    
+                                    # Update the TtaInvmain object with the retrieved values
+                                    TtaInvmain.objects.filter(docno=data['refno'], customer_guid=data['customer_guid']).update(
+                                        add_1=add1,
+                                        add_2=add2,
+                                        add_3=add3,
+                                        add_4=add4,
+                                        #term=term,
+                                        attn=pic
                                     )
                                                             
                             get_invmainguid = TtaInvmain.objects.get(docno=data['refno'], customer_guid=data['customer_guid']) 
@@ -233,7 +240,8 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                                         ) 
                                     check_invchild_exist.save() 
                 
-                            
+                            print("Check InvMain: ", check_invmain_exist)
+                            #print("Check InvChild: ", check_invchild_exist)
                             #result_status = posting_status["status"]
                             return result
                             #return Response({"status":"true","result":connection.queries}) 
@@ -252,21 +260,48 @@ def error_log(list_guid, customer_guid, log_module, data, result):
                     )  
         log.save()  
 
-
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
 def tta_vendor(request):
     if request.method == 'POST':  
         request_data = QueryDict.dict(request.data) 
         customer_guid = str(request_data['customer_guid'])
+        list_guid_array = request_data['list_guid']
         consolidate_result = []
 
-        result_1 = TtaList.objects.filter(customer_guid=customer_guid).values('list_guid','supplier_profile')
+        print("Request Data: ", request_data)
+
+        #loop through  list_guid that need to undergo data processing
+        for list_guid in list_guid_array:   
+            result_1 = TtaList.objects.get(customer_guid=customer_guid, list_guid=list_guid)  
+            consolidate_result.append(result_1)   
         
         force_new_dict = {}
 
         final_list =[]
 
+        for result_1 in consolidate_result:
+            force_new_dict['list_guid'] = result_1.list_guid
+            val_supplier_guid = result_1.supplier_guid
+            supplier_name = result_1.supplier_name
+            # Process 'supplier_name' field
+            if supplier_name:
+                if type(val_supplier_guid) == str: 
+                    val_supplier_guid = list(val_supplier_guid.split(" "))  
+                q_supcode = RimsSupcus.objects.filter(supcus_guid__in=val_supplier_guid).filter(customer_guid=customer_guid).values_list('code', flat=True)
+                supcode = list(q_supcode) 
+                force_new_dict['supcode'] = supcode
+                force_new_dict['sup_guid'] = val_supplier_guid
+                tobecopy = force_new_dict
+
+                final = tobecopy.copy()
+                final_list.append(final)  
+                print("Final List: ", final_list)
+    
+        return Response({"status":"true","result":final_list}) 
+        #return Response({"status":"true","result":outlet})   
+
+        '''
         for result  in result_1: 
 
             for sp in result['supplier_profile']:
@@ -292,9 +327,9 @@ def tta_vendor(request):
     
         return Response({"status":"true","result":final_list}) 
         #return Response({"status":"true","result":outlet}) 
+    '''
     else:
         return HttpResponse("Invalid Method")
-
 
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
@@ -1391,7 +1426,7 @@ def check_tta(request):
                         label = e_commerce_key.replace('_value', '').replace('_', ' ').title()
 
                         print("Q Type: ", q_type)
-                        print("Label: ", label)
+                        print("Label: ", label) 
 
                         # Date range fields
                         date_from_key = e_commerce_key.replace('_value', '_date_from')

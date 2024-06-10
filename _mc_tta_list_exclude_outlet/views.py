@@ -100,7 +100,7 @@ class TtaListExcludeOutletViewSet(viewsets.ModelViewSet):
         # Delete outlets not in provided data
         to_delete = existing_outlet_guids - provided_outlet_guids
 
-        print("To Delete Exclude Outlet Guids: ", to_delete)
+        print("To Delete Exclude Outlet Guids: ", to_delete)      
 
         TtaListExcludeOutlet.objects.filter(tta_exclude_outlet_guid__in=to_delete).delete()
 
