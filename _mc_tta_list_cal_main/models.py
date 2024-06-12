@@ -3,6 +3,7 @@ from _lib import panda
 from django.db.models.functions import Concat
 from django.http import HttpResponse
 from django.db import connection
+from django.utils import timezone
 from _mc_get_customer_profile.models import CustomerProfile
 
 from django.db.models.signals import (
@@ -49,5 +50,7 @@ class TtaListCalMain(models.Model):
         if self.cal_guid =='':
             self.cal_guid = panda.panda_uuid()  
 
-        self.created_at=panda.panda_today()
-        super(TtaListCalMain,self).save(*args, **kwargs)   
+        self.created_at= timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+        print("Cal Guid: ", self.cal_guid)
+        print("Created At: ", self.created_at)
+        super(TtaListCalMain,self).save(*args, **kwargs)  

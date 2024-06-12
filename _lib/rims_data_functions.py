@@ -166,7 +166,7 @@ def rebate(param):
         else:
             jsonChild = rebate_method
             jsonChild["tierPurchaseAmt"] = 0  
-            jsonChild["rebateValue"] = 0
+            jsonChild["rebateValue"] = 0  
             json.append(jsonChild)
 
     purchase['rebate'] = json

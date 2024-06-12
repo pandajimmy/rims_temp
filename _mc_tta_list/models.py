@@ -110,7 +110,14 @@ class TtaList(models.Model):
         if self.list_link_guid == None:
             self.list_link_guid = uuid
             self.revision = '0'
-            
+        
+        # Default calMethod to "Method1" if not specified
+        if not self.calMethod:
+            self.calMethod = "Method1"
+
+        #Default calValue to "0" if not specified
+        if not self.calValue:
+            self.calValue = 0
 
         #allresult = Sysrun.objects.filter(customer_guid=self.customer_guid).first()
         allresult = Sysrun.objects.filter(customer_guid=self.customer_guid, type='TTA').first()

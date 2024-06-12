@@ -127,7 +127,7 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                 cal_val = data['bf_amount']
         else:
             cal_val = 0      
-    elif calval_method == 'tier': 
+    elif calval_method == 'tier':   
         cal_val = 1
     else:
         cal_val = result['value'] 
@@ -199,7 +199,7 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                             description=data['label'] + str(t),
                             pricetype=data['prefix1'],
                             unit_price=data['bf_amount'],
-                            qty='1',
+                            qty='1', 
                             totalprice=t_loop['rebateValue'],
                             total_incl_tax=t_loop['rebateValue'],
                             created_by='system',
