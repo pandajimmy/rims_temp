@@ -20,8 +20,8 @@ class RimsBannerViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'concept': ["in", "exact"], # note the 'in' field
         'branch': ["in","exact"],
-        'customer_guid': ["exact"],
+        'customer_guid__customer_guid': ["exact"],
         'concept_inactive' : ["in","exact"],
         'branch_inactive' : ["in","exact"],
     }
-    search_fields = ['customer_guid','concept','branch','concept_inactive', 'branch_inactive']
+    search_fields = ['customer_guid__customer_guid','concept','branch','concept_inactive', 'branch_inactive']

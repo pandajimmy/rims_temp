@@ -20,10 +20,10 @@ class RimsCpSetBranchViewSet(viewsets.ModelViewSet):
     # search_fields = ['customer_guid','branch_code','branch_name'] 
 
     filterset_fields = {
-        'customer_guid': ["in", "exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["in", "exact"], # note the 'in' field
         'branch_code': ["in","exact"],
         'branch_name': ["in","exact"],
 
     }
-    search_fields = ['customer_guid','branch_code','branch_name']
+    search_fields = ['customer_guid__customer_guid','branch_code','branch_name']
     paginator = None

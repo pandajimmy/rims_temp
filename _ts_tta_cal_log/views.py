@@ -19,9 +19,9 @@ class TtaListCalLogsViewSet(viewsets.ModelViewSet):
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
         'log_guid': ["in", "exact"],# note the 'in' field
-        'customer_guid': ["in", "exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["in", "exact"], # note the 'in' field
         'list_guid': ["in","exact"],
         'log_module': ["in","exact"], 
         'log_ref': ["in","exact"], 
     }
-    search_fields = ['log_guid','customer_guid','list_guid','log_module','log_ref'] 
+    search_fields = ['log_guid','customer_guid__customer_guid','list_guid','log_module','log_ref'] 

@@ -18,7 +18,7 @@ class RimsSupcusViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     #filterset_fields = ['customer_guid','code','name', 'accountcode', 'type', 'block'] 
     filterset_fields = {
-        'customer_guid': ["exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["exact"], # note the 'in' field
         'code': ["exact"],
         'name': ["exact"],
         'accountcode': ["in"],
@@ -29,6 +29,6 @@ class RimsSupcusViewSet(viewsets.ModelViewSet):
         'name_reg' : ["exact"],
         'term' : ["exact"],
     }
-    search_fields = ['customer_guid','code','name', 'accountcode', 'type',
+    search_fields = ['customer_guid__customer_guid','code','name', 'accountcode', 'type',
             'block', 'gst_no', 'reg_no', 'name_reg', 'term'] 
     #paginator = None

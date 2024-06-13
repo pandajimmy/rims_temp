@@ -23,10 +23,10 @@ class RimsAccCodeViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
-        'customer_guid': ["in", "exact"],
+        'customer_guid__customer_guid': ["in", "exact"],
         'acc_type': ["in", "exact"], # note the 'in' field 
         'tta_field': ["in","exact"],
         'acc_code': ["in","exact"], 
 
     }
-    search_fields = ['customer_guid','acc_type','tta_field','acc_code']
+    search_fields = ['customer_guid__customer_guid','acc_type','tta_field','acc_code']

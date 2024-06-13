@@ -24,9 +24,9 @@ class RimsAccGlmasterViewSet(viewsets.ModelViewSet):
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
         'glmaster_guid': ["in", "exact"],
-        'customer_guid': ["in", "exact"],
+        'customer_guid__customer_guid': ["in", "exact"],
         'acc_code': ["in", "exact"], # note the 'in' field 
         'isactive': ["in","exact"], 
 
     }
-    search_fields = ['glmaster_guid','customer_guid','acc_code','isactive']
+    search_fields = ['glmaster_guid','customer_guid__customer_guid','acc_code','isactive']

@@ -17,10 +17,10 @@ class TtaInvmainViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
-        'customer_guid': ["exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["exact"], # note the 'in' field
         'refno': ["in", "exact"], # note the 'in' field 
         'invmain_guid': ["in", "exact"], # note the 'in' field 
         'docno': ["in", "exact"], 
     }
-    search_fields = ['customer_guid','refno','invmain_guid', 'docno']
+    search_fields = ['customer_guid__customer_guid','refno','invmain_guid', 'docno']
     #paginator = None

@@ -20,11 +20,11 @@ class RimsCustomerDataViewSet(viewsets.ModelViewSet):
     # search_fields = ['customer_guid','branch_code','branch_name'] 
 
     filterset_fields = {
-        'customer_guid': ["in", "exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["in", "exact"], # note the 'in' field
         'module_type': ["in","exact"],
         'list_guid': ["in","exact"],
         #'period_code': ["in","exact"],
 
     }
-    search_fields = ['customer_guid','module_type','list_guid']
+    search_fields = ['customer_guid__customer_guid','module_type','list_guid']
     #paginator = None

@@ -18,9 +18,9 @@ class TtaCndnAmtCViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
-        'customer_guid': ["exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["exact"], # note the 'in' field
         'child_guid': ["in", "exact"], # note the 'in' field 
         'cndn_guid': ["in", "exact"], # note the 'in' field 
     }
-    search_fields = ['customer_guid','child_guid','cndn_guid']
+    search_fields = ['customer_guid__customer_guid','child_guid','cndn_guid']
     #paginator = None

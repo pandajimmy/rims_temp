@@ -18,9 +18,9 @@ class DesignDynamic_SViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     #filterset_fields = ['customer_guid','dynamic_guid', 'tab_guid'] 
     filterset_fields = {
-        'customer_guid': ["exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["exact"],
         'dynamic_guid': ["in","exact"],
         'tab_guid': ["in","exact"],
     }
-    search_fields = ['customer_guid','dynamic_guid', 'tab_guid'] 
+    search_fields = ['customer_guid__customer_guid','dynamic_guid', 'tab_guid'] 
     paginator = None

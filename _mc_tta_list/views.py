@@ -40,7 +40,7 @@ class TtaListViewSet(viewsets.ModelViewSet):
     filterset_fields = {
         'refno': ["in", "exact"], # note the 'in' field
         'supplier_guid': ["in","exact"],
-        'customer_guid': ["in","exact"],
+        'customer_guid__customer_guid': ["in","exact"],
         'list_guid' : ["in","exact"],
         'list_status' : ["in","exact"],
         'tta_period_from' : ["gte","lte"],
@@ -51,7 +51,7 @@ class TtaListViewSet(viewsets.ModelViewSet):
         # 'list_guid' : ["exact"],
 
     }
-    search_fields = ['refno','supplier_name','customer_guid','list_guid','list_status']
+    search_fields = ['refno','supplier_name','customer_guid__customer_guid','list_guid','list_status']
  
  
     

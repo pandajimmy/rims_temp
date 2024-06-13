@@ -18,10 +18,10 @@ class RimsBrandViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
-        'customer_guid': ["exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["exact"], # note the 'in' field
         'mcode': ["in", "exact"], # note the 'in' field
         'code': ["in","exact"],
         'description': ["in","exact"], 
     }
-    search_fields = ['customer_guid','mcode','code','description']
+    search_fields = ['customer_guid__customer_guid','mcode','code','description']
     # paginator = None

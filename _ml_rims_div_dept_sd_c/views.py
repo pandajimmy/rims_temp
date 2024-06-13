@@ -18,7 +18,7 @@ class RimsDivDeptSdCViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
-        'customer_guid': ["in", "exact"], # note the 'in' field
+        'customer_guid__customer_guid': ["in", "exact"], # note the 'in' field
         'group_code': ["in", "exact"], # note the 'in' field
         'group_desc': ["in","exact"],
         'dept': ["in","exact"],
@@ -28,5 +28,5 @@ class RimsDivDeptSdCViewSet(viewsets.ModelViewSet):
         'category' : ["in","exact"],
         'category_desc' : ["in","exact"],
     }
-    search_fields = ['customer_guid','group_code','group_desc','dept','dept_desc', 'subdept','subdeptdesc','category','category_desc']
+    search_fields = ['customer_guid__customer_guid','group_code','group_desc','dept','dept_desc', 'subdept','subdeptdesc','category','category_desc']
     paginator = None

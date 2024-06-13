@@ -23,10 +23,10 @@ class TtaListStatusTransViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter,)
     # filterset_fields = ['refno','supplier_name']
     filterset_fields = {
-        'customer_guid': ["in", "exact"], # note the 'in' field 
+        'customer_guid__customer_guid': ["in", "exact"], # note the 'in' field 
         'list_guid': ["in","exact"],
         'trans_guid': ["in","exact"],
         'status_key' : ["in","exact"],
 
     }
-    search_fields = ['customer_guid','list_guid','trans_guid','status_key']
+    search_fields = ['customer_guid__customer_guid','list_guid','trans_guid','status_key']
