@@ -2286,11 +2286,13 @@ def export_excel(request,customer_guid, date_from, date_to):
         test=pd.DataFrame().to_records(row)
 
         trading_brand_list = []
-        brand_guids = []
-        trading_brand = row.get('trading_brand', [])
+        if row.get('trading_brand__brand_guid') != None:
+            trading_brand_list = list(trading_brand_list.append(row.get('trading_brand__brand_guid')))
+        else:
+            trading_brand_list = []
 
         # Debug print to see the structure of trading_brand
-        #print("Trading Brand:", trading_brand_list)
+        print("Trading Brand:", trading_brand_list)
 
         dataset={ 
                 "ref_no":row['refno'],
