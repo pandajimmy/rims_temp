@@ -2023,7 +2023,7 @@ def export_excel_old(request,customer_guid, date_from, date_to):
 
 @api_view(['GET'])
 def export_excel(request,customer_guid, date_from, date_to):
-    print("start api")
+    print("Start Export Excel Api")
     newlist=[]
     run=0
 
@@ -2033,7 +2033,6 @@ def export_excel(request,customer_guid, date_from, date_to):
     date_from = str('%s'%date_from)
     date_to = str('%s'%date_to) 
     title = customer_guid+'_'+date_from+'_'+date_to 
-    
     
     result = TtaList.objects.filter(customer_guid=customer_guid).values('refno'
                             ,'bill_supp_code'
@@ -2047,6 +2046,9 @@ def export_excel(request,customer_guid, date_from, date_to):
                             , 'trading_brand__brand_guid'
                             , 'outlet_type'
                             , 'outlet'
+                            , 'outlet__branch_guid'
+                            , 'exclude_outlet'
+                            , 'exclude_outlet__branch_guid'
                             #Purchase N Rebates
                             , 'purchase_n_rebates__unconditional_rebate_value'
                             , 'purchase_n_rebates__unconditional_rebate_type'
@@ -2280,19 +2282,87 @@ def export_excel(request,customer_guid, date_from, date_to):
                             , 'e_commerce_support__market_place_event_value_type'
             ).order_by('refno') 
 
+    # Dictionary to hold trading brands, outlet_branch and exclude_outlet_branch for each refno
+    trading_brands = {}
+    outlet_branch = {}
+    exclude_outlet_branch = {}
+
+
+    '''
+    # Process 'exclude_outlet' field
+    tta_exclude_outlet_guids = [guid for sublist in exclude_outlet_list for guid in sublist]
+
+    if tta_exclude_outlet_guids:
+        q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).exclude(branch_guid__in=tta_exclude_outlet_guids).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
+        exclude_outlet = list(q_outlet)
+    else:
+        exclude_outlet = []  # Default value when conditions don't match
+
+    dataset['exclude_outlet'] = exclude_outlet
+    print("Exclude Outlet Info: ", exclude_outlet)
+
+    '''
+
+    for row in result:
+        refno = row['refno']
+        if refno not in outlet_branch:
+            outlet_branch[refno] = set()  # Use a set to avoid duplicates
+        
+        if refno not in exclude_outlet_branch:
+            exclude_outlet_branch[refno] = set()  # Use a set to avoid duplicates
+
+        if refno not in trading_brands:
+            trading_brands[refno] = set()  # Use a set to avoid duplicates
+
+        brand_guid = row.get('trading_brand__brand_guid')
+        if brand_guid:
+            q_brand = RimsBrand.objects.filter(brand_guid=brand_guid, customer_guid=customer_guid).values_list('code', flat=True)
+            brands = list(q_brand)
+            trading_brands[refno].update(brands)
+
+        branch_guid = row.get('outlet__branch_guid')
+        if branch_guid:
+            outlet_branch[refno].add(branch_guid)
+
+        exclude_branch_guid = row.get('exclude_outlet__branch_guid')
+        if exclude_branch_guid:
+            q_branch = RimsCpSetBranch.objects.filter(branch_guid=exclude_branch_guid).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
+            branch = list(q_branch)
+            exclude_outlet_branch[refno].update(branch)
+
     for row in result:
         dataset={} 
         outlet_dataset={}
         test=pd.DataFrame().to_records(row)
 
-        trading_brand_list = []
-        if row.get('trading_brand__brand_guid') != None:
-            trading_brand_list = list(trading_brand_list.append(row.get('trading_brand__brand_guid')))
-        else:
-            trading_brand_list = []
+        refno = row['refno']
 
-        # Debug print to see the structure of trading_brand
-        print("Trading Brand:", trading_brand_list)
+        if refno in trading_brands:
+            brands = list(trading_brands[refno])
+        else:
+            brands = []
+
+        if refno in outlet_branch:
+            branch_guids = list(outlet_branch[refno])
+        else:
+            branch_guids = []
+        
+        if refno in exclude_outlet_branch:
+            exclude_branch = list(exclude_outlet_branch[refno])
+        else:
+            exclude_branch = []
+
+        outlet_dataset = {
+            "outlet_type": row.get('outlet_type', 'default_value')
+        }
+
+        if outlet_dataset['outlet_type'] == 'All':
+            outlet = "All"
+        elif outlet_dataset['outlet_type'] == 'Outlet':
+            q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=branch_guids, customer_guid=customer_guid).values_list('branch_code', flat=True)
+            outlet = list(q_outlet)
+        else:
+            outlet = []
 
         dataset={ 
                 "ref_no":row['refno'],
@@ -2302,8 +2372,9 @@ def export_excel(request,customer_guid, date_from, date_to):
                 "tta_period_to":row['tta_period_to'],
                 "returnable":row['returnable'],
                 "trading_type":row['trading_type'],  
-                "trading_brand": trading_brand_list,
-                "outlet": row['outlet'],
+                "trading_brand": brands,
+                "outlet": outlet,
+                "exclude_outlet": exclude_branch,
                 #Purchase N Rebates
                 "unconditional_rebate": row['purchase_n_rebates__unconditional_rebate_value'],
                 "unconditional_rebate_type": row['purchase_n_rebates__unconditional_rebate_type'],
@@ -2526,77 +2597,6 @@ def export_excel(request,customer_guid, date_from, date_to):
                 "market_place_event_remark": row['e_commerce_support__market_place_event_value_type']
         } 
 
-        outlet_dataset={
-                "outlet_type": row.get('outlet_type', 'default_value'),
-                "outlet": row.get('outlet')
-        }
-
-        # Assuming 'row' is the JSON object you are working with
-        outlet_branch_guids = []
-        '''
-        # Iterate through each outlet in the 'outlet' array
-        if row.get('outlet') != None:
-            for outlet in row.get('outlet', []):
-                # Access the 'branch_guid' from the nested 'branch' object
-                branch_guid = outlet.get('branch', {}).get('branch_guid')
-                
-                # Append the branch_guid to your list or process it further as needed
-                outlet_branch_guids.append(branch_guid)
-
-            # Now you have a list of branch_guids from each outlet
-            print(outlet_branch_guids)
-
-            # Print outlet_branch_guids to debug
-            print("Outlet Branch GUIDs: ", outlet_branch_guids)
-        '''
-
-        # Process 'outlet' field
-        if outlet_dataset['outlet_type'] == 'All':
-            outlet = "All"
-            #q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-            #outlet = list(q_outlet)
-        elif outlet_dataset['outlet_type']  == 'Outlet':
-            q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=outlet_branch_guids, customer_guid=customer_guid).values_list('branch_code', flat=True)
-            outlet = list(q_outlet)
-            # Print q_outlet results to debug
-            #print("Query Results for Outlet: ", outlet)
-        else:
-            outlet = []  # Default value when conditions don't match
-
-        dataset['outlet'] = outlet
-        #print("Outlet Info: ", outlet)
-
-        '''
-        # Process 'exclude_outlet' field
-        tta_exclude_outlet_guids = [guid for sublist in exclude_outlet_list for guid in sublist]
-
-        if tta_exclude_outlet_guids:
-            q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).exclude(branch_guid__in=tta_exclude_outlet_guids).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-            exclude_outlet = list(q_outlet)
-        else:
-            exclude_outlet = []  # Default value when conditions don't match
-
-        dataset['exclude_outlet'] = exclude_outlet
-        print("Exclude Outlet Info: ", exclude_outlet)
-
-        '''
-
-        '''
-        # Accessing brand_guid instead of list_brand_guid
-        brand_guids = [item['brand_guid'] for item in dataset['trading_brand']]
-
-        print("Brand Guid:", brand_guids)
-
-        if brand_guids:
-            q_brand = RimsBrand.objects.filter(brand_guid__in=brand_guids, customer_guid=customer_guid).values_list('code', flat=True)
-            brands = list(q_brand)
-        else:
-            brands = []  # Default value when conditions don't match
-
-        dataset['trading_brand'] = brands
-        print("Trading Brand Info: ", brands)
-        '''
-
         newlist.append(dataset)
 
          # Convert lists to tuples to make them hashable for drop_duplicates
@@ -2621,8 +2621,8 @@ def export_excel(request,customer_guid, date_from, date_to):
         df.to_excel(writer, sheet_name='Sheet1', index=False)
         writer.close()
         # Set up the Http response.
-        #filename = title + '.xlsx'
-        filename = 'test' + '.xlsx'
+        filename = title + '.xlsx'
+        #filename = 'test' + '.xlsx'
         response = HttpResponse(
             b.getvalue(),
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
