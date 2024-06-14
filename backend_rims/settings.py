@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     '_mc_get_customer_profile_table.apps.McGetCustomerProfileTableConfig',
     '_mc_tta_logs.apps.McTtaLogsConfig',
     '_ml_rims_cp_set_branch.apps.MlRimsCpSetBranchConfig',
+    '_ml_rims_cp_set_branch_location.apps.MlRimsCpSetBranchLocationConfig',
     '_ml_rims_pay_term.apps.MlRimsPayTermConfig',
     '_ml_rims_supcus.apps.MlRimsSupcusConfig',
     '_mc_design_dynamic.apps.McDesignDynamicConfig',

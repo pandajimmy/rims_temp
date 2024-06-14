@@ -82,6 +82,7 @@ path('mc_design_template/', include('_mc_design_template.urls')),
 # Define the list of endpoints you want to show in ml
 ml_included_endpoints = [
     path('ml_rims_cp_set_branch/', include('_ml_rims_cp_set_branch.urls')),
+    path('ml_rims_cp_set_branch_location/', include('_ml_rims_cp_set_branch_location.urls')),
     path('ml_rims_pay_term/', include('_ml_rims_pay_term.urls')),
     path('ml_rims_supcus/', include('_ml_rims_supcus.urls')),
     path('ml_design_cot/', include('_ml_design_cot.urls')),
@@ -231,6 +232,7 @@ urlpatterns = [
     path('mc_get_customer_profile_table/', include('_mc_get_customer_profile_table.urls')),
     path('mc_tta_logs/', include('_mc_tta_logs.urls')),
     path('ml_rims_cp_set_branch/', include('_ml_rims_cp_set_branch.urls')),
+    path('ml_rims_cp_set_branch_location/', include('_ml_rims_cp_set_branch_location.urls')),
     path('ml_rims_pay_term/', include('_ml_rims_pay_term.urls')),
     path('ml_rims_supcus/', include('_ml_rims_supcus.urls')),
     path('mc_design_dynamic/', include('_mc_design_dynamic.urls')),
