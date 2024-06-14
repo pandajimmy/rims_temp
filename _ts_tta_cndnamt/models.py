@@ -1,12 +1,15 @@
 from django.db import models
 from _lib import panda
 from _mc_get_customer_profile.models import CustomerProfile
+from datetime import datetime
+import uuid
 
 # Create your models here.
 class TtaCndnAmt(models.Model):
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cndnamt_customer_profile')
-    cndn_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Cndn guid')
-    trans_type = models.CharField(max_length=10, blank=True, null=True, verbose_name='Transaction Type')
+    cndn_guid = models.CharField(primary_key=True, max_length=32, editable=False, verbose_name='Cndn guid')
+    #cndn_guid_refdate = models.CharField(max_length=32, verbose_name='Cndn guid ref date')
+    trans_type = models.CharField(max_length=10, verbose_name='Transaction Type')
     loc_group = models.CharField(max_length=20, blank=True, null=True, verbose_name='Location Group')
     location = models.CharField(max_length=20, blank=True, null=True, verbose_name='Location')
     refno = models.CharField(max_length=20, blank=True, null=True, verbose_name='Reference Number')
@@ -76,14 +79,30 @@ class TtaCndnAmt(models.Model):
     def get_absolute_url(self):
         return f'/{self.refno}/' 
     
-    
-    def save(self, *args, **kwargs): 
-        
-        uuid = panda.panda_uuid()
+    def save(self, *args, **kwargs):
+        uid = ''
+        while not uid.startswith('C'):
+            uid = uuid.uuid4().hex.upper()
 
-        if self.cndn_guid =='':
-            self.cndn_guid = uuid  
-        
-        self.updated_at=panda.panda_today()
-        self.updated_by=self.updated_by
-        super(TtaCndnAmt,self).save(*args, **kwargs)
+        if self.cndn_guid == '':
+            self.cndn_guid = uid
+            self.created_at = panda.panda_today()
+            self.created_by = self.created_by  or "system"  # Default to 'system' if created_by is None
+
+        if not self.refno:
+            last_refno = TtaCndnAmt.objects.order_by('-refno').first()
+            if last_refno:
+                last_number = int(last_refno.refno[-8:])
+                new_number = last_number + 1
+            else:
+                new_number = 20000001
+            
+            self.refno = f'EVRCNDN{new_number:08d}'
+
+        # Update docdate to today's date in YYYY-MM-DD format
+        self.docdate = datetime.now().strftime('%Y-%m-%d')
+        self.doc_type = self.trans_type
+
+        self.updated_at = panda.panda_today()
+        self.updated_by = self.updated_by  or "system"  # Default to 'system' if created_by is None
+        super(TtaCndnAmt, self).save(*args, **kwargs)

@@ -2029,7 +2029,6 @@ def export_excel(request,customer_guid, date_from, date_to):
 
     # result=TtaList.objects.all()
     
-    
     customer_guid = str('%s'%customer_guid)
     date_from = str('%s'%date_from)
     date_to = str('%s'%date_to) 
@@ -2045,37 +2044,254 @@ def export_excel(request,customer_guid, date_from, date_to):
                             , 'returnable'
                             , 'trading_type'
                             , 'trading_brand'
+                            , 'trading_brand__brand_guid'
                             , 'outlet_type'
                             , 'outlet'
-                            , 'purchase_n_rebates'
-                            , 'payment_n_discount'
-                            , 'stock_n_deliveries'
-                            , 'administration_fees'
-                            , 'business_growth_support'
-                            , 'promotion_support'
+                            #Purchase N Rebates
+                            , 'purchase_n_rebates__unconditional_rebate_value'
+                            , 'purchase_n_rebates__unconditional_rebate_type'
+                            , 'purchase_n_rebates__unconditional_rebate_value_type'
+                            , 'purchase_n_rebates__commission_value'
+                            , 'purchase_n_rebates__commission_type'
+                            , 'purchase_n_rebates__commission_value_type'
+                            , 'purchase_n_rebates__auto_replenishment_rebate_value'
+                            , 'purchase_n_rebates__auto_replenishment_rebate_type'
+                            , 'purchase_n_rebates__auto_replenishment_rebate_value_type'
+                            , 'purchase_n_rebates__monthly_discount_value'
+                            , 'purchase_n_rebates__monthly_discount_type'
+                            , 'purchase_n_rebates__monthly_discount_value_type'
+                            , 'purchase_n_rebates__target_period_type'
+                            , 'purchase_n_rebates__target_purchase_tier_1_value1'
+                            , 'purchase_n_rebates__target_purchase_tier_1_value2'
+                            , 'purchase_n_rebates__target_purchase_tier_1_type1'
+                            , 'purchase_n_rebates__target_purchase_tier_1_type2'
+                            , 'purchase_n_rebates__target_purchase_tier_1_value_type'
+                            , 'purchase_n_rebates__target_purchase_tier_2_value1'
+                            , 'purchase_n_rebates__target_purchase_tier_2_value2'
+                            , 'purchase_n_rebates__target_purchase_tier_2_type1'
+                            , 'purchase_n_rebates__target_purchase_tier_2_type2'
+                            , 'purchase_n_rebates__target_purchase_tier_2_value_type'
+                            , 'purchase_n_rebates__target_purchase_tier_3_value1'
+                            , 'purchase_n_rebates__target_purchase_tier_3_value2'
+                            , 'purchase_n_rebates__target_purchase_tier_3_type1'
+                            , 'purchase_n_rebates__target_purchase_tier_3_type2'
+                            , 'purchase_n_rebates__target_purchase_tier_3_value_type'
+                            , 'purchase_n_rebates__target_growth_tier_1_value1'
+                            , 'purchase_n_rebates__target_growth_tier_1_value2'
+                            , 'purchase_n_rebates__target_growth_tier_1_type1'
+                            , 'purchase_n_rebates__target_growth_tier_1_type2'
+                            , 'purchase_n_rebates__target_growth_tier_1_type3'
+                            , 'purchase_n_rebates__target_growth_tier_1_type4'
+                            , 'purchase_n_rebates__target_growth_tier_1_value_type'
+                            , 'purchase_n_rebates__target_growth_tier_2_value1'
+                            , 'purchase_n_rebates__target_growth_tier_2_value2'
+                            , 'purchase_n_rebates__target_growth_tier_2_type1'
+                            , 'purchase_n_rebates__target_growth_tier_2_type2'
+                            , 'purchase_n_rebates__target_growth_tier_2_type3'
+                            , 'purchase_n_rebates__target_growth_tier_2_type4'
+                            , 'purchase_n_rebates__target_growth_tier_2_value_type'
+                            , 'purchase_n_rebates__target_growth_tier_3_value1'
+                            , 'purchase_n_rebates__target_growth_tier_3_value2'
+                            , 'purchase_n_rebates__target_growth_tier_3_type1'
+                            , 'purchase_n_rebates__target_growth_tier_3_type2'
+                            , 'purchase_n_rebates__target_growth_tier_3_type3'
+                            , 'purchase_n_rebates__target_growth_tier_3_type4'
+                            , 'purchase_n_rebates__target_growth_tier_3_value_type'
+                            #Payment N Discount
+                            , 'payment_n_discount__payment_terms_type'
+                            , 'payment_n_discount__early_payment_terms_type'
+                            , 'payment_n_discount__early_payment_terms_value'
+                            , 'payment_n_discount__early_payment_discount_value'
+                            , 'payment_n_discount__early_payment_discount_type'
+                            , 'payment_n_discount__early_payment_discount_value_type'
+                            , 'payment_n_discount__prompt_payment_discount_value'
+                            , 'payment_n_discount__prompt_payment_discount_type'
+                            , 'payment_n_discount__prompt_payment_discount_value_type'
+                            #Stock N Deliveries
+                            , 'stock_n_deliveries__cross_docking_allowance_value'
+                            , 'stock_n_deliveries__cross_docking_allowance_type'
+                            , 'stock_n_deliveries__cross_docking_allowance_value_type'
+                            , 'stock_n_deliveries__conventional_flow_thru_allowance_value'
+                            , 'stock_n_deliveries__conventional_flow_thru_allowance_type'
+                            , 'stock_n_deliveries__conventional_flow_thru_allowance_value_type'
+                            , 'stock_n_deliveries__shrinkage_pilferage_allowance_value'
+                            , 'stock_n_deliveries__shrinkage_pilferage_allowance_type'
+                            , 'stock_n_deliveries__shrinkage_pilferage_allowance_value_type'
+                            , 'stock_n_deliveries__non_returnable_goods_allowance_value'
+                            , 'stock_n_deliveries__non_returnable_goods_allowance_type'
+                            , 'stock_n_deliveries__non_returnable_goods_allowance_value_type'
+                            , 'stock_n_deliveries__east_malaysia_orders_allowance_value'
+                            , 'stock_n_deliveries__east_malaysia_orders_allowance_type'
+                            , 'stock_n_deliveries__east_malaysia_orders_allowance_value_type'
+                            , 'stock_n_deliveries__damage_good_allowance_value'
+                            , 'stock_n_deliveries__damage_good_allowance_type'
+                            , 'stock_n_deliveries__damage_good_allowance_value_type'
+                            , 'stock_n_deliveries__non_compliance_packaging_allowance_value'
+                            , 'stock_n_deliveries__non_compliance_packaging_allowance_type'
+                            , 'stock_n_deliveries__non_compliance_packaging_allowance_value_type'
+                            , 'stock_n_deliveries__purchase_order_fulfillment_value'
+                            , 'stock_n_deliveries__purchase_order_fulfillment_type'
+                            , 'stock_n_deliveries__purchase_order_fulfillment_value_type'
+                            , 'stock_n_deliveries__unfulfilled_penalty_value'
+                            , 'stock_n_deliveries__unfulfilled_penalty_type'
+                            , 'stock_n_deliveries__unfulfilled_penalty_value_type'
+                            , 'stock_n_deliveries__lost_of_profit_penalty_value'
+                            , 'stock_n_deliveries__lost_of_profit_penalty_type'
+                            , 'stock_n_deliveries__lost_of_profit_penalty_value_type'
+                            , 'stock_n_deliveries__purchase_order_lead_time_value'
+                            , 'stock_n_deliveries__purchase_order_lead_time_type'
+                            , 'stock_n_deliveries__purchase_order_lead_time_value_type'
+                            , 'stock_n_deliveries__lead_time_penalty_value'
+                            , 'stock_n_deliveries__lead_time_penalty_type'
+                            , 'stock_n_deliveries__lead_time_penalty_value_type'
+                            , 'stock_n_deliveries__ullarge_value'
+                            , 'stock_n_deliveries__ullarge_type'
+                            , 'stock_n_deliveries__ullarge_value_type'
+                            , 'stock_n_deliveries__target_service_level_value'
+                            , 'stock_n_deliveries__target_service_level_type'
+                            , 'stock_n_deliveries__target_service_level_value_type'
+                            , 'stock_n_deliveries__target_service_level_unfulfilled_penalty_value'
+                            , 'stock_n_deliveries__target_service_level_unfulfilled_penalty_type'
+                            , 'stock_n_deliveries__target_service_level_unfulfilled_penalty_value_type'
+                            #Administration Fees
+                            , 'administration_fees__account_administration_fee_value'
+                            , 'administration_fees__account_administration_fee_type'
+                            , 'administration_fees__account_administration_fee_value_type'
+                            , 'administration_fees__product_registration_fee_value'
+                            , 'administration_fees__product_registration_fee_type'
+                            , 'administration_fees__product_registration_fee_value_type'
+                            , 'administration_fees__sku_replacement_value'
+                            , 'administration_fees__sku_replacement_type'
+                            , 'administration_fees__sku_replacement_value_type'
+                            , 'administration_fees__new_line_fee_value'
+                            , 'administration_fees__new_line_fee_type'
+                            , 'administration_fees__new_line_fee_value_type'
+                            , 'administration_fees__new_item_listing_value'
+                            , 'administration_fees__new_item_listing_type'
+                            , 'administration_fees__new_item_listing_value_type'
+                            , 'administration_fees__new_item_first_order_discount_value1'
+                            , 'administration_fees__new_item_first_order_discount_value2'
+                            , 'administration_fees__new_item_first_order_discount_type1'
+                            , 'administration_fees__new_item_first_order_discount_type2'
+                            , 'administration_fees__new_item_first_order_discount_value_type'
+                            , 'administration_fees__change_of_purchase_type_value'
+                            , 'administration_fees__change_of_purchase_type_type'
+                            , 'administration_fees__change_of_purchase_type_value_type'
+                            , 'administration_fees__maintenance_of_vendor_information_value'
+                            , 'administration_fees__maintenance_of_vendor_information_type'
+                            , 'administration_fees__maintenance_of_vendor_information_value_type'
+                            , 'administration_fees__new_vcr_barcode_value'
+                            , 'administration_fees__new_vcr_barcode_type'
+                            , 'administration_fees__new_vcr_barcode_value_type'
+                            #Business Growth Support
+                            , 'business_growth_support__category_development_fund_value'
+                            , 'business_growth_support__category_development_fund_type'
+                            , 'business_growth_support__category_development_fund_value_type'
+                            , 'business_growth_support__business_development_fund_value'
+                            , 'business_growth_support__business_development_fund_type'
+                            , 'business_growth_support__business_development_fund_value_type'
+                            , 'business_growth_support__data_sharing_fee_value'
+                            , 'business_growth_support__data_sharing_fee_type'
+                            , 'business_growth_support__data_sharing_fee_value_type'
+                            , 'business_growth_support__new_store_opening_value'
+                            , 'business_growth_support__new_store_opening_type'
+                            , 'business_growth_support__new_store_opening_value_type'
+                            , 'business_growth_support__new_store_first_order_discount_value1'
+                            , 'business_growth_support__new_store_first_order_discount_value2'
+                            , 'business_growth_support__new_store_first_order_discount_type1'
+                            , 'business_growth_support__new_store_first_order_discount_type2'
+                            , 'business_growth_support__new_store_first_order_discount_value_type'
+                            , 'business_growth_support__refurbish_store_value'
+                            , 'business_growth_support__refurbish_store_type'
+                            , 'business_growth_support__refurbish_store_value_type'
+                            , 'business_growth_support__anniversary_sales_allowance_value'
+                            , 'business_growth_support__anniversary_sales_allowance_type'
+                            , 'business_growth_support__anniversary_sales_allowance_value_type'
+                            , 'business_growth_support__anniversary_orders_rebate_value'
+                            , 'business_growth_support__anniversary_orders_rebate_type'
+                            , 'business_growth_support__anniversary_orders_rebate_value_type'
+                            #Promotion Support
+                            , 'promotion_support__middle_year_big_sales_value'
+                            , 'promotion_support__middle_year_big_sales_type'
+                            , 'promotion_support__middle_year_big_sales_value_type'
+                            , 'promotion_support__top_brand_value'
+                            , 'promotion_support__top_brand_type'
+                            , 'promotion_support__top_brand_value_type'
+                            , 'promotion_support__anniversary_value'
+                            , 'promotion_support__anniversary_type'
+                            , 'promotion_support__anniversary_value_type'
+                            , 'promotion_support__gawai_value'
+                            , 'promotion_support__gawai_type'
+                            , 'promotion_support__gawai_value_type'
+                            , 'promotion_support__gawai_sales_value'
+                            , 'promotion_support__gawai_sales_type'
+                            , 'promotion_support__gawai_sales_value_type'
+                            , 'promotion_support__anniversary_sales_value'
+                            , 'promotion_support__anniversary_sales_type'
+                            , 'promotion_support__anniversary_sales_value_type'
+                            , 'promotion_support__chinese_new_year_sales_value'
+                            , 'promotion_support__chinese_new_year_sales_type'
+                            , 'promotion_support__chinese_new_year_sales_value_type'
+                            , 'promotion_support__hari_raya_sales_value'
+                            , 'promotion_support__hari_raya_sales_type'
+                            , 'promotion_support__hari_raya_sales_value_type'
+                            , 'promotion_support__christmas_sales_value'
+                            , 'promotion_support__christmas_sales_type'
+                            , 'promotion_support__christmas_sales_value_type'
+                            , 'promotion_support__promotion_commission_value'
+                            , 'promotion_support__promotion_commission_type'
+                            , 'promotion_support__promotion_commission_value_type'
+                            #Display Incentive
                             , 'display_incentive'
-                            , 'marketing_support'
-                            , 'e_commerce_support' 
+                            #Marketing Support
+                            , 'marketing_support__packaging_fee_value'
+                            , 'marketing_support__packaging_fee_type'
+                            , 'marketing_support__packaging_fee_value_type'
+                            , 'marketing_support__loyalty_program_value'
+                            , 'marketing_support__loyalty_program_type'
+                            , 'marketing_support__loyalty_program_value_type'
+                            , 'marketing_support__anniversary_event_value'
+                            , 'marketing_support__anniversary_event_type'
+                            , 'marketing_support__anniversary_event_value_type'
+                            , 'marketing_support__crm_event_value'
+                            , 'marketing_support__crm_event_type'
+                            , 'marketing_support__crm_event_value_type'
+                            , 'marketing_support__marketing_event_value'
+                            , 'marketing_support__marketing_event_type'
+                            , 'marketing_support__marketing_event_value_type'
+                            , 'marketing_support__concourse_event_value'
+                            , 'marketing_support__concourse_event_type'
+                            , 'marketing_support__concourse_event_value_type'
+                            #E-Commerce Support
+                            , 'e_commerce_support__e_commerce_sales_value'
+                            , 'e_commerce_support__e_commerce_sales_type'
+                            , 'e_commerce_support__e_commerce_sales_value_type'
+                            , 'e_commerce_support__system_setup_n_maintenance_value'
+                            , 'e_commerce_support__system_setup_n_maintenance_type'
+                            , 'e_commerce_support__system_setup_n_maintenance_value_type'
+                            , 'e_commerce_support__digital_communication_value'
+                            , 'e_commerce_support__digital_communication_type'
+                            , 'e_commerce_support__digital_communication_value_type'
+                            , 'e_commerce_support__social_media_post_value'
+                            , 'e_commerce_support__social_media_post_type'
+                            , 'e_commerce_support__social_media_post_value_type'
+                            , 'e_commerce_support__market_place_event_value'
+                            , 'e_commerce_support__market_place_event_type'
+                            , 'e_commerce_support__market_place_event_value_type'
             ).order_by('refno') 
-    
-    # Initialize an empty list to store the brand_guid values
-    brand_guid_list = []
-
-    # Iterate over the result
-    for record in result:
-        trading_brands = record.get('trading_brand', [])
-        for brand in trading_brands:
-            brand_guid = brand.get('brand_guid')
-            if brand_guid:
-                brand_guid_list.append(brand_guid)
-
-    # Now brand_guid_list contains all the brand_guid values
-    print(brand_guid_list)
 
     for row in result:
         dataset={} 
         outlet_dataset={}
         test=pd.DataFrame().to_records(row)
+
+        trading_brand_list = []
+        brand_guids = []
+        trading_brand = row.get('trading_brand', [])
+
+        # Debug print to see the structure of trading_brand
+        #print("Trading Brand:", trading_brand_list)
+
         dataset={ 
                 "ref_no":row['refno'],
                 "bill_supp_code":row['bill_supp_code'],
@@ -2084,39 +2300,259 @@ def export_excel(request,customer_guid, date_from, date_to):
                 "tta_period_to":row['tta_period_to'],
                 "returnable":row['returnable'],
                 "trading_type":row['trading_type'],  
+                "trading_brand": trading_brand_list,
+                "outlet": row['outlet'],
+                #Purchase N Rebates
+                "unconditional_rebate": row['purchase_n_rebates__unconditional_rebate_value'],
+                "unconditional_rebate_type": row['purchase_n_rebates__unconditional_rebate_type'],
+                "unconditional_rebate_remark": row['purchase_n_rebates__unconditional_rebate_value_type'],
+                "commission": row['purchase_n_rebates__commission_value'],
+                "commission_type": row['purchase_n_rebates__commission_type'],
+                "commission_remark": row['purchase_n_rebates__commission_value_type'],
+                "auto_replenishment_rebate": row['purchase_n_rebates__auto_replenishment_rebate_value'],
+                "auto_replenishment_rebate_type": row['purchase_n_rebates__auto_replenishment_rebate_type'],
+                "purchase_n_rebates__auto_replenishment_rebate_remark": row['purchase_n_rebates__auto_replenishment_rebate_value_type'],
+                "monthly_discount": row['purchase_n_rebates__monthly_discount_value'],
+                "monthly_discount_type": row['purchase_n_rebates__monthly_discount_type'],
+                "monthly_discount_remark": row['purchase_n_rebates__monthly_discount_value_type'],
+                "target_period": row['purchase_n_rebates__target_period_type'],
+                "target_purchase_tier_1": row['purchase_n_rebates__target_purchase_tier_1_value1'],
+                "target_purchase_tier_1_type": row['purchase_n_rebates__target_purchase_tier_1_type1'],
+                "target_purchase_tier_1_remark": row['purchase_n_rebates__target_purchase_tier_1_value_type'],
+                "target_purchase_tier_1_rate": row['purchase_n_rebates__target_purchase_tier_1_value2'],
+                "target_purchase_tier_1_rate_uom": row['purchase_n_rebates__target_purchase_tier_1_type2'],
+                "target_purchase_tier_2": row['purchase_n_rebates__target_purchase_tier_2_value1'],
+                "target_purchase_tier_2_type": row['purchase_n_rebates__target_purchase_tier_2_type1'],
+                "target_purchase_tier_2_remark": row['purchase_n_rebates__target_purchase_tier_2_value_type'],
+                "target_purchase_tier_2_rate": row['purchase_n_rebates__target_purchase_tier_2_value2'],
+                "target_purchase_tier_2_rate_uom": row['purchase_n_rebates__target_purchase_tier_2_type2'],
+                "target_purchase_tier_3": row['purchase_n_rebates__target_purchase_tier_3_value1'],
+                "target_purchase_tier_3_type": row['purchase_n_rebates__target_purchase_tier_3_type1'],
+                "target_purchase_tier_3_remark": row['purchase_n_rebates__target_purchase_tier_3_value_type'],
+                "target_purchase_tier_3_rate": row['purchase_n_rebates__target_purchase_tier_3_value2'],
+                "target_purchase_tier_3_rate_uom": row['purchase_n_rebates__target_purchase_tier_3_type2'],
+                "target_growth_tier_1": row['purchase_n_rebates__target_growth_tier_1_value1'],
+                "target_growth_tier_1_type": row['purchase_n_rebates__target_growth_tier_1_type1'],
+                "target_growth_tier_1_remark": row['purchase_n_rebates__target_growth_tier_1_value_type'],
+                "target_growth_tier_1_rate": row['purchase_n_rebates__target_growth_tier_1_value2'],
+                "target_growth_tier_1_rate_uom": row['purchase_n_rebates__target_growth_tier_1_type2'],
+                "target_growth_tier_1_division": row['purchase_n_rebates__target_growth_tier_1_type3'],
+                "target_growth_tier_2": row['purchase_n_rebates__target_growth_tier_2_value1'],
+                "target_growth_tier_2_type": row['purchase_n_rebates__target_growth_tier_2_type1'],
+                "target_growth_tier_2_remark": row['purchase_n_rebates__target_growth_tier_2_value_type'],
+                "target_growth_tier_2_rate": row['purchase_n_rebates__target_growth_tier_2_value2'],
+                "target_growth_tier_2_rate_uom": row['purchase_n_rebates__target_growth_tier_2_type2'],
+                "target_growth_tier_2_division": row['purchase_n_rebates__target_growth_tier_2_type3'],
+                "target_growth_tier_3": row['purchase_n_rebates__target_growth_tier_3_value1'],
+                "target_growth_tier_3_type": row['purchase_n_rebates__target_growth_tier_3_type1'],
+                "target_growth_tier_3_remark": row['purchase_n_rebates__target_growth_tier_3_value_type'],
+                "target_growth_tier_3_rate": row['purchase_n_rebates__target_growth_tier_3_value2'],
+                "target_growth_tier_3_rate_uom": row['purchase_n_rebates__target_growth_tier_3_type2'],
+                "target_growth_tier_3_division": row['purchase_n_rebates__target_growth_tier_3_type3'],
+                #Payment N Discount
+                "payment_terms": row['payment_n_discount__payment_terms_type'],
+                "early_payment_terms": row['payment_n_discount__early_payment_terms_value'],
+                "early_payment_terms_type": row['payment_n_discount__early_payment_terms_type'],
+                "early_payment_discount": row['payment_n_discount__early_payment_discount_value'],
+                "early_payment_discount_type": row['payment_n_discount__early_payment_discount_type'],
+                "early_payment_discount_remark": row['payment_n_discount__early_payment_discount_value_type'],
+                "prompt_payment_discount": row['payment_n_discount__prompt_payment_discount_value'],
+                "prompt_payment_discount_type": row['payment_n_discount__prompt_payment_discount_type'],
+                "prompt_payment_discount_remark": row['payment_n_discount__prompt_payment_discount_value_type'],
+                #Stock N Deliveries
+                "cross_docking_allowance": row['stock_n_deliveries__cross_docking_allowance_value'],
+                "cross_docking_allowance_type": row['stock_n_deliveries__cross_docking_allowance_type'],
+                "cross_docking_allowance_remark": row['stock_n_deliveries__cross_docking_allowance_value_type'],
+                "conventional_flow_thru_allowance": row['stock_n_deliveries__conventional_flow_thru_allowance_value'],
+                "conventional_flow_thru_allowance_type": row['stock_n_deliveries__conventional_flow_thru_allowance_type'],
+                "conventional_flow_thru_allowance_remark": row['stock_n_deliveries__conventional_flow_thru_allowance_value_type'],
+                "shrinkage_pilferage_allowance": row['stock_n_deliveries__shrinkage_pilferage_allowance_value'],
+                "shrinkage_pilferage_allowance_type": row['stock_n_deliveries__shrinkage_pilferage_allowance_type'],
+                "shrinkage_pilferage_allowance_remark": row['stock_n_deliveries__shrinkage_pilferage_allowance_value_type'],
+                "non_returnable_goods_allowance": row['stock_n_deliveries__non_returnable_goods_allowance_value'],
+                "non_returnable_goods_allowance_type": row['stock_n_deliveries__non_returnable_goods_allowance_type'],
+                "non_returnable_goods_allowance_remark": row['stock_n_deliveries__non_returnable_goods_allowance_value_type'],
+                "east_malaysia_orders_allowance": row['stock_n_deliveries__east_malaysia_orders_allowance_value'],
+                "east_malaysia_orders_allowance_type": row['stock_n_deliveries__east_malaysia_orders_allowance_type'],
+                "east_malaysia_orders_allowance_remark": row['stock_n_deliveries__east_malaysia_orders_allowance_value_type'],
+                "damage_good_allowance": row['stock_n_deliveries__damage_good_allowance_value'],
+                "damage_good_allowance_type": row['stock_n_deliveries__damage_good_allowance_type'],
+                "damage_good_allowance_remark": row['stock_n_deliveries__damage_good_allowance_value_type'],
+                "non_compliance_packaging_allowance": row['stock_n_deliveries__non_compliance_packaging_allowance_value'],
+                "non_compliance_packaging_allowance_type": row['stock_n_deliveries__non_compliance_packaging_allowance_type'],
+                "non_compliance_packaging_allowance_remark": row['stock_n_deliveries__non_compliance_packaging_allowance_value_type'],
+                "purchase_order_fulfillment": row['stock_n_deliveries__purchase_order_fulfillment_value'],
+                "purchase_order_fulfillment_type": row['stock_n_deliveries__purchase_order_fulfillment_type'],
+                "purchase_order_fulfillment_remark": row['stock_n_deliveries__purchase_order_fulfillment_value_type'],
+                "unfulfilled_penalty": row['stock_n_deliveries__unfulfilled_penalty_value'],
+                "unfulfilled_penalty_type": row['stock_n_deliveries__unfulfilled_penalty_type'],
+                "unfulfilled_penalty_remark": row['stock_n_deliveries__unfulfilled_penalty_value_type'],
+                "lost_of_profit_penalty": row['stock_n_deliveries__lost_of_profit_penalty_value'],
+                "lost_of_profit_penalty_type": row['stock_n_deliveries__lost_of_profit_penalty_type'],
+                "lost_of_profit_penalty_remark": row['stock_n_deliveries__lost_of_profit_penalty_value_type'],
+                "purchase_order_lead_time": row['stock_n_deliveries__purchase_order_lead_time_value'],
+                "purchase_order_lead_time_type": row['stock_n_deliveries__purchase_order_lead_time_type'],
+                "purchase_order_lead_time_remark": row['stock_n_deliveries__purchase_order_lead_time_value_type'],
+                "lead_time_penalty": row['stock_n_deliveries__lead_time_penalty_value'],
+                "lead_time_penalty_type": row['stock_n_deliveries__lead_time_penalty_type'],
+                "lead_time_penalty_remark": row['stock_n_deliveries__lead_time_penalty_value_type'],
+                "ullarge": row['stock_n_deliveries__ullarge_value'],
+                "ullarge_type": row['stock_n_deliveries__ullarge_type'],
+                "ullarge_remark": row['stock_n_deliveries__ullarge_value_type'],
+                "target_service_level": row['stock_n_deliveries__target_service_level_value'],
+                "target_service_level_type": row['stock_n_deliveries__target_service_level_type'],
+                "target_service_level_remark": row['stock_n_deliveries__target_service_level_value_type'],
+                "target_service_level_unfulfilled_penalty": row['stock_n_deliveries__target_service_level_unfulfilled_penalty_value'],
+                "target_service_level_unfulfilled_penalty_type": row['stock_n_deliveries__target_service_level_unfulfilled_penalty_type'],
+                "target_service_level_unfulfilled_penalty_remark": row['stock_n_deliveries__target_service_level_unfulfilled_penalty_value_type'],
+                #Administration Fees
+                "account_administration_fee": row['administration_fees__account_administration_fee_value'],
+                "account_administration_fee_type": row['administration_fees__account_administration_fee_type'],
+                "account_administration_fee_remark": row['administration_fees__account_administration_fee_value_type'],  
+                "product_registration_fee": row['administration_fees__product_registration_fee_value'],
+                "product_registration_fee_type": row['administration_fees__product_registration_fee_type'],
+                "product_registration_fee_remark": row['administration_fees__product_registration_fee_value_type'],     
+                "sku_replacement": row['administration_fees__sku_replacement_value'],
+                "sku_replacement_type": row['administration_fees__sku_replacement_type'],
+                "sku_replacement_remark": row['administration_fees__sku_replacement_value_type'],     
+                "new_line_fee": row['administration_fees__new_line_fee_value'],
+                "new_line_fee_type": row['administration_fees__new_line_fee_type'],
+                "new_line_fee_remark": row['administration_fees__new_line_fee_value_type'],           
+                "new_item_listing": row['administration_fees__new_item_listing_value'],
+                "new_item_listing_type": row['administration_fees__new_item_listing_type'],
+                "new_item_listing_remark": row['administration_fees__new_item_listing_value_type'],           
+                "new_item_first_order_discount": row['administration_fees__new_item_first_order_discount_value1'],
+                "new_item_first_order_discount_type": row['administration_fees__new_item_first_order_discount_type1'],
+                "new_item_first_order_discount_remark": row['administration_fees__new_item_first_order_discount_value_type'],  
+                "change_of_purchase_type": row['administration_fees__change_of_purchase_type_value'],
+                "change_of_purchase_type_type": row['administration_fees__change_of_purchase_type_type'],
+                "change_of_purchase_type_remark": row['administration_fees__change_of_purchase_type_value_type'],       
+                "maintenance_of_vendor_information_type": row['administration_fees__maintenance_of_vendor_information_value'],
+                "maintenance_of_vendor_information_type": row['administration_fees__maintenance_of_vendor_information_type'],
+                "maintenance_of_vendor_information_remark": row['administration_fees__maintenance_of_vendor_information_value_type'],   
+                "new_vendor_creation_request_by_existing_vendor_barcode": row['administration_fees__new_vcr_barcode_value'],
+                "new_vendor_creation_request_by_existing_vendor_barcode_type": row['administration_fees__new_vcr_barcode_type'],
+                "new_vendor_creation_request_by_existing_vendor_barcode_remark": row['administration_fees__new_vcr_barcode_value_type'], 
+                #Business Growth Support
+                "category_development_fund": row['business_growth_support__category_development_fund_value'],
+                "category_development_fund_type": row['business_growth_support__category_development_fund_type'],
+                "category_development_fund_value_type": row['business_growth_support__category_development_fund_value_type'],
+                "business_development_fund": row['business_growth_support__business_development_fund_value'],
+                "business_development_fund_type": row['business_growth_support__business_development_fund_type'],
+                "business_development_fund_value_type": row['business_growth_support__business_development_fund_value_type'],
+                "data_sharing_fee": row['business_growth_support__data_sharing_fee_value'],
+                "data_sharing_fee_type": row['business_growth_support__data_sharing_fee_type'],
+                "data_sharing_fee_value_type": row['business_growth_support__data_sharing_fee_value_type'],
+                "new_store_opening": row['business_growth_support__new_store_opening_value'],
+                "new_store_opening_type": row['business_growth_support__new_store_opening_type'],
+                "new_store_opening_value_type": row['business_growth_support__new_store_opening_value_type'],
+                "new_store_first_order_discount": row['business_growth_support__new_store_first_order_discount_value1'],
+                "new_store_first_order_discount_type": row['business_growth_support__new_store_first_order_discount_type1'],
+                "new_store_first_order_discount_value_type": row['business_growth_support__new_store_first_order_discount_value_type'],
+                "refurbish_store": row['business_growth_support__refurbish_store_value'],
+                "refurbish_store_type": row['business_growth_support__refurbish_store_type'],
+                "refurbish_store_value_type": row['business_growth_support__refurbish_store_value_type'],
+                "anniversary_sales_allowance": row['business_growth_support__anniversary_sales_allowance_value'],
+                "anniversary_sales_allowance_type": row['business_growth_support__anniversary_sales_allowance_type'],
+                "anniversary_sales_allowance_value_type": row['business_growth_support__anniversary_sales_allowance_value_type'],
+                "anniversary_orders_rebate": row['business_growth_support__anniversary_orders_rebate_value'],
+                "anniversary_orders_rebate_type": row['business_growth_support__anniversary_orders_rebate_type'],
+                "anniversary_orders_rebate_value_type": row['business_growth_support__anniversary_orders_rebate_value_type'],
+                #Promotion Support
+                "middle_year_big_sales": row['promotion_support__middle_year_big_sales_value'],
+                "middle_year_big_sales_type": row['promotion_support__middle_year_big_sales_type'],
+                "middle_year_big_sales_remark": row['promotion_support__middle_year_big_sales_value_type'],
+                "top_brand": row['promotion_support__top_brand_value'],
+                "top_brand_type": row['promotion_support__top_brand_type'],
+                "top_brand_remark": row['promotion_support__top_brand_value_type'],
+                "anniversary": row['promotion_support__anniversary_value'],
+                "anniversary_type": row['promotion_support__anniversary_type'],
+                "anniversary_remark": row['promotion_support__anniversary_value_type'],
+                "gawai_sales": row['promotion_support__gawai_sales_value'],
+                "gawai_sales_type": row['promotion_support__gawai_sales_type'],
+                "gawai_sales_remark": row['promotion_support__gawai_sales_value_type'],
+                "anniversary_sales": row['promotion_support__anniversary_sales_value'],
+                "anniversary_sales_type": row['promotion_support__anniversary_sales_type'],
+                "anniversary_sales_remark": row['promotion_support__anniversary_sales_value_type'],
+                "chinese_new_year_sales": row['promotion_support__chinese_new_year_sales_value'],
+                "chinese_new_year_sales_type": row['promotion_support__chinese_new_year_sales_type'],
+                "chinese_new_year_sales_remark": row['promotion_support__chinese_new_year_sales_value_type'],
+                "hari_raya_sales": row['promotion_support__hari_raya_sales_value'],
+                "hari_raya_sales_type": row['promotion_support__hari_raya_sales_type'],
+                "hari_raya_sales_remark": row['promotion_support__hari_raya_sales_value_type'],
+                "christmas_sales": row['promotion_support__christmas_sales_value'],
+                "christmas_sales_type": row['promotion_support__christmas_sales_type'],
+                "christmas_sales_remark": row['promotion_support__christmas_sales_value_type'],
+                "promotion_commission": row['promotion_support__promotion_commission_value'],
+                "promotion_commission_type": row['promotion_support__promotion_commission_type'],
+                "promotion_commission_remark": row['promotion_support__promotion_commission_value_type'],
+                #Display Incentive
+                #Marketing Support
+                "packaging_fee": row['marketing_support__packaging_fee_value'],
+                "packaging_fee_type": row['marketing_support__packaging_fee_type'],
+                "packaging_fee_remark": row['marketing_support__packaging_fee_value_type'],
+                "loyalty_program": row['marketing_support__loyalty_program_value'],
+                "loyalty_program_type": row['marketing_support__loyalty_program_type'],
+                "loyalty_program_remark": row['marketing_support__loyalty_program_value_type'],
+                "anniversary_event": row['marketing_support__anniversary_event_value'],
+                "anniversary_event_type": row['marketing_support__anniversary_event_type'],
+                "anniversary_event_remark": row['marketing_support__anniversary_event_value_type'],
+                "crm_event": row['marketing_support__crm_event_value'],
+                "crm_event_type": row['marketing_support__crm_event_type'],
+                "crm_event_remark": row['marketing_support__crm_event_value_type'],
+                "marketing_event": row['marketing_support__marketing_event_value'],
+                "marketing_event_type": row['marketing_support__marketing_event_type'],
+                "marketing_event_remark": row['marketing_support__marketing_event_value_type'],
+                "concourse_event": row['marketing_support__concourse_event_value'],
+                "concourse_event_type": row['marketing_support__concourse_event_type'],
+                "concourse_event_remark": row['marketing_support__concourse_event_value_type'],
+                #E-Commerce Support
+                "e_commerce_sales": row['e_commerce_support__e_commerce_sales_value'],
+                "e_commerce_sales_type": row['e_commerce_support__e_commerce_sales_type'],
+                "e_commerce_sales_remark": row['e_commerce_support__e_commerce_sales_value_type'],
+                "system_setup_n_maintenance": row['e_commerce_support__system_setup_n_maintenance_value'],
+                "system_setup_n_maintenance_type": row['e_commerce_support__system_setup_n_maintenance_type'],
+                "system_setup_n_maintenance_remark": row['e_commerce_support__system_setup_n_maintenance_value_type'],
+                "digital_communication": row['e_commerce_support__digital_communication_value'],
+                "digital_communication_type": row['e_commerce_support__digital_communication_type'],
+                "digital_communication_remark": row['e_commerce_support__digital_communication_value_type'],
+                "social_media_post": row['e_commerce_support__social_media_post_value'],
+                "social_media_post_type": row['e_commerce_support__social_media_post_type'],
+                "social_media_post_remark": row['e_commerce_support__social_media_post_value_type'],
+                "market_place_event": row['e_commerce_support__market_place_event_value'],
+                "market_place_event_type": row['e_commerce_support__market_place_event_type'],
+                "market_place_event_remark": row['e_commerce_support__market_place_event_value_type']
         } 
 
         outlet_dataset={
                 "outlet_type": row.get('outlet_type', 'default_value'),
-                "outlet__branch__branch_guid": row.get('outlet__branch__branch_guid', 'default_value')
+                "outlet": row.get('outlet')
         }
 
-        # Process 'trading_brand' field
-        trading_brand = dataset['trading_brand']
-        print("Trading Brand: ", trading_brand)
-
-        if trading_brand:
-            q_brand = RimsBrand.objects.filter(
-                brand_guid__in=trading_brand, 
-                customer_guid=customer_guid
-            ).values_list('code', flat=True)
-            brands = list(q_brand)
-        else:
-            brands = []  # Default value when conditions don't match
-
-        print("Trading Brand Info: ", brands)
-
-        # Extracting branch_guid values
+        # Assuming 'row' is the JSON object you are working with
         outlet_branch_guids = []
+        '''
+        # Iterate through each outlet in the 'outlet' array
+        if row.get('outlet') != None:
+            for outlet in row.get('outlet', []):
+                # Access the 'branch_guid' from the nested 'branch' object
+                branch_guid = outlet.get('branch', {}).get('branch_guid')
+                
+                # Append the branch_guid to your list or process it further as needed
+                outlet_branch_guids.append(branch_guid)
 
-        outlet_branch_guids = dataset.get('outlet__branch__branch_guid', [])
+            # Now you have a list of branch_guids from each outlet
+            print(outlet_branch_guids)
 
-        # Print outlet_branch_guids to debug
-        #print("Outlet Branch GUIDs: ", outlet_branch_guids)
+            # Print outlet_branch_guids to debug
+            print("Outlet Branch GUIDs: ", outlet_branch_guids)
+        '''
 
         # Process 'outlet' field
         if outlet_dataset['outlet_type'] == 'All':
             outlet = "All"
+            #q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
+            #outlet = list(q_outlet)
         elif outlet_dataset['outlet_type']  == 'Outlet':
             q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=outlet_branch_guids, customer_guid=customer_guid).values_list('branch_code', flat=True)
             outlet = list(q_outlet)
@@ -2141,6 +2577,22 @@ def export_excel(request,customer_guid, date_from, date_to):
         dataset['exclude_outlet'] = exclude_outlet
         print("Exclude Outlet Info: ", exclude_outlet)
 
+        '''
+
+        '''
+        # Accessing brand_guid instead of list_brand_guid
+        brand_guids = [item['brand_guid'] for item in dataset['trading_brand']]
+
+        print("Brand Guid:", brand_guids)
+
+        if brand_guids:
+            q_brand = RimsBrand.objects.filter(brand_guid__in=brand_guids, customer_guid=customer_guid).values_list('code', flat=True)
+            brands = list(q_brand)
+        else:
+            brands = []  # Default value when conditions don't match
+
+        dataset['trading_brand'] = brands
+        print("Trading Brand Info: ", brands)
         '''
 
         newlist.append(dataset)
@@ -2175,301 +2627,6 @@ def export_excel(request,customer_guid, date_from, date_to):
         )
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         return response
-
-        '''
-        row_count_pnr=len(numpy.array(row['purchase_n_rebates']))  
-        row_count_pnd=len(numpy.array(row['payment_n_discount'])) 
-        row_count_snd=len(numpy.array(row['stock_n_deliveries']))
-        row_count_af=len(numpy.array(row['administration_fees']))
-        row_count_bgs=len(numpy.array(row['business_growth_support']))
-        row_count_ps=len(numpy.array(row['promotion_support']))
-        row_count_di=len(numpy.array(row['display_incentive']))
-        row_count_ms=len(numpy.array(row['marketing_support']))
-        row_count_ecs=len(numpy.array(row['e_commerce_support']))
-
-        
-        for row_sp in range(row_count_sp):
-            field=row['supplier_profile'][row_sp]["field"] 
-            if field == 'outlet':
-                if row['supplier_profile'][row_sp]["prefix1"]["value"] != 'All':
-                    val_outlet = row['supplier_profile'][row_sp]["prefix2"]["value"]
-                    #selected outlet 
-                    q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=val_outlet).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-                    outlet= list(q_outlet) 
-                    dataset[field]=outlet
-
-                else: 
-                    dataset[field]=row['supplier_profile'][row_sp]["prefix1"]["value"]
-                    
-
-            if field == 'exclude_outlet':
-                prefix=field+'_type'
-
-                excl_outlet = row['supplier_profile'][row_sp]["prefix1"]["value"] 
-                #q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).exclude(branch_guid__in=excl_outlet).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-                q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).filter(branch_guid__in=excl_outlet).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-                outlet = list(q_outlet)
-                
-                dataset[field]=outlet
-                #dataset[prefix]=''
-            if field == 'trading_brand':
-                val_brand=row['supplier_profile'][row_sp]["prefix1"]["value"]
-                q_brand = RimsBrand.objects.filter(brand_guid__in=val_brand).filter(customer_guid=customer_guid).values_list('code', flat=True)
-                dataset[field]=list(q_brand) 
-
-        for row_pnr in range(row_count_pnr):
-            field=row['purchase_n_rebates'][row_pnr]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-            rate = field+'_rate'
-            rate_uom = field+'_rate_uom'
-
-            try: 
-                if(row['purchase_n_rebates'][row_pnr]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['purchase_n_rebates'][row_pnr]["input1"]
-                    dataset[prefix]=row['purchase_n_rebates'][row_pnr]["prefix1"]["value"]
-                
-                try:
-                    if(row['purchase_n_rebates'][row_pnr]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['purchase_n_rebates'][row_pnr]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''
-
-                try:
-                    if(row['purchase_n_rebates'][row_pnr]["input2"] != 'makesureifgotdata'):
-                        dataset[rate]=row['purchase_n_rebates'][row_pnr]["input2"]
-                        dataset[rate_uom]=row['purchase_n_rebates'][row_pnr]["prefix2"]["value"]
-                except KeyError:
-                    dataset[rate]=''
-                    dataset[rate_uom]='' 
-
-            except KeyError:
-                
-                dataset[field]=row['purchase_n_rebates'][row_pnr]["prefix1"]["value"]
-                dataset[prefix]=''
-            # ////////////////////////////////////////////////////////
-            try: 
-                if(row['purchase_n_rebates'][row_pnr]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['purchase_n_rebates'][row_pnr]["input1"]
-                    dataset[prefix]=row['purchase_n_rebates'][row_pnr]["prefix1"]["value"]
-                
-                try:
-                    if(row['purchase_n_rebates'][row_pnr]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['purchase_n_rebates'][row_pnr]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''
-
-            except KeyError:
-                
-                dataset[field]=row['purchase_n_rebates'][row_pnr]["prefix1"]["value"]
-                dataset[prefix]=''
-
-
-        for row_pnd in range(row_count_pnd):
-            field=row['payment_n_discount'][row_pnd]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-
-            try: 
-                if(row['payment_n_discount'][row_pnd]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['payment_n_discount'][row_pnd]["input1"]
-                    dataset[prefix]=row['payment_n_discount'][row_pnd]["prefix1"]["value"]
-                
-                try:
-                    if(row['payment_n_discount'][row_pnd]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['payment_n_discount'][row_pnd]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''
-
-            except KeyError:
-                
-                dataset[field]=row['payment_n_discount'][row_pnd]["prefix1"]["value"]
-                dataset[prefix]=''
-
-        for row_snd in range(row_count_snd):
-            field=row['stock_n_deliveries'][row_snd]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-
-            try:
-                #force something hopefully wont kena
-                if(row['stock_n_deliveries'][row_snd]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['stock_n_deliveries'][row_snd]["input1"]
-                    dataset[prefix]=row['stock_n_deliveries'][row_snd]["prefix1"]["value"]
-
-                try:
-                    if(row['stock_n_deliveries'][row_snd]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['stock_n_deliveries'][row_snd]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''   
-                    
-            except KeyError:
-                
-                dataset[field]=row['stock_n_deliveries'][row_snd]["prefix1"]["value"]
-                dataset[prefix]=''
-
-        for row_af in range(row_count_af):
-            field=row['administration_fees'][row_af]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-
-            try:
-                #force something hopefully wont kena
-                if(row['administration_fees'][row_af]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['administration_fees'][row_af]["input1"]
-                    dataset[prefix]=row['administration_fees'][row_af]["prefix1"]["value"]
-
-                try:
-                    if(row['administration_fees'][row_af]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['administration_fees'][row_af]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]='' 
-                        
-            except KeyError:
-                
-                dataset[field]=row['administration_fees'][row_af]["prefix1"]["value"]
-                dataset[prefix]=''
-
-        for row_bgs in range(row_count_bgs):
-            field=row['business_growth_support'][row_bgs]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-            try:
-                #force something hopefully wont kena
-                if(row['business_growth_support'][row_bgs]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['business_growth_support'][row_bgs]["input1"]
-                    dataset[prefix]=row['business_growth_support'][row_bgs]["prefix1"]["value"]
-                
-                try:
-                    if(row['business_growth_support'][row_bgs]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['business_growth_support'][row_bgs]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]='' 
-                    
-            except KeyError:
-                
-                dataset[field]=row['business_growth_support'][row_bgs]["prefix1"]["value"]
-                dataset[prefix]=''
-        
-        for row_ps in range(row_count_ps):
-            field=row['promotion_support'][row_ps]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-            try:
-                #force something hopefully wont kena
-                if(row['promotion_support'][row_ps]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['promotion_support'][row_ps]["input1"]
-                    dataset[prefix]=row['promotion_support'][row_ps]["prefix1"]["value"]
-                
-                try:
-                    if(row['promotion_support'][row_ps]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['promotion_support'][row_ps]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''
-
-            except KeyError:
-                
-                dataset[field]=row['promotion_support'][row_ps]["prefix1"]["value"]
-                dataset[prefix]=''
-        
-        # for row_di in range(row_count_di):
-        #     field=row['display_incentive'][row_di]["field"]
-        #     prefix=field+'_type'
-        #     remark=field+'_remark'
-        #     try:
-        #         #force something hopefully wont kena
-        #         if(row['display_incentive'][row_di]["input1"] != 'makesureifgotdata'):
-        #             dataset[field]=row['display_incentive'][row_di]["input1"]
-        #             dataset[prefix]=row['display_incentive'][row_di]["prefix1"]["value"]
-                
-        #         try:
-        #             if(row['display_incentive'][row_ps]["radio1"] != 'makesureifgotdata'):
-        #                 dataset[remark]=row['display_incentive'][row_di]["radio1"]["value"]
-        #         except KeyError:
-        #             dataset[remark]=''
-
-        #     except KeyError: 
-        #         dataset[field]=row['display_incentive'][row_di]["prefix1"]["value"]
-        #         dataset[prefix]=''
-        
-        for row_ms in range(row_count_ms):
-            field=row['marketing_support'][row_ms]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-            try:
-                #force something hopefully wont kena
-                if(row['marketing_support'][row_ms]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['marketing_support'][row_ms]["input1"]
-                    dataset[prefix]=row['marketing_support'][row_ms]["prefix1"]["value"]
-                try:
-                    if(row['marketing_support'][row_ms]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['marketing_support'][row_ms]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''    
-            except KeyError:
-                
-                dataset[field]=row['marketing_support'][row_ms]["prefix1"]["value"]
-                dataset[prefix]=''
-
-        for row_ecs in range(row_count_ecs):
-            field=row['e_commerce_support'][row_ecs]["field"]
-            prefix=field+'_type'
-            remark=field+'_remark'
-            try:
-                #force something hopefully wont kena
-                if(row['e_commerce_support'][row_ecs]["input1"] != 'makesureifgotdata'):
-                    dataset[field]=row['e_commerce_support'][row_ecs]["input1"]
-                    dataset[prefix]=row['e_commerce_support'][row_ecs]["prefix1"]["value"]
-                try:
-                    if(row['e_commerce_support'][row_ecs]["radio1"] != 'makesureifgotdata'):
-                        dataset[remark]=row['e_commerce_support'][row_ecs]["radio1"]["value"]
-                except KeyError:
-                    dataset[remark]=''        
-            except KeyError:
-                
-                dataset[field]=row['e_commerce_support'][row_ecs]["prefix1"]["value"]
-                dataset[prefix]=''
-            '''
-
-
-    # data = {
-    #         "status": True,
-    #         "message": customer_guid,
-    #         "retailer_guid": customer_guid
-    #     } 
-    #return Response(data, status=status.HTTP_200_OK)
-
-
-    return Response(newlist, status=status.HTTP_200_OK)
-    # return Response(result[0].payment_n_discount, status=status.HTTP_200_OK)
-# Create your views here.
-
-'''
-@api_view(['GET'])
-def testing(request):
-    data = {
-                "customer_guid":'D361F8521E1211EAAD7CC8CBB8CC0C93', 
-                "refno":result_1.refno, 
-                "code":result_1.supplier_code, 
-                "name":result_1.supplier_name, 
-                "prefix1": prefix1,
-                "label":label,
-                "type":q_type,  
-                "startDate":datefrom,
-                "endDate":dateto, 
-                "outlet" : outlet,
-                "brand": brand,
-                "supcode":supcode,
-                "bf_amount":input1.replace(',', ''),
-                "rebate_method":[
-                {
-                    "range":0,
-                    "type":'%',
-                    "value":0
-                } 
-                ]
-            }
-'''
 
 #def export_excel_cal_main(request,customer_guid, date_from, date_to):
 # @api_view(['GET'])
