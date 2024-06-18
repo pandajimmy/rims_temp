@@ -29,6 +29,7 @@ import requests
 import json
 import uuid
 import calendar
+import cProfile
 from _lib import panda
 from _lib import rims_data_functions
 from django.db import connection
@@ -2047,12 +2048,9 @@ def export_excel(request,customer_guid, date_from, date_to):
                             , 'tta_period_to'
                             , 'returnable'
                             , 'trading_type'
-                            , 'trading_brand'
                             , 'trading_brand__brand_guid'
                             , 'outlet_type'
-                            , 'outlet'
                             , 'outlet__branch_guid'
-                            , 'exclude_outlet'
                             , 'exclude_outlet__branch_guid'
                             #Purchase N Rebates
                             , 'purchase_n_rebates__unconditional_rebate_value'
@@ -2294,20 +2292,14 @@ def export_excel(request,customer_guid, date_from, date_to):
 
     for row in result:
         refno = row['refno']
-        if refno not in outlet_branch:
-            outlet_branch[refno] = set()  # Use a set to avoid duplicates
-        
-        if refno not in exclude_outlet_branch:
-            exclude_outlet_branch[refno] = set()  # Use a set to avoid duplicates
-
-        if refno not in trading_brands:
-            trading_brands[refno] = set()  # Use a set to avoid duplicates
+        trading_brands.setdefault(refno, set())
+        outlet_branch.setdefault(refno, set())
+        exclude_outlet_branch.setdefault(refno, set())
 
         brand_guid = row.get('trading_brand__brand_guid')
         if brand_guid:
             q_brand = RimsBrand.objects.filter(brand_guid=brand_guid, customer_guid=customer_guid).values_list('code', flat=True)
-            brands = list(q_brand)
-            trading_brands[refno].update(brands)
+            trading_brands[refno].update(q_brand)
 
         branch_guid = row.get('outlet__branch_guid')
         if branch_guid:
@@ -2315,39 +2307,23 @@ def export_excel(request,customer_guid, date_from, date_to):
 
         exclude_branch_guid = row.get('exclude_outlet__branch_guid')
         if exclude_branch_guid:
-            q_branch = RimsCpSetBranch.objects.filter(branch_guid=exclude_branch_guid).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-            branch = list(q_branch)
-            exclude_outlet_branch[refno].update(branch)
+            q_branch = RimsCpSetBranch.objects.filter(branch_guid=exclude_branch_guid, customer_guid=customer_guid).values_list('branch_code', flat=True)
+            exclude_outlet_branch[refno].update(q_branch)
+
+    processed_refnos = set()
 
     for row in result:
-        dataset={} 
-        outlet_dataset={}
-        #test=pd.DataFrame().to_records(row)
-
         refno = row['refno']
+        if refno in processed_refnos:
+            continue  # Skip if this refno has already been processed
 
-        if refno in trading_brands:
-            brands = list(trading_brands[refno])
-        else:
-            brands = []
+        brands = list(trading_brands.get(refno, []))
+        branch_guids = list(outlet_branch.get(refno, []))
+        exclude_branch = list(exclude_outlet_branch.get(refno, []))
 
-        if refno in outlet_branch:
-            branch_guids = list(outlet_branch[refno])
-        else:
-            branch_guids = []
-        
-        if refno in exclude_outlet_branch:
-            exclude_branch = list(exclude_outlet_branch[refno])
-        else:
-            exclude_branch = []
-
-        outlet_dataset = {
-            "outlet_type": row.get('outlet_type', 'default_value')
-        }
-
-        if outlet_dataset['outlet_type'] == 'All':
+        if row.get('outlet_type', 'default_value') == 'All':
             outlet = "All"
-        elif outlet_dataset['outlet_type'] == 'Outlet':
+        elif row.get('outlet_type', 'default_value') == 'Outlet':
             q_outlet = RimsCpSetBranch.objects.filter(branch_guid__in=branch_guids, customer_guid=customer_guid).values_list('branch_code', flat=True)
             outlet = list(q_outlet)
         else:
@@ -2587,22 +2563,24 @@ def export_excel(request,customer_guid, date_from, date_to):
         } 
 
         newlist.append(dataset)
+        processed_refnos.add(refno)  # Mark this refno as processed
 
-         # Convert lists to tuples to make them hashable for drop_duplicates
-        for item in newlist:
-            for key, value in item.items():
-                if isinstance(value, list):
-                    item[key] = tuple(value)
+
+        # Convert lists to tuples to make them hashable for drop_duplicates
+        #for item in newlist:
+            #for key, value in item.items():
+                #if isinstance(value, list):
+                    #item[key] = tuple(value)
 
         df = pd.DataFrame(newlist)
 
-        # Drop duplicate rows based on all columns
-        df = df.drop_duplicates()
+        #Drop duplicate rows based on all columns
+        #df = df.drop_duplicates()
 
-        # Convert tuPaymenples back to lists, but leave other values unchanged
-        for column in df.columns:
-            if df[column].apply(lambda x: isinstance(x, tuple)).any():
-                df[column] = df[column].apply(lambda x: list(x) if isinstance(x, tuple) else x)
+        # Convert tuples back to lists, but leave other values unchanged
+        #for column in df.columns:
+            #if df[column].apply(lambda x: isinstance(x, tuple)).any():
+                #df[column] = df[column].apply(lambda x: list(x) if isinstance(x, tuple) else x)
     
     df = format_numeric_columns(df)
 
@@ -2616,7 +2594,7 @@ def export_excel(request,customer_guid, date_from, date_to):
         workbook  = writer.book
         worksheet = writer.sheets['Sheet1']
 
-        # Get the dimensions of the dataframe.
+        # Get the dimensions of the dataframe. 
         (max_row, max_col) = df.shape
 
         # Iterate through each column and set the width.
@@ -2633,8 +2611,8 @@ def export_excel(request,customer_guid, date_from, date_to):
         # display a message box; execution will stop here until user acknowledges
         #ctypes.windll.user32.MessageBoxExW(None, message, windowTitle, WS_EX_TOPMOST)
 
-        #writer.save()
         writer.close()
+        #writer.save()
 
         # Set up the Http response.
         filename = title + '.xlsx'
@@ -2644,7 +2622,9 @@ def export_excel(request,customer_guid, date_from, date_to):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
         return response
+    
 
 #def export_excel_cal_main(request,customer_guid, date_from, date_to):
 # @api_view(['GET'])
@@ -2686,4 +2666,3 @@ def export_excel(request,customer_guid, date_from, date_to):
 
 
 #     return Response(result, status=status.HTTP_200_OK)
-
