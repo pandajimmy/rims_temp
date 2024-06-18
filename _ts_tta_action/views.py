@@ -70,10 +70,10 @@ from _ts_tta_invchild.serializers import TtaInvchildSerializer
 from .serializers import update_ttachild_serializers
 from _mc_get_customer_profile.models import CustomerProfile
 
+import ctypes  # An included library with Python install.   
+import threading
 
 # Create your serializers here.
-
-
 
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
@@ -2020,6 +2020,11 @@ def export_excel_old(request,customer_guid, date_from, date_to):
         } 
     return Response(data, status=status.HTTP_200_OK)
 
+def format_numeric_columns(df):
+    for col in df.select_dtypes(include=['float64', 'int64']).columns:
+        # Format numbers to 2 decimal places, except those in lists
+        df[col] = df[col].apply(lambda x: f"{x:.2f}" if not pd.isna(x) and not isinstance(x, list) else "")
+    return df
 
 @api_view(['GET'])
 def export_excel(request,customer_guid, date_from, date_to):
@@ -2287,22 +2292,6 @@ def export_excel(request,customer_guid, date_from, date_to):
     outlet_branch = {}
     exclude_outlet_branch = {}
 
-
-    '''
-    # Process 'exclude_outlet' field
-    tta_exclude_outlet_guids = [guid for sublist in exclude_outlet_list for guid in sublist]
-
-    if tta_exclude_outlet_guids:
-        q_outlet = RimsCpSetBranch.objects.exclude(set_active=0).exclude(branch_guid__in=tta_exclude_outlet_guids).filter(customer_guid=customer_guid).values_list('branch_code', flat=True)
-        exclude_outlet = list(q_outlet)
-    else:
-        exclude_outlet = []  # Default value when conditions don't match
-
-    dataset['exclude_outlet'] = exclude_outlet
-    print("Exclude Outlet Info: ", exclude_outlet)
-
-    '''
-
     for row in result:
         refno = row['refno']
         if refno not in outlet_branch:
@@ -2333,7 +2322,7 @@ def export_excel(request,customer_guid, date_from, date_to):
     for row in result:
         dataset={} 
         outlet_dataset={}
-        test=pd.DataFrame().to_records(row)
+        #test=pd.DataFrame().to_records(row)
 
         refno = row['refno']
 
@@ -2365,7 +2354,7 @@ def export_excel(request,customer_guid, date_from, date_to):
             outlet = []
 
         dataset={ 
-                "ref_no":row['refno'],
+                "ref_no":refno,
                 "bill_supp_code":row['bill_supp_code'],
                 "bill_supp_name":row['bill_supp_name'],
                 "tta_period_from":row['tta_period_from'],
@@ -2614,18 +2603,45 @@ def export_excel(request,customer_guid, date_from, date_to):
         for column in df.columns:
             if df[column].apply(lambda x: isinstance(x, tuple)).any():
                 df[column] = df[column].apply(lambda x: list(x) if isinstance(x, tuple) else x)
+    
+    df = format_numeric_columns(df)
 
     #return Response(newlist, status=status.HTTP_200_OK)
+    
     with BytesIO() as b:
         writer = pd.ExcelWriter(b, engine='xlsxwriter')
         df.to_excel(writer, sheet_name='Sheet1', index=False)
+        
+        # Get the xlsxwriter workbook and worksheet objects.
+        workbook  = writer.book
+        worksheet = writer.sheets['Sheet1']
+
+        # Get the dimensions of the dataframe.
+        (max_row, max_col) = df.shape
+
+        # Iterate through each column and set the width.
+        for col in range(max_col):
+            column_len = df.iloc[:, col].astype(str).map(len).max()
+            column_name = df.columns[col]
+            max_len = max(column_len, len(column_name)) + 2
+            worksheet.set_column(col, col, max_len)
+
+        #WS_EX_TOPMOST = 0x40000
+        #windowTitle = "Exporting RIMS TTA List Excel Sheet"
+        #message = "Your excel file has been generated. Click ok to download."
+
+        # display a message box; execution will stop here until user acknowledges
+        #ctypes.windll.user32.MessageBoxExW(None, message, windowTitle, WS_EX_TOPMOST)
+
+        #writer.save()
         writer.close()
+
         # Set up the Http response.
         filename = title + '.xlsx'
         #filename = 'test' + '.xlsx'
         response = HttpResponse(
             b.getvalue(),
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
         return response

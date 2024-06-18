@@ -1,11 +1,14 @@
 from django.db import models
 from _ts_tta_cndnamt.models import TtaCndnAmt
 from _mc_get_customer_profile.models import CustomerProfile
+from _lib import panda
+from datetime import datetime
+import uuid
 
 # Create your models here.
 class TtaCndnAmtC(models.Model):
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='tta_cndn_amt_child_customer_profile')
-    child_guid = models.CharField(primary_key=True, max_length=32, verbose_name='Child guid')
+    cndn_child_guid = models.CharField(primary_key=True, max_length=32, editable=False, verbose_name='Child guid')
     cndn_guid = models.ForeignKey(TtaCndnAmt, models.DO_NOTHING, db_column='cndn_guid', related_name='cndn_guid_key', verbose_name='Cndn guid')
     seq = models.IntegerField(blank=True, null=True, verbose_name='Sequence')
     itemcode = models.CharField(max_length=20, blank=True, null=True, verbose_name='Item Code')
@@ -53,10 +56,25 @@ class TtaCndnAmtC(models.Model):
     class Meta:
         managed = False
         db_table = 'tta_cndn_amt_c'
-        ordering = ('child_guid','cndn_guid')
+        ordering = ('cndn_child_guid','cndn_guid')
 
     def __str__(self):
         return self.child_guid
 
     def get_absolute_url(self):
-        return f'/{self.child_guid}/' 
+        return f'/{self.cndn_child_guid}/' 
+    
+    def save(self, *args, **kwargs):
+        uid = ''
+        while not uid.startswith('CC'):
+            uid = uuid.uuid4().hex.upper()
+
+        if self.cndn_child_guid == '':
+            self.cndn_child_guid = uid
+            self.created_at = panda.panda_today()
+            self.created_by = self.created_by  or "system"  # Default to 'system' if created_by is None
+        
+        self.updated_at = panda.panda_today()
+        self.updated_by = self.updated_by  or "system"  # Default to 'system' if created_by is None
+
+        super(TtaCndnAmtC, self).save(*args, **kwargs)
