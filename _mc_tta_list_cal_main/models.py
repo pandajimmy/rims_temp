@@ -49,8 +49,8 @@ class TtaListCalMain(models.Model):
         
         if self.cal_guid =='':
             self.cal_guid = panda.panda_uuid()  
+            self.created_at = panda.panda_today()
 
-        self.created_at= timezone.now().strftime('%Y-%m-%d %H:%M:%S')
         print("Cal Guid: ", self.cal_guid)
         print("Created At: ", self.created_at)
         super(TtaListCalMain,self).save(*args, **kwargs)  

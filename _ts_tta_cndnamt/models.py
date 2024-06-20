@@ -100,7 +100,10 @@ class TtaCndnAmt(models.Model):
             self.refno = f'EVRCNDN{new_number:08d}'
 
         # Update docdate to today's date in YYYY-MM-DD format
-        self.docdate = datetime.now().strftime('%Y-%m-%d')
+        # Check if docdate is not provided (None or empty string)
+        if self.docdate is None or self.docdate == '':
+            self.docdate = datetime.now().strftime('%Y-%m-%d')
+        
         self.doc_type = self.trans_type
 
         self.updated_at = panda.panda_today()

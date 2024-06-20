@@ -74,11 +74,11 @@ def gr_sum(param):
         gr_sum = 0
     return {"status":True, "value":gr_sum}
 
-def calRebate(calType,calValue,calAmount):
-    if calType == '$':
+def calRebate(calType, calValue, calAmount):
+    if calType == '$' or calType == 'RM':
         return calValue
     if calType == '%':
-        return round((calValue/100) * float(calAmount), 4)
+        return round((calValue / 100) * float(calAmount), 4)
 
 def rebate(param): 
     json = []
