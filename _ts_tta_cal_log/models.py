@@ -28,5 +28,9 @@ class TtaListCalLogs(models.Model):
     def save(self, *args, **kwargs):   
 
         self.created_at=panda.panda_today()
-        self.created_by=self.created_by
+        if self.created_by == '':
+            self.created_by="system"
+        else:
+            self.created_by=self.created_by
+
         super(TtaListCalLogs,self).save(*args, **kwargs)

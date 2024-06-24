@@ -2029,7 +2029,7 @@ def format_numeric_columns(df):
 
 @api_view(['GET'])
 def export_excel(request,customer_guid, date_from, date_to):
-    print("Start Export Excel Api")
+    print("Start Export Excel Api") 
     newlist=[]
     run=0
 

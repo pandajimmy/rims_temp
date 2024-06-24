@@ -13,7 +13,7 @@ def gr_gross_sum_cal():
 
 class rebateSerializer(serializers.Serializer):
     range = serializers.FloatField(max_value=None, min_value=0)
-    type = serializers.ChoiceField(choices=('$','%',))
+    type = serializers.ChoiceField(choices=('$','%','RM'))
     value = serializers.FloatField(max_value=None, min_value=0)
 
 class fgr_sumSerializer(serializers.Serializer):

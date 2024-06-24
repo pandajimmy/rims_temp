@@ -9,7 +9,7 @@
     <style>
       body {
         /*background-color: #517bc0;*/
-        background-color: #222222;
+        background-color: darkslategrey;
       }
 
       table.comicGreen {
@@ -173,6 +173,41 @@
       #scrollToTopBtn::before {
         content: "\2B06"; /* Unicode for upward arrow */
       }
+
+      .search-container {
+        margin: 20px 0;
+        text-align: center;
+        display: relative;
+      }
+
+      .search-input {
+        width: 50%;
+        padding: 5px 10px;
+        font-size: 16px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        outline: none;
+        border: 2px solid darkgrey;
+        border-radius: 5px;
+        box-shadow: 3px 3px 2px 0px #E2E2E2;
+        transition: .3s ease;
+      }
+
+      .search-input:focus {
+        background: #F2F2F2;
+        border: 1px solid darkgrey;
+        border-radius: 10px;
+      }
+
+      .search-input::placeholder {
+        color: black;
+      }
+
+      .search-text {
+        color: #fff;
+        font-weight: 700;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        font-size: 16px;
+      }
     </style>
   </head>
 
@@ -184,8 +219,19 @@
       <span class="title-text"> RIMS API Endpoint Access Table </span>
 
       <span class="last-updated-text" id="last-updated">
-        Last Updated Time: 3:14 PM 24/4/2024
+        Last Updated Time: 9:49 AM 24/6/2024
       </span>
+    </div>
+
+    <div class="search-container">
+      <span class="search-text">Search for RIMS API endpoint: </span>
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Enter API name..."
+        onkeyup="filterTable()"
+      />
     </div>
 
     <table class="comicGreen" id="apiTable">
@@ -427,6 +473,9 @@
         },
         {
           "api_name": "ts_tta_invmain/ts_TtaInvmain/"
+        },
+        {
+          "api_name": "ts_tta_invchild/ts_TtaInvchild/"
         }
       ]
     </script>
@@ -446,70 +495,50 @@
       const tableBody = document.querySelector("#apiTable tbody");
 
       async function updateTable() {
-        tableBody.innerHTML = ""; // Clear the table body
-        for (let index = 0; index < jsonData.length; index++) {
-          const item = jsonData[index];
+        tableBody.innerHTML = "";
+        const fetchPromises = jsonData.map(async (item, index) => {
           const endpoint = `${window.location.origin}/${item.api_name}`;
-
           try {
             const response = await fetch(endpoint);
-            const statusText = response.statusText; // Get HTTP response status text
-
-            let status = "";
-            if (response.ok) {
-              status = "No error";
-            } else if (response.status === 400) {
-              status = "Bad Request";
-            } else if (response.status === 401) {
-              status = "Unauthorized";
-            } else if (response.status === 403) {
-              status = "Forbidden";
-            } else if (response.status === 404) {
-              status = "Not Found";
-            } else if (response.status === 405) {
-              status = "Method Not Allowed [GET]";
-            } else if (response.status === 408) {
-              status = "Request Timeout";
-            } else if (response.status === 500) {
-              status = "Internal Server Error";
-            } else if (response.status === 503) {
-              status = "Service Unavailable";
-            } else {
-              status = `HTTP Response Error: ${response.status}`;
-            }
+            let status = response.ok ? "No error" : response.statusText || `HTTP Response Error: ${response.status}`;
 
             const row = `
-        <tr id="api_${index + 1}">
-          <td>${index + 1}</td>
-          <td>
-            <a href="${endpoint}" target="_blank" style="color: #4f7849; text-decoration: none;">${
-              item.api_name
-            }</a>
-          </td>
-          <td>${status}</td>
-        </tr>
-      `;
+              <tr id="api_${index + 1}">
+                <td>${index + 1}</td>
+                <td>
+                  <a href="${endpoint}" target="_blank" style="color: #4f7849; text-decoration: none;">${item.api_name}</a>
+                </td>
+                <td>${status}</td>
+              </tr>
+            `;
             tableBody.innerHTML += row;
           } catch (error) {
-            console.error(`Error fetching ${endpoint}:`, error);
             const row = `
-        <tr id="api_${index + 1}">
-          <td>${index + 1}</td>
-          <td>
-            <a href="${endpoint}" target="_blank" style="color: #4f7849; text-decoration: none;">${
-              item.api_name
-            }</a>
-          </td>
-          <td>error: ${error.message}</td>
-        </tr>
-      `;
+              <tr id="api_${index + 1}">
+                <td>${index + 1}</td>
+                <td>
+                  <a href="${endpoint}" target="_blank" style="color: #4f7849; text-decoration: none;">${item.api_name}</a>
+                </td>
+                <td>error: ${error.message}</td>
+              </tr>
+            `;
             tableBody.innerHTML += row;
           }
-        }
+        });
+
+        await Promise.all(fetchPromises);
+
+        // Hide the spinner and overlay once all data is fetched and table is updated
+        document.getElementById("spinner").classList.add("hidden");
+        document.getElementById("overlay").classList.add("hidden");
       }
 
       // Initial table population
-      updateTable();
+      document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("spinner").classList.remove("hidden");
+        document.getElementById("overlay").classList.remove("hidden");
+        updateTable();
+      });
 
       // Function to scroll to the top of the page smoothly
       function scrollToTop() {
@@ -538,35 +567,6 @@
           document.getElementById("scrollToTopBtn").style.display = "none";
         }
       }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const spinner = document.getElementById("spinner");
-        spinner.classList.remove("hidden"); // Show the spinner
-
-        // Function to hide the spinner after a delay (e.g., 1 second)
-        setTimeout(function () {
-          spinner.classList.add("hidden");
-        }, 1000); // 1000 milliseconds = 1 second
-
-        // Your existing code goes here...
-      });
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const spinner = document.getElementById("spinner");
-        const overlay = document.getElementById("overlay");
-
-        // Show the spinner and overlay
-        spinner.classList.remove("hidden");
-        overlay.classList.remove("hidden");
-
-        // Function to hide the spinner and overlay after a delay (e.g., 1 second)
-        setTimeout(function () {
-          spinner.classList.add("hidden");
-          overlay.classList.add("hidden");
-        }, 1000); // 1000 milliseconds = 1 second
-
-        // Your existing code goes here...
-      });
 
       // Function to update the last updated time
       function updateLastUpdatedTime() {
@@ -600,6 +600,22 @@
 
       // Update the last updated time every minute
       setInterval(updateLastUpdatedTime, 60000); // 60000 milliseconds = 1 minute
+
+      // Filter table based on search input
+      function filterTable() {
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
+        const tableRows = document.querySelectorAll("#apiTable tbody tr");
+
+        tableRows.forEach((row) => {
+          const cellText = row.cells[1].textContent.toLowerCase();
+          if (cellText.includes(searchInput)) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+      
     </script>
   </body>
 </html>

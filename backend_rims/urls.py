@@ -105,6 +105,7 @@ ts_included_endpoints = [
     path('ts_tta_cndnamt/', include('_ts_tta_cndnamt.urls')),
     path('ts_tta_cndnamt_child/', include('_ts_tta_cndnamt_child.urls')),
     path('ts_tta_invmain/', include('_ts_tta_invmain.urls')),
+    path('ts_tta_invchild/', include('_ts_tta_invchild.urls')),
     path('ts_tta_status_trans/', include('_ts_tta_status_trans.urls')),
 ]
 
@@ -112,7 +113,7 @@ ts_included_endpoints = [
 schema_view = get_schema_view(
     openapi.Info(
         title="Panda Retail Income Management System API",
-        default_version='v3',
+        default_version='v5',
         description="RIMS API (Full API)",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email=""),
@@ -126,7 +127,7 @@ schema_view = get_schema_view(
 schema_view_mc = get_schema_view(
     openapi.Info(
         title="Panda Retail Income Management System API",
-        default_version='v3',
+        default_version='v5',
         description="RIMS API (Master Code)",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email=""),
@@ -141,7 +142,7 @@ schema_view_mc = get_schema_view(
 schema_view_ml = get_schema_view(
     openapi.Info(
         title="Panda Retail Income Management System API",
-        default_version='v3',
+        default_version='v5',
         description="RIMS API (Master List)",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email=""),
@@ -156,7 +157,7 @@ schema_view_ml = get_schema_view(
 schema_view_ts = get_schema_view(
     openapi.Info(
         title="Panda Retail Income Management System API",
-        default_version='v3',
+        default_version='v5',
         description="RIMS API (Transaction List)",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email=""),
@@ -263,7 +264,7 @@ urlpatterns = [
     path('ts_tta_cndnamt/', include('_ts_tta_cndnamt.urls')),
     path('ts_tta_cndnamt_child/', include('_ts_tta_cndnamt_child.urls')),
     path('ts_tta_invmain/', include('_ts_tta_invmain.urls')),
-
+    path('ts_tta_invchild/', include('_ts_tta_invchild.urls')),
     path('ts_tta_status_trans/', include('_ts_tta_status_trans.urls')),
 
 ]
