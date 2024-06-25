@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import TtaListExcludeOutlet
 from rest_framework import viewsets
 from .serializers import TtaListExcludeOutletSerializer
+from _mc_tta_list_display_incentive_table.models import TtaListDisplayIncentiveTable
 from rest_framework import filters
 import django_filters.rest_framework
 from _ml_rims_cp_set_branch.models import RimsCpSetBranch
@@ -97,10 +98,17 @@ class TtaListExcludeOutletViewSet(viewsets.ModelViewSet):
         print("Existing Outlet Branch Guids: ", existing_outlet_branch_guids)
         print("Provided Outlet Branch Guids: ", provided_outlet_branch_guids)
 
+        # Check for display incentives associated with provided outlets to be added
+        for outlet_data in data:
+            branch_guid = outlet_data.get('branch_guid')
+            if TtaListDisplayIncentiveTable.objects.filter(branch_guid=branch_guid, list_guid=list_guid).exists():
+                branch_code = self.get_outlet_code(branch_guid)
+                return Response({"error": f"Display incentives exist for outlet {branch_code}. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
+
         # Delete outlets not in provided data
         to_delete = existing_outlet_guids - provided_outlet_guids
 
-        print("To Delete Exclude Outlet Guids: ", to_delete)      
+        print("To Delete Exclude Outlet Guids: ", to_delete)
 
         TtaListExcludeOutlet.objects.filter(tta_exclude_outlet_guid__in=to_delete).delete()
 

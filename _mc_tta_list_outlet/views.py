@@ -74,7 +74,8 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
             if existing_outlets.exists():
                 for outlet in existing_outlets:
                     if TtaListDisplayIncentiveTable.objects.filter(branch_guid=outlet.branch_guid, list_guid=list_guid).exists():
-                        return Response({"error": f"Display incentives exist for outlet {outlet.branch_guid}. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
+                        branch_code = self.get_outlet_code(outlet.branch_guid)
+                        return Response({"error": f"Display incentives exist for outlet {branch_code}. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
 
                 existing_outlets.delete()
                 return Response({"message": "All outlets from the selected TTA list have been deleted successfully"}, status=status.HTTP_200_OK)
@@ -104,7 +105,8 @@ class TtaListOutletViewSet(viewsets.ModelViewSet):
 
         for branch_guid in to_delete_branch_guids:
             if TtaListDisplayIncentiveTable.objects.filter(branch_guid=branch_guid, list_guid=list_guid).exists():
-                return Response({"error": f"Display incentives exist for outlet {branch_guid}. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
+                branch_code = self.get_outlet_code(branch_guid)
+                return Response({"error": f"Display incentives exist for outlet {branch_code}. Please remove incentives first."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Delete outlets not in provided data
         to_delete = existing_outlet_guids - provided_outlet_guids

@@ -40,7 +40,8 @@ from _ts_tta_invchild.models import TtaInvchild
 from _ts_tta_invchild.serializers import TtaInvchildSerializer
 from _mc_tta_list_purchase_n_rebates.models import TtaListPurchaseNRebates
 from _mc_get_customer_profile.models import CustomerProfile
-
+import logging
+from decimal import Decimal
 
 def last_day_of_month(any_day):
     # The day 28 exists in every month. 4 days later, it's always next month
@@ -118,34 +119,29 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
     print(f"Data content: {data}")
     print(f"Result type: {type(result)}")
     print(f"Result content: {result}")
-
-    if calval_method == 'non_tier':
-        if result['value'] != 0:
-            if data['prefix1'] == '%': 
-                cal_val = round((float(data['bf_amount']) * float(result['value'])) / 100, 2)
-
-                print("Cal Value: ", cal_val)
+    
+    # Calculate cal_val based on calval_method
+    try:
+        if calval_method == 'non_tier':
+            if result['value'] != 0:
+                cal_val = round((float(data['bf_amount']) * float(result['value'])) / 100, 2) if data['prefix1'] == '%' else data['bf_amount']
             else:
-                cal_val = data['bf_amount']
-
-                print("Cal Value: ", cal_val)
+                cal_val = 0
+        elif calval_method == 'tier':
+            cal_val = 1
         else:
-            cal_val = 0     
+            cal_val = result['value']
+        print("Calculated Value: ", cal_val)
+    except (KeyError, ValueError, TypeError) as e:
+        print(f"Error in calculation: {e}")
+        return
 
-            print("Cal Value: ", cal_val) 
-    elif calval_method == 'tier':   
-        cal_val = 1
-
-        print("Cal Value: ", cal_val)
-    else:
-        cal_val = result['value'] 
-
-        print("Cal Value: ", cal_val)
-    try: 
-        check_invmain_exist = TtaInvmain.objects.get(docno=data['refno'], customer_guid=data['customer_guid']) 
+    # Try to get or create the TtaInvmain object
+    try:
+        check_invmain_exist = TtaInvmain.objects.get(docno=data['refno'], customer_guid=customer_guid)
     except TtaInvmain.DoesNotExist:
         try:
-            customer_profile = CustomerProfile.objects.get(customer_guid=data['customer_guid'])
+            customer_profile = CustomerProfile.objects.get(customer_guid=customer_guid)
         except CustomerProfile.DoesNotExist:
             print("CustomerProfile with the given customer_guid does not exist.")
             return
@@ -159,91 +155,102 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
             created_by='system',
             updated_by='system'
         )
-        check_invmain_exist.save()   
+        check_invmain_exist.save()
 
-        update_profile = TtaList.objects.filter(refno=data['refno'], customer_guid=data['customer_guid']).values(
+        # Update profile with additional information
+        update_profile = TtaList.objects.filter(refno=data['refno'], customer_guid=customer_guid).values(
             'bill_supp_name', 'supplier_add1', 'supplier_add2', 'supplier_add3', 'supplier_add4', 'supplier_pic'
         )
-
         if update_profile.exists():
             profile = update_profile[0]
-            add1 = profile['supplier_add1']
-            add2 = profile['supplier_add2']
-            add3 = profile['supplier_add3']
-            add4 = profile['supplier_add4']
-            pic = profile['supplier_pic']
-            
-            TtaInvmain.objects.filter(docno=data['refno'], customer_guid=data['customer_guid']).update(
-                add_1=add1,
-                add_2=add2,
-                add_3=add3,
-                add_4=add4,
-                attn=pic
+            TtaInvmain.objects.filter(docno=data['refno'], customer_guid=customer_guid).update(
+                add_1=profile['supplier_add1'],
+                add_2=profile['supplier_add2'],
+                add_3=profile['supplier_add3'],
+                add_4=profile['supplier_add4'],
+                attn=profile['supplier_pic']
             )
-                                    
-    get_invmainguid = TtaInvmain.objects.get(docno=data['refno'], customer_guid=data['customer_guid']) 
+    except Exception as e:
+        print(f"Error in getting or creating TtaInvmain: {e}")
+        return
 
-    if cal_val != 0:   
-        if calval_method == 'tier':
-            for t_loop in result['rebate']: 
-                t = 1
-                if t_loop['rebateValue'] != 0: 
-                    try:
-                        check_invchild_exist = TtaInvchild.objects.get(
-                            invmain_guid=get_invmainguid,
-                            customer_guid=data['customer_guid'],
-                            description="Tier Result"
-                        )
-                        check_invchild_exist.totalprice = t_loop['rebateValue']
-                        check_invchild_exist.total_incl_tax = t_loop['rebateValue']
-                        check_invchild_exist.updated_by = 'system'
-                        check_invchild_exist.save()
-                    except TtaInvchild.DoesNotExist:
-                        query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=data['customer_guid'])
-                        line = query_line.count() + 1  
-                        check_invchild_exist = TtaInvchild(
-                            customer_guid=data['customer_guid'],
-                            invmain_guid=get_invmainguid,
-                            line=line,
-                            description="Tier Result",
-                            pricetype=data['prefix1'],
-                            unit_price=data['bf_amount'],
-                            qty='1', 
-                            totalprice=t_loop['rebateValue'],
-                            total_incl_tax=t_loop['rebateValue'],
-                            created_by='system',
-                            updated_by='system'
-                        ) 
-                        check_invchild_exist.save()
-                    t = t + 1 
-        else:
-            try:
-                check_invchild_exist = TtaInvchild.objects.get(
-                    invmain_guid=get_invmainguid,
-                    customer_guid=customer_guid,
-                    description=data['label']
-                )
-                check_invchild_exist.totalprice = cal_val
-                check_invchild_exist.total_incl_tax = cal_val
-                check_invchild_exist.updated_by = 'system'
-                check_invchild_exist.save()
-            except TtaInvchild.DoesNotExist:
-                query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=customer_guid)
-                line = query_line.count() + 1  
-                check_invchild_exist = TtaInvchild(
-                    customer_guid=customer_guid,
-                    invmain_guid=get_invmainguid,
-                    line=line,
-                    description=data['label'],
-                    pricetype=data['prefix1'],
-                    unit_price=data['bf_amount'],
-                    qty='1',
-                    totalprice=cal_val,
-                    total_incl_tax=cal_val,
-                    created_by='system',
-                    updated_by='system'
-                ) 
-                check_invchild_exist.save()
+    # Get the invmain guid
+    try:
+        get_invmainguid = TtaInvmain.objects.get(docno=data['refno'], customer_guid=customer_guid)
+    except TtaInvmain.DoesNotExist:
+        print("TtaInvmain object does not exist after creation.")
+        return
+
+    # Create or update TtaInvchild objects based on the calculated value
+    if cal_val != 0:
+        try:
+            if calval_method == 'tier':
+                print("Processing tier results here: ")
+                print(result)
+                for t_loop in result['rebate']:
+                    t = 1
+                    if t_loop['rebateValue'] != 0:
+                        try:
+                            check_invchild_exist = TtaInvchild.objects.get(
+                                invmain_guid=get_invmainguid,
+                                customer_guid=customer_guid,
+                                description=data['label'] + str(t),
+                            )
+                            check_invchild_exist.totalprice = t_loop['rebateValue']
+                            check_invchild_exist.total_incl_tax = t_loop['rebateValue']
+                            check_invchild_exist.updated_by = 'system'
+                            check_invchild_exist.save()
+                        except TtaInvchild.DoesNotExist:
+                            query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=customer_guid)
+                            line = query_line.count() + 1
+                            check_invchild_exist = TtaInvchild(
+                                customer_guid=customer_guid,
+                                invmain_guid=get_invmainguid,
+                                line=line,
+                                description=data['label'] + str(t),
+                                pricetype=data['prefix1'],
+                                unit_price=data['bf_amount'],
+                                calculated_val=result['value'],
+                                qty='1',
+                                totalprice=t_loop['rebateValue'],
+                                total_incl_tax=t_loop['rebateValue'],
+                                created_by='system',
+                                updated_by='system'
+                            )
+                            check_invchild_exist.save()
+                        print(f"Saved tier result: {check_invchild_exist}")
+            else:
+                try:
+                    check_invchild_exist = TtaInvchild.objects.get(
+                        invmain_guid=get_invmainguid,
+                        customer_guid=customer_guid,
+                        description=data['label']
+                    )
+                    check_invchild_exist.totalprice = cal_val
+                    check_invchild_exist.total_incl_tax = cal_val
+                    check_invchild_exist.updated_by = 'system'
+                    check_invchild_exist.save()
+                except TtaInvchild.DoesNotExist:
+                    query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=customer_guid)
+                    line = query_line.count() + 1
+                    check_invchild_exist = TtaInvchild(
+                        customer_guid=customer_guid,
+                        invmain_guid=get_invmainguid,
+                        line=line,
+                        description=data['label'],
+                        pricetype=data['prefix1'],
+                        unit_price=data['bf_amount'],
+                        calculated_val=result['value'],
+                        qty='1',
+                        totalprice=cal_val,
+                        total_incl_tax=cal_val,
+                        created_by='system',
+                        updated_by='system'
+                    )
+                    check_invchild_exist.save()
+        except Exception as e:
+            print(f"Error in creating or updating TtaInvchild: {e}")
+            return
 
     print("Check InvMain: ", check_invmain_exist)
     return result
@@ -260,6 +267,50 @@ def error_log(list_guid, customer_guid, log_module, data, result):
                     , remark = result
                     )  
         log.save()  
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+
+def calculate_rebate(customer_guid, refno, code, net_sum, start_date, end_date, outlet_list, sup_code):
+    try:
+        logging.info(f"Starting rebate calculation for {customer_guid} from {start_date} to {end_date}")
+        
+        # Example of detailed logging within the function
+        logging.debug(f"Net sum: {net_sum}")
+        logging.debug(f"Sup Code: {sup_code}")
+        
+        rebate_methods = [
+            {'range': Decimal('410857'), 'type': '%', 'value': Decimal('0.5')},
+            {'range': Decimal('414966'), 'type': '%', 'value': Decimal('1')},
+            {'range': Decimal('430422'), 'type': '%', 'value': Decimal('1.5')}
+        ]
+        
+        rebate_results = []
+        for method in rebate_methods:
+            logging.debug(f"Processing method: {method}")
+            if net_sum >= method['range']:
+                rebate_value = (net_sum * method['value']) / 100
+                rebate_results.append({'range': method['range'], 'rebate_value': rebate_value})
+                logging.debug(f"Rebate Value for {method['range']}: {rebate_value}")
+        
+        return rebate_results
+    
+    except Exception as e:
+        logging.error(f"Error calculating rebate: {e}")
+        return None
+
+# Example function call
+result = calculate_rebate(
+    customer_guid="D361F8521E1211EAAD7CC8CBB8CC0C93",
+    refno="EVRTTA20060036",
+    code="Q0006",
+    net_sum=Decimal('812626.20'),
+    start_date="2024-01-01",
+    end_date="2024-01-31",
+    outlet_list=['4M', 'BDC', 'BK', 'BMM', 'C1', 'DL', 'ESK', 'FC', 'GHM', 'HQ', 'IMG', 'KR', 'KS', 'MET', 'MJ', 'MSB', 'PDN', 'PEN', 'PMR', 'STU', 'TJ1', 'VIV'],
+    sup_code=['Q0006']
+)
+logging.info(f"Rebate Calculation Result: {result}")
 
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
@@ -1583,6 +1634,11 @@ def check_tta(request):
             }                    
 
             if result_status == False:
+                data = {
+                    "status": False,
+                    "message": "We couldn't process your request. Please ensure that all values are correctly entered and try again",
+                    "retailer_guid": customer_guid
+                }
                 return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
             return Response(data, status=status.HTTP_200_OK)
         else:

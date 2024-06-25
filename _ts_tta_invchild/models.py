@@ -21,6 +21,8 @@ class TtaInvchild(models.Model):
     description = models.CharField(max_length=50, verbose_name='Description')
     qty = models.DecimalField(max_digits=14, decimal_places=2, verbose_name='Quantity')
     unit_price = models.DecimalField(max_digits=14, decimal_places=2, default=0.00, verbose_name='Unit Price')
+    #Previously calculated_val has not been declared in here
+    calculated_val = models.DecimalField(max_digits=14, decimal_places=2, default=0.00, verbose_name='Calculated Val')
     disc1type = models.CharField(max_length=20, verbose_name='Discount 1 Type')
     disc1value = models.DecimalField(max_digits=14, decimal_places=2, default=0.00, verbose_name='Discount 1 Value')
     disc2type = models.CharField(max_length=20, verbose_name='Discount 2 Type')
