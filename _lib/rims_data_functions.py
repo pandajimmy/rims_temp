@@ -151,6 +151,8 @@ def rebate(param):
         # print('range :',rebate_method["range"] )
         # print('bf_amount :',bf_amount)
         # print('accum_pur_amount :',accum_pur_amount)
+        print("bf_amount in rebate: ", bf_amount)
+        print("rebate_method_range in rebate: ", rebate_method["range"])
         if bf_amount <= rebate_method["range"]:
         #if accum_pur_amount >= rebate_method["range"]: 
             method_amount_bal = rebate_method["range"]-bf_amount 
@@ -163,11 +165,14 @@ def rebate(param):
             jsonChild["tierPurchaseAmt"] = actRebateAmt
             jsonChild["rebateValue"] = calRebate(rebate_method['type'], rebate_method['value'], actRebateAmt)
             json.append(jsonChild)
+            print("JSON (If): ", json)
         else:
             jsonChild = rebate_method
             jsonChild["tierPurchaseAmt"] = 0  
             jsonChild["rebateValue"] = 0  
             json.append(jsonChild)
+            print("JSON (Else): ", json)
+
 
     purchase['rebate'] = json
 

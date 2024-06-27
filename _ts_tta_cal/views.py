@@ -88,6 +88,14 @@ def daterange_condition(label , cal_date, var_date_from, var_date_to):
     #     dateto1 =  '2099-12-31'  
     #     # cond = '4'
 
+    print("--------------------------------------------------------------------")
+    print("                      Checking The Daterange                        ")
+    print("--------------------------------------------------------------------")
+
+    print("Cal Date: ", cal_date)
+    print("PS From: ", ps_from)
+    print("PS To: ", ps_to)
+
     if (cal_date >= ps_from) and (cal_date <= ps_to):
         #caldate = 2022-08-30
         #2022-01-01 <= 2022-08-30 <= 2022-08-31
@@ -103,7 +111,9 @@ def daterange_condition(label , cal_date, var_date_from, var_date_to):
         dateto1 =  '2099-12-31'  
         # cond = '2' 
 
-
+    #Check whether datefrom1 and dateto1 is correct or not
+    print("Date From: ", datefrom1)
+    print("Date To: ", dateto1)
 
     # print(ps['label'])
     # print('ps_to')
@@ -119,8 +129,9 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
     print(f"Data content: {data}")
     print(f"Result type: {type(result)}")
     print(f"Result content: {result}")
+
+    customer_profile = CustomerProfile.objects.get(customer_guid=customer_guid)
     
-    # Calculate cal_val based on calval_method
     try:
         if calval_method == 'non_tier':
             if result['value'] != 0:
@@ -136,7 +147,6 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
         print(f"Error in calculation: {e}")
         return
 
-    # Try to get or create the TtaInvmain object
     try:
         check_invmain_exist = TtaInvmain.objects.get(docno=data['refno'], customer_guid=customer_guid)
     except TtaInvmain.DoesNotExist:
@@ -157,7 +167,6 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
         )
         check_invmain_exist.save()
 
-        # Update profile with additional information
         update_profile = TtaList.objects.filter(refno=data['refno'], customer_guid=customer_guid).values(
             'bill_supp_name', 'supplier_add1', 'supplier_add2', 'supplier_add3', 'supplier_add4', 'supplier_pic'
         )
@@ -174,41 +183,41 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
         print(f"Error in getting or creating TtaInvmain: {e}")
         return
 
-    # Get the invmain guid
     try:
         get_invmainguid = TtaInvmain.objects.get(docno=data['refno'], customer_guid=customer_guid)
     except TtaInvmain.DoesNotExist:
         print("TtaInvmain object does not exist after creation.")
         return
 
-    # Create or update TtaInvchild objects based on the calculated value
     if cal_val != 0:
         try:
             if calval_method == 'tier':
                 print("Processing tier results here: ")
                 print(result)
                 for t_loop in result['rebate']:
-                    t = 1
                     if t_loop['rebateValue'] != 0:
                         try:
                             check_invchild_exist = TtaInvchild.objects.get(
                                 invmain_guid=get_invmainguid,
-                                customer_guid=customer_guid,
-                                description=data['label'] + str(t),
+                                customer_guid=customer_profile,
+                                description=data['label'],
                             )
                             check_invchild_exist.totalprice = t_loop['rebateValue']
                             check_invchild_exist.total_incl_tax = t_loop['rebateValue']
+                            check_invchild_exist.last_cal_date = data['last_cal_date'] 
                             check_invchild_exist.updated_by = 'system'
                             check_invchild_exist.save()
                         except TtaInvchild.DoesNotExist:
                             query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=customer_guid)
                             line = query_line.count() + 1
                             check_invchild_exist = TtaInvchild(
-                                customer_guid=customer_guid,
+                                customer_guid=customer_profile,
                                 invmain_guid=get_invmainguid,
+                                last_cal_date=data['last_cal_date'],
                                 line=line,
-                                description=data['label'] + str(t),
+                                description=data['label'],
                                 pricetype=data['prefix1'],
+                                calctype=data['calctype'],                        
                                 unit_price=data['bf_amount'],
                                 calculated_val=result['value'],
                                 qty='1',
@@ -220,25 +229,75 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                             check_invchild_exist.save()
                         print(f"Saved tier result: {check_invchild_exist}")
             else:
+                last_invchild = TtaInvchild.objects.filter(
+                    invmain_guid=get_invmainguid,
+                    customer_guid=customer_profile,
+                    description=data['label'],
+                    calctype=data['calctype']
+                ).order_by('-created_at').first()
+
+                if data['calctype'] == 'Yearly' and last_invchild:
+                    previous_date = last_invchild.last_cal_date.date()
+
+                    print("Previous Date: ", previous_date)
+
+                    new_date = data['last_cal_date'].date()  # Convert to date
+
+                    print("New Date: ", new_date)
+
+                    date_range = new_date - previous_date
+
+                    print("Invoice Calculated Date Range: ", date_range)
+
+                    if (date_range).days < 365 and (date_range).days >= 0:
+                        # Delete the existing yearly invchild
+                        try:
+                            check_invchild_exist = TtaInvchild.objects.get(
+                                invmain_guid=get_invmainguid,
+                                customer_guid=customer_profile,
+                                description=data["label"],
+                                calctype="Yearly",
+                            )
+                            check_invchild_exist.delete()
+                            print("Deleted existing yearly invchild.")
+                        except TtaInvchild.DoesNotExist:
+                            print("No existing yearly invchild to delete.")
+                        return
+                    else:
+                        check_invchild_exist = TtaInvchild.objects.get(
+                            invmain_guid=get_invmainguid,
+                            customer_guid=customer_profile,
+                            description=data['label']
+                        )
+
+                        if new_date < previous_date and (date_range).days < 0:
+                            print("Not able to calculate the previous provided date, please generate a new invoice.")
+                            return
+                        else:
+                            cal_val = Decimal(cal_val) + check_invchild_exist.totalprice
+
                 try:
                     check_invchild_exist = TtaInvchild.objects.get(
                         invmain_guid=get_invmainguid,
-                        customer_guid=customer_guid,
+                        customer_guid=customer_profile,
                         description=data['label']
                     )
                     check_invchild_exist.totalprice = cal_val
                     check_invchild_exist.total_incl_tax = cal_val
+                    check_invchild_exist.last_cal_date = data['last_cal_date']
                     check_invchild_exist.updated_by = 'system'
                     check_invchild_exist.save()
                 except TtaInvchild.DoesNotExist:
                     query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=customer_guid)
                     line = query_line.count() + 1
                     check_invchild_exist = TtaInvchild(
-                        customer_guid=customer_guid,
+                        customer_guid=customer_profile,
                         invmain_guid=get_invmainguid,
+                        last_cal_date=data['last_cal_date'],
                         line=line,
                         description=data['label'],
                         pricetype=data['prefix1'],
+                        calctype=data['calctype'],
                         unit_price=data['bf_amount'],
                         calculated_val=result['value'],
                         qty='1',
@@ -269,6 +328,7 @@ def error_log(list_guid, customer_guid, log_module, data, result):
         log.save()  
 
 # Configure logging
+'''
 logging.basicConfig(level=logging.DEBUG)
 
 def calculate_rebate(customer_guid, refno, code, net_sum, start_date, end_date, outlet_list, sup_code):
@@ -311,6 +371,7 @@ result = calculate_rebate(
     sup_code=['Q0006']
 )
 logging.info(f"Rebate Calculation Result: {result}")
+'''
 
 @api_view(['POST'])
 #@permission_classes([IsAuthenticated])
@@ -577,10 +638,21 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
 
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         # Determine calculation method based on rebate type key
                         calmethod = "Method 2" if rebate_type_key.startswith('target_purchase_tier') or rebate_type_key.startswith('target_growth_tier') else "Method 1"
 
-                        print("Cal Method: ", calmethod)
+                        print("Cal Method Purchase N Rebates: ", calmethod)
 
                         if calmethod == "Method 1":
                             data = {
@@ -589,7 +661,9 @@ def check_tta(request):
                                 "code": result_1.supplier_code,
                                 "name": result_1.supplier_name,
                                 "prefix1": rebate_type_value,
+                                "last_cal_date": cal_date,
                                 "type": q_type,
+                                "calctype": calctype,
                                 "label": label,
                                 "startDate": datefrom,
                                 "endDate": dateto,
@@ -608,20 +682,58 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if q_type in ['gr_gross_sum', 'gr_net_sum']:
-                                # To calculate gr_sum
-                                result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
-
-                                if result['status'] == live_mode:
-                                    calval_method = 'non_tier'
-                                    print("Calling create_inv_header_child with calval_method:", calval_method)
-                                    print("Data:", data)
-                                    print("Result:", result)
-                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
-                                    print("Function executed successfully with result:", add_data)
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if rebate_value != 0 and rebate_value is not None:
+                                    result = {"status":True, "value":rebate_value}
+                                    print("Result of Purchase N Rebates: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if rebate_value != 0 and rebate_value is not None:
+                                    result = {"status":True, "value":rebate_value}
+                                    print("Result of Purchase N Rebates: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif q_type in ['gr_gross_sum', 'gr_net_sum']:
+                                    # To calculate gr_sum
+                                    result = rims_data_functions.gr_sum(data)
+                                    print("Result of Purchase N Rebates (Non-Tier): ", result)
+
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                    else:
+                                        error_log(list_guid, 'check_tta', data, result)
 
                         elif calmethod == "Method 2":
                             # If it's a tiered rebate, collect tier results
@@ -631,7 +743,7 @@ def check_tta(request):
 
                             print("This is Rebate Value: ", rebate_value)
                             print("This is Rebate Value 2: ", rebate_value2) 
-
+                            print("This is Rebate Type Value: ", rebate_type_value)
                             print("This is Rebate Type Value 2: ", rebate_type_value2)
 
                             print("Rebate Key: ", rebate_key)
@@ -657,6 +769,8 @@ def check_tta(request):
                                 dicts.append(tier_result)
 
                                 print("Tier Results Please: ", dicts)
+                        else:
+                            print(f"Skipping {rebate_key}: Unknown q_type defined")
                     else:
                         print(f"Skipping {rebate_key}: Missing type values")
                 else:
@@ -664,7 +778,13 @@ def check_tta(request):
 
             # Handle tiered results if any  
             if dicts is not None:
-                print("I exist")
+                # Determine the prefix1 value based on rebate_type_key
+                if rebate_type_key.startswith('target_purchase_tier'):
+                    prefix1 = "Target Purchase Tier"
+                elif rebate_type_key.startswith('target_growth_tier'):
+                    prefix1 = "Target Growth Tier"
+                else:
+                    prefix1 = rebate_type_value  # Fallback value if no condition is met
 
                 # Get the last day of the month from a given date  
                 dt = datetime.strptime(dateto, '%Y-%m-%d')
@@ -678,9 +798,11 @@ def check_tta(request):
                     "refno": result_1.refno,
                     "code": result_1.supplier_code,
                     "name": result_1.supplier_name,
-                    "prefix1": rebate_type_value,
+                    "prefix1": "RM",
+                    "last_cal_date": cal_date,
                     "type": q_type,
-                    "label": label,
+                    "calctype": calctype,
+                    "label": prefix1,
                     "startDate": consolidate_result[0].tta_period_from,
                     "endDate": actual_last_day_of_month,
                     "outlet": outlet,
@@ -698,16 +820,18 @@ def check_tta(request):
 
                 bf_result = rims_data_functions.gr_sum(bf_data)
                 final_bf_result = bf_result['value']
-                print("Tier Calculation bf_result:", bf_result)
+                print("Tier Calculation bf_result:", final_bf_result)
 
                 data = {
                     "customer_guid": customer_guid,
                     "refno": result_1.refno,
                     "code": result_1.supplier_code,
                     "name": result_1.supplier_name,
-                    "prefix1": rebate_type_value,
-                    "label": label,
+                    "prefix1": "RM",
+                    "label": prefix1,
+                    "last_cal_date": cal_date,
                     "type": q_type,
+                    "calctype": calctype,
                     "startDate": datefrom,
                     "endDate": dateto,
                     "outlet": outlet,
@@ -741,7 +865,7 @@ def check_tta(request):
             "early_payment_terms_value", "early_payment_discount_value", "prompt_payment_discount_value"
         ]
 
-         # Iterating over each payment and discount object
+        # Iterating over each payment and discount object
         for payment in payment_list:
             print("Processing Payment and Discount: ", payment.refno)
 
@@ -778,6 +902,17 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
 
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         data = {
                                     "customer_guid":customer_guid, 
                                     "refno":result_1.refno, 
@@ -785,7 +920,9 @@ def check_tta(request):
                                     "name":result_1.supplier_name, 
                                     "prefix1": discount_type_value,
                                     "label":label,
+                                    "last_cal_date": cal_date,
                                     "type":q_type,  
+                                    "calctype":calctype,
                                     "startDate":datefrom,
                                     "endDate":dateto, 
                                     "outlet" : outlet,
@@ -803,10 +940,49 @@ def check_tta(request):
 
                         print("Data Prepared: ", data)
 
-                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                        if q_type == 'Monthly':
+                            print("Reached the Monthly block")
+                        
+                            # To add on the value
+                            if discount_value != 0 and discount_value is not None:
+                                result = {"status":True, "value":discount_value}
+                                print("Result of Payment N Discount: ", result)
+                            
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+                        
+                        elif q_type == 'Yearly':
+                            print("Reached the Yearly block")
+                            
+                            # To add on the value
+                            if discount_value != 0 and discount_value is not None:
+                                result = {"status":True, "value":discount_value}
+                                print("Result of Payment N Discount: ", result)
+                            
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+
+                        elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                             # To calculate gr_sum
                             result = rims_data_functions.gr_sum(data)
-                            print("Result: ", result)
+                            print("Reached the Sum Function")
+                            print("Result of Payment N Discount: ", result)
                             
                             if result['status'] == live_mode:
                                 calval_method = 'non_tier'
@@ -818,6 +994,9 @@ def check_tta(request):
                                 print("Function executed successfully with result:", add_data)
                             else:
                                 error_log(list_guid, 'check_tta', data, result)
+
+                        else:
+                            print(f"Skipping {discount_key}: Unknown q_type defined")
 
                     else:
                         print(f"Skipping {discount_key}: Missing type values")
@@ -870,6 +1049,17 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
                         
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         data = {
                                     "customer_guid":customer_guid, 
                                     "refno":result_1.refno, 
@@ -877,7 +1067,9 @@ def check_tta(request):
                                     "name":result_1.supplier_name, 
                                     "prefix1": stock_type_value,
                                     "label":label,
+                                    "last_cal_date": cal_date,
                                     "type":q_type,  
+                                    "calctype":calctype,
                                     "startDate":datefrom,
                                     "endDate":dateto, 
                                     "outlet" : outlet,
@@ -895,10 +1087,48 @@ def check_tta(request):
 
                         print("Data Prepared: ", data)
 
-                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                        if q_type == 'Monthly':
+                            print("Reached the Monthly block")
+                        
+                            # To add on the value
+                            if stock_value != 0 and stock_value is not None:
+                                result = {"status":True, "value":stock_value}
+                                print("Result of Stock N Deliveries: ", result)
+                            
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+                        
+                        elif q_type == 'Yearly':
+                            print("Reached the Yearly block")
+                            
+                            # To add on the value
+                            if stock_value != 0 and stock_value is not None:
+                                result = {"status":True, "value":stock_value}
+                                print("Result of Stock N Deliveries: ", result)
+                            
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+
+                        elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                             # To calculate gr_sum
                             result = rims_data_functions.gr_sum(data)
-                            print("Result: ", result)
+                            print("Result of Stock N Deliveries: ", result)
                             
                             if result['status'] == live_mode:
                                 calval_method = 'non_tier'
@@ -910,6 +1140,8 @@ def check_tta(request):
                                 print("Function executed successfully with result:", add_data)
                             else:
                                 error_log(list_guid, 'check_tta', data, result)
+                        else:
+                                print(f"Skipping {stock_key}: Unknown q_type defined")
 
                     else:
                         print(f"Skipping {stock_key}: Missing type values")
@@ -964,6 +1196,17 @@ def check_tta(request):
 
                         print("Q Type: ", q_type)
                         print("Label: ", label)
+
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
                         
                         data = {
                                     "customer_guid":customer_guid, 
@@ -972,7 +1215,9 @@ def check_tta(request):
                                     "name":result_1.supplier_name, 
                                     "prefix1": fee_type_value,
                                     "label":label,
+                                    "last_cal_date": cal_date,
                                     "type":q_type,  
+                                    "calctype": calctype,
                                     "startDate":datefrom,
                                     "endDate":dateto, 
                                     "outlet" : outlet,
@@ -989,11 +1234,49 @@ def check_tta(request):
                                 }
 
                         print("Data Prepared: ", data)
-
-                        if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                        
+                        if q_type == 'Monthly':
+                            print("Reached the Monthly block")
+                        
+                            # To add on the value
+                            if fee_value != 0 and fee_value is not None:
+                                result = {"status":True, "value":fee_value}
+                                print("Result of Administration Fees: ", result)
+                            
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+                        
+                        elif q_type == 'Yearly':
+                            print("Reached the Yearly block")
+                            
+                            # To add on the value
+                            if fee_value != 0 and fee_value is not None:
+                                result = {"status":True, "value":fee_value}
+                                print("Result of Administration Fees: ", result)
+                            
+                                if result['status'] == live_mode:
+                                    calval_method = 'non_tier'
+                                    print("Calling create_inv_header_child with calval_method:", calval_method)
+                                    print("Data:", data)
+                                    print("Result:", result)
+                                    
+                                    add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                    print("Function executed successfully with result:", add_data)
+                            else:
+                                error_log(list_guid, 'check_tta', data, result)
+                        
+                        elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                             # To calculate gr_sum
                             result = rims_data_functions.gr_sum(data)
-                            print("Result: ", result)
+                            print("Result of Administration Fees: ", result)
                             
                             if result['status'] == live_mode:
                                 calval_method = 'non_tier'
@@ -1005,6 +1288,8 @@ def check_tta(request):
                                 print("Function executed successfully with result:", add_data)
                             else:
                                 error_log(list_guid, 'check_tta', data, result)
+                        else:
+                            print(f"Skipping {fee_key}: Unknown q_type defined")
 
                     else:
                         print(f"Skipping {fee_key}: Missing type values")
@@ -1059,6 +1344,17 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
 
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         # Date range fields
                         date_from_key = bgs_key.replace('_value', '_date_from')
                         date_to_key = bgs_key.replace('_value', '_date_to')
@@ -1082,7 +1378,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": bgs_type_value,
-                                            "type":q_type,  
+                                            "last_cal_date": cal_date,
+                                            "type":q_type, 
+                                            "calctype":calctype, 
                                             "label":label, 
                                             "startDate":check_daterange['date_from'],
                                             "endDate":check_daterange['date_to'], 
@@ -1101,10 +1399,48 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if bgs_value != 0 and bgs_value is not None:
+                                    result = {"status":True, "value":bgs_value}
+                                    print("Result of Business Growth Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if bgs_value != 0 and bgs_value is not None:
+                                    result = {"status":True, "value":bgs_value}
+                                    print("Result of Business Growth Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of Business Growth Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1116,6 +1452,8 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
+                            else:
+                                print(f"Skipping {bgs_key}: Unknown q_type defined")
                         else:
                             print(f"No date range for {bgs_key}")
 
@@ -1128,7 +1466,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": bgs_type_value,
+                                            "last_cal_date": cal_date,
                                             "type":q_type,  
+                                            "calctype":calctype,
                                             "label":label, 
                                             "startDate":datefrom,
                                             "endDate":dateto, 
@@ -1147,10 +1487,48 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if bgs_value != 0 and bgs_value is not None:
+                                    result = {"status":True, "value":bgs_value}
+                                    print("Result of Business Growth Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if bgs_value != 0 and bgs_value is not None:
+                                    result = {"status":True, "value":bgs_value}
+                                    print("Result of Business Growth Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of Business Growth Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1162,7 +1540,8 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
-
+                            else:
+                                print(f"Skipping {bgs_key}: Unknown q_type defined")
                     else:
                         print(f"Skipping {bgs_key}: Missing type values")
                 
@@ -1207,6 +1586,17 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
 
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         # Date range fields
                         date_from_key = promotion_key.replace('_value', '_date_from')
                         date_to_key = promotion_key.replace('_value', '_date_to')
@@ -1230,7 +1620,9 @@ def check_tta(request):
                                             "code": result_1.supplier_code,
                                             "name": result_1.supplier_name, 
                                             "prefix1": promotion_type_value,
+                                            "last_cal_date": cal_date,
                                             "type": q_type,  
+                                            "calctype":calctype,
                                             "label": label, 
                                             "startDate": check_daterange['date_from'],
                                             "endDate": check_daterange['date_to'], 
@@ -1248,11 +1640,49 @@ def check_tta(request):
                                         }
 
                             print("Data Prepared: ", data)
+                            
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if promotion_value != 0 and promotion_value is not None:
+                                    result = {"status":True, "value":promotion_value}
+                                    print("Result of Promotion Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if promotion_value != 0 and promotion_value is not None:
+                                    result = {"status":True, "value":promotion_value}
+                                    print("Result of Promotion Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of Promotion Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1264,6 +1694,8 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
+                            else:
+                                print(f"Skipping {promotion_key}: Unknown q_type defined")
                         else:
                             print(f"No date range for {promotion_key}")
 
@@ -1276,7 +1708,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": promotion_type_value,
-                                            "type":q_type,  
+                                            "last_cal_date": cal_date,
+                                            "type":q_type, 
+                                            "calctype":calctype, 
                                             "label":label, 
                                             "startDate":datefrom,
                                             "endDate":dateto, 
@@ -1295,10 +1729,48 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if promotion_value != 0 and promotion_value is not None:
+                                    result = {"status":True, "value":promotion_value}
+                                    print("Result of Promotion Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if promotion_value != 0 and promotion_value is not None:
+                                    result = {"status":True, "value":promotion_value}
+                                    print("Result of Promotion Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of Promotion Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1310,6 +1782,8 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
+                            else:
+                                print(f"Skipping {promotion_key}: Unknown q_type defined")
 
                     else:
                         print(f"Skipping {promotion_key}: Missing type values")
@@ -1354,6 +1828,17 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
 
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         # Date range fields
                         date_from_key = marketing_key.replace('_value', '_date_from')
                         date_to_key = marketing_key.replace('_value', '_date_to')
@@ -1390,7 +1875,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": marketing_type_value,
+                                            "last_cal_date": cal_date,
                                             "type":q_type,  
+                                            "calctype":calctype,
                                             "label":label, 
                                             "startDate":check_daterange['date_from'],
                                             "endDate":check_daterange['date_to'], 
@@ -1409,10 +1896,48 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if marketing_value != 0 and marketing_value is not None:
+                                    result = {"status":True, "value":marketing_value}
+                                    print("Result of Marketing Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if marketing_value != 0 and marketing_value is not None:
+                                    result = {"status":True, "value":marketing_value}
+                                    print("Result of Marketing Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of Marketing Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1424,6 +1949,8 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
+                            else:
+                                print(f"Skipping {marketing_key}: Unknown q_type defined")
                         else:
                             print(f"No date range for {marketing_key}")
 
@@ -1436,7 +1963,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": marketing_type_value,
+                                            "last_cal_date": cal_date,
                                             "type":q_type,  
+                                            "calctype":calctype,
                                             "label":label, 
                                             "startDate":datefrom,
                                             "endDate":dateto, 
@@ -1455,10 +1984,48 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if marketing_value != 0 and marketing_value is not None:
+                                    result = {"status":True, "value":marketing_value}
+                                    print("Result of Marketing Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if marketing_value != 0 and marketing_value is not None:
+                                    result = {"status":True, "value":marketing_value}
+                                    print("Result of Marketing Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of Marketing Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1470,10 +2037,10 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
-
+                            else:
+                                print(f"Skipping {marketing_key}: Unknown q_type defined")
                     else:
                         print(f"Skipping {marketing_key}: Missing type values")
-                
                 else:
                     print(f"Skipping {marketing_key}: Value is None or zero")
 
@@ -1514,6 +2081,17 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label) 
 
+                        if(q_type == 'Monthly'):
+                            calctype = 'Monthly'
+                        elif(q_type == 'Yearly'):
+                            calctype = 'Yearly'
+                        elif(q_type == 'gr_gross_sum'):
+                            calctype = 'Gross Sum'
+                        elif(q_type == 'gr_net_sum'):
+                            calctype = 'Net Sum'
+                        else:
+                            calctype = 'Unknown'
+
                         # Date range fields
                         date_from_key = e_commerce_key.replace('_value', '_date_from')
                         date_to_key = e_commerce_key.replace('_value', '_date_to')
@@ -1537,7 +2115,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": e_commerce_type_value,
-                                            "type":q_type,  
+                                            "last_cal_date": cal_date,
+                                            "type":q_type, 
+                                            "calctype": calctype, 
                                             "label":label, 
                                             "startDate":check_daterange['date_from'],
                                             "endDate":check_daterange['date_to'], 
@@ -1556,10 +2136,48 @@ def check_tta(request):
 
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if e_commerce_value != 0 and e_commerce_value is not None:
+                                    result = {"status":True, "value":e_commerce_value}
+                                    print("Result of E-Commerce Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if e_commerce_value != 0 and e_commerce_value is not None:
+                                    result = {"status":True, "value":e_commerce_value}
+                                    print("Result of E-Commerce Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of E-Commerce Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1571,6 +2189,8 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
+                            else:
+                                print(f"Skipping {e_commerce_key}: Unknown q_type defined")
                         else:
                             print(f"No date range for {e_commerce_key}")
 
@@ -1583,7 +2203,9 @@ def check_tta(request):
                                             "code":result_1.supplier_code, 
                                             "name":result_1.supplier_name, 
                                             "prefix1": e_commerce_type_value,
+                                            "last_cal_date": cal_date,
                                             "type":q_type,  
+                                            "calctype":calctype,
                                             "label":label, 
                                             "startDate":datefrom,
                                             "endDate":dateto, 
@@ -1602,10 +2224,48 @@ def check_tta(request):
  
                             print("Data Prepared: ", data)
 
-                            if (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
+                            if q_type == 'Monthly':
+                                print("Reached the Monthly block")
+                            
+                                # To add on the value
+                                if e_commerce_value != 0 and e_commerce_value is not None:
+                                    result = {"status":True, "value":e_commerce_value}
+                                    print("Result of E-Commerce Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                            
+                            elif q_type == 'Yearly':
+                                print("Reached the Yearly block")
+                                
+                                # To add on the value
+                                if e_commerce_value != 0 and e_commerce_value is not None:
+                                    result = {"status":True, "value":e_commerce_value}
+                                    print("Result of E-Commerce Support: ", result)
+                                
+                                    if result['status'] == live_mode:
+                                        calval_method = 'non_tier'
+                                        print("Calling create_inv_header_child with calval_method:", calval_method)
+                                        print("Data:", data)
+                                        print("Result:", result)
+                                        
+                                        add_data = create_inv_header_child(data, customer_guid, result, calval_method)
+                                        print("Function executed successfully with result:", add_data)
+                                else:
+                                    error_log(list_guid, 'check_tta', data, result)
+                                    
+                            elif (q_type == 'gr_gross_sum') or (q_type == 'gr_net_sum'):
                                 # To calculate gr_sum
                                 result = rims_data_functions.gr_sum(data)
-                                print("Result: ", result)
+                                print("Result of E-Commerce Support: ", result)
                                 
                                 if result['status'] == live_mode:
                                     calval_method = 'non_tier'
@@ -1617,10 +2277,10 @@ def check_tta(request):
                                     print("Function executed successfully with result:", add_data)
                                 else:
                                     error_log(list_guid, 'check_tta', data, result)
-
+                            else:
+                                print(f"Skipping {e_commerce_key}: Unknown q_type defined")
                     else:
                         print(f"Skipping {e_commerce_key}: Missing type values")
-                
                 else:
                     print(f"Skipping {e_commerce_key}: Value is None or zero")
 
