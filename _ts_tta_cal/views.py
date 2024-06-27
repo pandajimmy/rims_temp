@@ -258,8 +258,9 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                                 description=data["label"],
                                 calctype="Yearly",
                             )
-                            check_invchild_exist.delete()
-                            print("Deleted existing yearly invchild.")
+                            #check_invchild_exist.delete()
+                            #print("Deleted existing yearly invchild.")
+                            print("Maybe need to delete invchild.")
                         except TtaInvchild.DoesNotExist:
                             print("No existing yearly invchild to delete.")
                         return
@@ -271,10 +272,11 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                         )
 
                         if new_date < previous_date and (date_range).days < 0:
-                            print("Not able to calculate the previous provided date, please generate a new invoice.")
+                            print("Not able to calculate the previous provided date")
                             return
                         else:
-                            cal_val = Decimal(cal_val) + check_invchild_exist.totalprice
+                            print("Logic to Create New Invoice for the Yearly Item Only")
+                            #cal_val = Decimal(cal_val) + check_invchild_exist.totalprice
 
                 try:
                     check_invchild_exist = TtaInvchild.objects.get(
@@ -654,10 +656,7 @@ def check_tta(request):
                                 calctype = 'Net Sum'
                             else:
                                 calctype = 'Unknown'
-                        elif(calmethod == 'Method 2'):
-                            calctype = 'Rebate'
-
-                        if calmethod == "Method 1":
+                                
                             data = {
                                 "customer_guid": customer_guid,
                                 "refno": result_1.refno,
@@ -739,6 +738,8 @@ def check_tta(request):
                                         error_log(list_guid, 'check_tta', data, result)
 
                         elif calmethod == "Method 2":
+                            calctype = 'Rebate'
+
                             # If it's a tiered rebate, collect tier results
                             rebate_value = getattr(purchase, rebate_key.replace('_value1', '_value1'), None)  # _value1 rebate value
                             rebate_value2 = getattr(purchase, rebate_key.replace('_value1', '_value2'), None)  # _value2 rebate value

@@ -136,4 +136,5 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
-_mc_tta_list/migrations/0002_alter_ttalist_table.py
+_ts_tta_cal/old_views.py
+_mc_tta_list/check_tta.txt

@@ -15,7 +15,7 @@ class TtaInvchild(models.Model):
     #customer_guid = models.CharField(max_length=32, blank=True, null=True, verbose_name='Customer guid')
     invchild_guid = models.CharField(primary_key=True, max_length=32, blank=True, verbose_name='Invoice Child guid')
     invmain_guid = models.ForeignKey(TtaInvmain, models.DO_NOTHING, db_column='invmain_guid', related_name='invchild_key', verbose_name='Invoice Main guid')
-    last_cal_date = models.DateTimeField(blank=True, null=True, verbose_name='Last Calculation Date')    
+    last_cal_date = models.DateField(blank=True, null=True, verbose_name='Last Calculation Date')    
     line = models.IntegerField(blank=True, null=True, verbose_name='Line')
     pricetype = models.CharField(max_length=5, verbose_name='Price Type')
     calctype = models.CharField(max_length=50, verbose_name='Calculation Type')
