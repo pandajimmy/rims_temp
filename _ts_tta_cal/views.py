@@ -638,21 +638,24 @@ def check_tta(request):
                         print("Q Type: ", q_type)
                         print("Label: ", label)
 
-                        if(q_type == 'Monthly'):
-                            calctype = 'Monthly'
-                        elif(q_type == 'Yearly'):
-                            calctype = 'Yearly'
-                        elif(q_type == 'gr_gross_sum'):
-                            calctype = 'Gross Sum'
-                        elif(q_type == 'gr_net_sum'):
-                            calctype = 'Net Sum'
-                        else:
-                            calctype = 'Unknown'
-
                         # Determine calculation method based on rebate type key
                         calmethod = "Method 2" if rebate_type_key.startswith('target_purchase_tier') or rebate_type_key.startswith('target_growth_tier') else "Method 1"
 
                         print("Cal Method Purchase N Rebates: ", calmethod)
+
+                        if(calmethod == 'Method 1'):
+                            if(q_type == 'Monthly'):
+                                calctype = 'Monthly'
+                            elif(q_type == 'Yearly'):
+                                calctype = 'Yearly'
+                            elif(q_type == 'gr_gross_sum'):
+                                calctype = 'Gross Sum'
+                            elif(q_type == 'gr_net_sum'):
+                                calctype = 'Net Sum'
+                            else:
+                                calctype = 'Unknown'
+                        elif(calmethod == 'Method 2'):
+                            calctype = 'Rebate'
 
                         if calmethod == "Method 1":
                             data = {
