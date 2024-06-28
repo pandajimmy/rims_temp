@@ -136,5 +136,5 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
-_ts_tta_cal/old_views.py
 _mc_tta_list/check_tta.txt
+_ts_tta_cal/old_views.py
