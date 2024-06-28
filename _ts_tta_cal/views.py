@@ -42,6 +42,7 @@ from _mc_tta_list_purchase_n_rebates.models import TtaListPurchaseNRebates
 from _mc_get_customer_profile.models import CustomerProfile
 import logging
 from decimal import Decimal
+from dateutil.relativedelta import relativedelta
 
 def last_day_of_month(any_day):
     # The day 28 exists in every month. 4 days later, it's always next month
@@ -49,7 +50,7 @@ def last_day_of_month(any_day):
     # subtracting the number of the current day brings us back one month
     return next_month - timedelta(days=next_month.day)
 
-def daterange_condition(label , cal_date, var_date_from, var_date_to):
+def daterange_condition(label, cal_date, var_date_from, var_date_to):
     # print(label)
     # print(cal_date)
     # panda.check_type(cal_date)
@@ -213,6 +214,7 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                             check_invchild_exist = TtaInvchild(
                                 customer_guid=customer_profile,
                                 invmain_guid=get_invmainguid,
+                                first_cal_date=data['last_cal_date'],
                                 last_cal_date=data['last_cal_date'],
                                 line=line,
                                 description=data['label'],
@@ -237,7 +239,8 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                 ).order_by('-created_at').first()
 
                 if data['calctype'] == 'Yearly' and last_invchild:
-                    previous_date = last_invchild.last_cal_date.date()
+
+                    previous_date = last_invchild.last_cal_date
 
                     print("Previous Date: ", previous_date)
 
@@ -276,7 +279,101 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                             return
                         else:
                             print("Logic to Create New Invoice for the Yearly Item Only")
-                            #cal_val = Decimal(cal_val) + check_invchild_exist.totalprice
+                            cal_val = Decimal(cal_val) + check_invchild_exist.totalprice
+
+                            if check_invchild_exist.total_year > 0 and check_invchild_exist.total_year is not None:
+                                sum_years = check_invchild_exist.total_year + 1
+
+                                print("Sum Years: ", sum_years)
+                
+                elif data['calctype'] == 'Monthly' and last_invchild:
+                    previous_date = last_invchild.last_cal_date
+
+                    print("Previous Date: ", previous_date)
+
+                    new_date = data['last_cal_date'].date()  # Convert to date
+
+                    print("New Date: ", new_date)
+
+                    # Calculate full months between previous_date and new_date
+                    full_months = (new_date.year - previous_date.year) * 12 + new_date.month - previous_date.month
+
+                    if new_date.day < previous_date.day:
+                        full_months -= 1
+
+                    print("Full Months: ", full_months)
+                    
+                    #Update total months
+                    check_invchild_exist = TtaInvchild.objects.get(
+                        invmain_guid=get_invmainguid,
+                        customer_guid=customer_profile,
+                        description=data['label']
+                    )
+
+                    if check_invchild_exist.total_month > 0 and check_invchild_exist.total_month is not None:
+                        sum_months = check_invchild_exist.total_month + full_months
+
+                        print("Sum Months: ", sum_months)
+
+                    if full_months <= 0:
+                        try:
+                            check_invchild_exist = TtaInvchild.objects.get(
+                                invmain_guid=get_invmainguid,
+                                customer_guid=customer_profile,
+                                description=data["label"],
+                                calctype="Monthly",
+                            )
+                            # Uncomment the delete line if you want to delete the existing invchild
+                            # check_invchild_exist.delete()
+                            print("Maybe need to delete invchild.")
+                        except TtaInvchild.DoesNotExist:
+                            print("No existing monthly invchild to delete.")
+                        return
+                    else:
+                        # Retrieve the monthly rate
+                        try:
+                            check_invchild_exist = TtaInvchild.objects.get(
+                                invmain_guid=get_invmainguid,
+                                customer_guid=customer_profile,
+                                description=data['label']
+                            )
+                            monthly_rate = check_invchild_exist.unit_price  # Assuming unit_price is the monthly rate
+                        except TtaInvchild.DoesNotExist:
+                            monthly_rate = Decimal(0)
+
+                        # Retrieve existing accumulated_cal_val if this is a continuation of a previous calculation
+                        try:
+                            existing_invchild = TtaInvchild.objects.get(
+                                invmain_guid=get_invmainguid,
+                                customer_guid=customer_profile,
+                                description=data['label'],
+                                calctype='Monthly'
+                            )
+                            accumulated_cal_val = existing_invchild.totalprice  # Assuming totalprice stores the accumulated value
+                        except TtaInvchild.DoesNotExist:
+                            accumulated_cal_val = Decimal(0)
+                            
+
+                        print("Initial accumulated_cal_val: ", accumulated_cal_val)
+                        print("Monthly rate: ", monthly_rate)
+
+                        for _ in range(full_months):
+                            # Print the value before adding to cal_val
+                            print("Current accumulated_cal_val before addition: ", accumulated_cal_val)
+                            print("Monthly rate to add: ", monthly_rate)
+                            
+                            # Add the monthly rate to accumulated_cal_val
+                            accumulated_cal_val += monthly_rate
+
+                            # Print the value after adding to accumulated_cal_val
+                            print("New accumulated_cal_val after addition: ", accumulated_cal_val)
+
+                            # Update previous_date to the next month
+                            previous_date += relativedelta(months=1)
+                            print("Updated Previous Date to: ", previous_date)
+
+                            # Update cal_val to the new accumulated value
+                            cal_val = accumulated_cal_val
 
                 try:
                     check_invchild_exist = TtaInvchild.objects.get(
@@ -287,14 +384,28 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                     check_invchild_exist.totalprice = cal_val
                     check_invchild_exist.total_incl_tax = cal_val
                     check_invchild_exist.last_cal_date = data['last_cal_date']
+                    
+                    if data['calctype'] == 'Yearly':
+                        check_invchild_exist.total_year = sum_years
+                    
+                    if data['calctype'] == 'Monthly':    
+                        check_invchild_exist.total_month = sum_months
+                    
                     check_invchild_exist.updated_by = 'system'
                     check_invchild_exist.save()
                 except TtaInvchild.DoesNotExist:
                     query_line = TtaInvchild.objects.filter(invmain_guid=get_invmainguid, customer_guid=customer_guid)
                     line = query_line.count() + 1
+                    sum_years = 1
+                    print("Sum Years: ", sum_years)
+
+                    sum_months = 1
+                    print("Sum Months: ", sum_months)
+
                     check_invchild_exist = TtaInvchild(
                         customer_guid=customer_profile,
                         invmain_guid=get_invmainguid,
+                        first_cal_date=data['last_cal_date'],
                         last_cal_date=data['last_cal_date'],
                         line=line,
                         description=data['label'],
@@ -308,12 +419,19 @@ def create_inv_header_child(data, customer_guid, result, calval_method):
                         created_by='system',
                         updated_by='system'
                     )
+
+                    if data['calctype'] == 'Yearly':
+                        check_invchild_exist.total_year = sum_years
+                    if data['calctype'] == 'Monthly':
+                        check_invchild_exist.total_month = sum_months
+
                     check_invchild_exist.save()
         except Exception as e:
             print(f"Error in creating or updating TtaInvchild: {e}")
             return
 
     print("Check InvMain: ", check_invmain_exist)
+
     return result
 
 def error_log(list_guid, customer_guid, log_module, data, result):
@@ -1860,7 +1978,7 @@ def check_tta(request):
                             # Determine datefrom1 and dateto1 based on cal_date in relation to marketing_from and marketing_to
                             if marketing_from <= cal_date <= marketing_to:
                                 datefrom1 = cal_date.replace(day=1).strftime('%Y-%m-%d')
-                                dateto1 = str(last_day_of_month(cal_date.date()))
+                                dateto1 = str(last_day_of_month(cal_date))
                             elif cal_date > marketing_to:
                                 datefrom1 = marketing_to.strftime('%Y-%m-%d')
                                 dateto1 = marketing_to.strftime('%Y-%m-%d')

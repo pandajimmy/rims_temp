@@ -103,7 +103,7 @@ INSTALLED_APPS = [
     '_ts_tta_status_trans.apps.TsTtaStatusTransConfig',
     #'_ml_rims_acc_code.apps.MlRimsAccCodeConfig',
     #'_ml_rims_acc_glmaster.apps.MlRimsAccGlmasterConfig',
-    #'_mc_get_rims_acc_type.apps.McGetRimsAccTypeConfig',
+    '_mc_get_rims_acc_type.apps.McGetRimsAccTypeConfig',
     '_mc_tta_list_cal_main.apps.McTtaListCalMainConfig',
     '_ts_tta_invmain.apps.TsTtaInvmainConfig',
     '_ts_tta_invchild.apps.TsTtaInvchildConfig',
