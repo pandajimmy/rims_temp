@@ -4,7 +4,7 @@ from _mc_get_customer_profile.models import CustomerProfile
 from _mc_get_rims_acc_type.models import RimsAccType
 
 class RimsAccGlmaster(models.Model):
-    glmaster_guid = models.CharField(primary_key=True, max_length=32, verbose_name='GL Master guid')
+    glmaster_guid = models.CharField(primary_key=True, max_length=32, editable=False, verbose_name='GL Master guid')
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='acc_glmaster_customer_profile')
     acc_type_guid = models.ForeignKey(RimsAccType, on_delete=models.DO_NOTHING, db_column='acc_type_guid', verbose_name='Customer guid', related_name='acc_glmaster_acc_type')
     acc_type = models.CharField(max_length=20, blank=True, null=True, verbose_name='Account Type')
@@ -24,6 +24,7 @@ class RimsAccGlmaster(models.Model):
     def save(self, *args, **kwargs):
         if self.glmaster_guid == '':
             self.glmaster_guid = panda.panda_uuid()
+            self.created_at = panda.panda_today()
         
         self.updated_at = panda.panda_today()
         self.updated_by = self.updated_by

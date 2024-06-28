@@ -8,7 +8,7 @@ class DesignCot(models.Model):
     #cot_guid = models.CharField(primary_key=True, max_length=32)
     cot_guid = models.CharField(primary_key=True, max_length=32, default=panda.panda_uuid, editable=False, verbose_name='COT guid')
     customer_guid = models.ForeignKey(CustomerProfile, on_delete=models.DO_NOTHING, db_column='customer_guid', verbose_name='Customer guid', related_name='cot_customer_profile')
-    tab_guid = models.OneToOneField(DesignTab, on_delete=models.DO_NOTHING, db_column='tab_guid', verbose_name='Tab guid', related_name='cot_design_tab')
+    tab_guid = models.ForeignKey(DesignTab, on_delete=models.DO_NOTHING, db_column='tab_guid', verbose_name='Tab guid', related_name='cot_design_tab')
     cot_group = models.CharField(max_length=120, blank=True, null=True, verbose_name='COT Group')
     cot_seq = models.SmallIntegerField(blank=True, null=True, verbose_name='COT Sequence')
     cot_description = models.CharField(max_length=120, blank=True, null=True, verbose_name='COT Description')
@@ -30,4 +30,13 @@ class DesignCot(models.Model):
 
     def get_absolute_url(self):
         return f'/{self.cot_guid}/' 
+
+    def save(self, *args, **kwargs):
+        if self.cot_guid == '':
+            self.cot_guid = panda.panda_uuid()
+            self.created_at = panda.panda_today()
+        
+        self.updated_at = panda.panda_today()
+        self.updated_by = self.updated_by
+        super(DesignCot, self).save(*args, **kwargs)
     
